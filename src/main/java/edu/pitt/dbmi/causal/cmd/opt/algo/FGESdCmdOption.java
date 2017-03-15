@@ -47,6 +47,7 @@ public class FGESdCmdOption extends TetradCmdAlgoOpt implements CmdOption {
     protected boolean skipCategoryLimit;
 
     public FGESdCmdOption() {
+        super();
     }
 
     @Override

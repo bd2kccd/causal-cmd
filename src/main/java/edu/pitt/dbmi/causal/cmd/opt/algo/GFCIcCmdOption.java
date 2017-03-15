@@ -34,6 +34,7 @@ import org.apache.commons.cli.Option;
 public class GFCIcCmdOption extends FGEScCmdOption {
 
     public GFCIcCmdOption() {
+        super();
     }
 
     protected double alpha;

@@ -44,6 +44,7 @@ public class FGEScCmdOption extends TetradCmdAlgoOpt implements CmdOption {
     protected boolean skipZeroVariance;
 
     public FGEScCmdOption() {
+        super();
     }
 
     @Override

@@ -54,11 +54,10 @@ public abstract class TetradCmdAlgoOpt {
     protected boolean skipLatest;
 
     public TetradCmdAlgoOpt() {
+        setOptions();
     }
 
     public void parseOptions(String[] args) {
-        setOptions();
-
         try {
             CommandLineParser cmdParser = new DefaultParser();
             CommandLine cmd = cmdParser.parse(mainOptions, args);
