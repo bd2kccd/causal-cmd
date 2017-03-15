@@ -62,9 +62,8 @@ public class FGESdCmdOption extends TetradCmdAlgoOpt implements CmdOption {
         skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
         skipCategoryLimit = cmd.hasOption(CmdLongOpts.SKIP_CATEGORY_LIMIT);
 
-        if (outputPrefix.isEmpty()) {
-            outputPrefix = String.format("%s_%s_%d", AlgorithmType.FGESD.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        }
+        String prefix = String.format("%s_%s_%d", AlgorithmType.FGESD.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
+        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
     }
 
     @Override

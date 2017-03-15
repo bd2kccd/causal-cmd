@@ -47,6 +47,9 @@ import java.util.List;
  */
 public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
 
+    public FGEScAlgorithmRunner() {
+    }
+
     @Override
     protected Parameters getParameters(TetradCmdAlgoOpt cmdAlgoOpt) {
         FGEScCmdOption cmdOption = (FGEScCmdOption) cmdAlgoOpt;
