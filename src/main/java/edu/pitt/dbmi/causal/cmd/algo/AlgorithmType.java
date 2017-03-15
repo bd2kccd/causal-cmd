@@ -28,7 +28,8 @@ public enum AlgorithmType {
 
     FGESC("FGES Continuous", "FGESc"),
     FGESD("FGES Discrete", "FGESd"),
-    GFCIC("GFCI Continuous", "GFCIc");
+    GFCIC("GFCI Continuous", "GFCIc"),
+    GFCID("GFCI Discrete", "GFCId");
 
     private final String title;
 

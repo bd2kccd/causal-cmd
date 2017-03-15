@@ -105,6 +105,33 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testGFCId() throws IOException {
+        Path dataFile = Paths.get("test", "data", "discrete", "sim_discrete_data_20vars_100cases.txt");
+        String delimiter = "tab";
+        String algorithm = AlgorithmType.GFCID.getCmd();
+        String dirOut = tmpDir.newFolder(algorithm).toString();
+        String outputPrefix = algorithm;
+        String[] args = {
+            "--algorithm", algorithm,
+            "--data", dataFile.toString(),
+            "--delimiter", delimiter,
+            "--out", dirOut,
+            "--output-prefix", outputPrefix,
+            "--json",
+            "--skip-latest"
+        };
+        CausalCmdApplication.main(args);
+
+        Path outFile = Paths.get(dirOut, outputPrefix + ".txt");
+        String errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+
+        outFile = Paths.get(dirOut, outputPrefix + "_graph.json");
+        errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+    }
+
+    @Test
     public void testGFCIc() throws IOException {
         Path dataFile = Paths.get("test", "data", "continuous", "sim_data_20vars_100cases.txt");
         String delimiter = "tab";
