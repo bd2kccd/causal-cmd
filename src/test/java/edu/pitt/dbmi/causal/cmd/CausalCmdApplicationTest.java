@@ -18,6 +18,8 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
+import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
+import edu.pitt.dbmi.causal.cmd.sim.DataSimulationType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -49,10 +51,64 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testBayNetRandFwdDataSimulation() throws IOException {
+        String simulation = DataSimulationType.BAYES_NET_RAND_FWD.getCmd();
+        String numOfVariables = "8";
+        String numOfCases = "10";
+        String delimiter = "tab";
+        String dirOut = tmpDir.newFolder(simulation).toString();
+        String outputPrefix = simulation;
+        String[] args = {
+            "--simulate-data", simulation,
+            "--var", numOfVariables,
+            "--case", numOfCases,
+            "--delimiter", delimiter,
+            "--out", dirOut,
+            "--output-prefix", outputPrefix
+        };
+        CausalCmdApplication.main(args);
+
+        Path outFile = Paths.get(dirOut, outputPrefix + ".txt");
+        String errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+
+        outFile = Paths.get(dirOut, outputPrefix + ".graph");
+        errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+    }
+
+    @Test
+    public void testSemRandFwdDataSimulation() throws IOException {
+        String simulation = DataSimulationType.SEM_RAND_FWD.getCmd();
+        String numOfVariables = "8";
+        String numOfCases = "10";
+        String delimiter = "tab";
+        String dirOut = tmpDir.newFolder(simulation).toString();
+        String outputPrefix = simulation;
+        String[] args = {
+            "--simulate-data", simulation,
+            "--var", numOfVariables,
+            "--case", numOfCases,
+            "--delimiter", delimiter,
+            "--out", dirOut,
+            "--output-prefix", outputPrefix
+        };
+        CausalCmdApplication.main(args);
+
+        Path outFile = Paths.get(dirOut, outputPrefix + ".txt");
+        String errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+
+        outFile = Paths.get(dirOut, outputPrefix + ".graph");
+        errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+    }
+
+    @Test
     public void testGFCIc() throws IOException {
         Path dataFile = Paths.get("test", "data", "continuous", "sim_data_20vars_100cases.txt");
         String delimiter = "tab";
-        String algorithm = "gfcic";
+        String algorithm = AlgorithmType.GFCIC.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
         String[] args = {
@@ -81,7 +137,7 @@ public class CausalCmdApplicationTest {
     public void testFGESd() throws IOException {
         Path dataFile = Paths.get("test", "data", "discrete", "sim_discrete_data_20vars_100cases.txt");
         String delimiter = "tab";
-        String algorithm = "fgesd";
+        String algorithm = AlgorithmType.FGESD.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
         String[] args = {
@@ -108,7 +164,7 @@ public class CausalCmdApplicationTest {
     public void testFGESc() throws IOException {
         Path dataFile = Paths.get("test", "data", "continuous", "sim_data_20vars_100cases.txt");
         String delimiter = "tab";
-        String algorithm = "fgesc";
+        String algorithm = AlgorithmType.FGESC.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
         String[] args = {

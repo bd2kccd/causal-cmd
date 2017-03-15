@@ -22,6 +22,9 @@ import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.algo.FGEScAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.FGESdAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.GFCIcAlgorithmRunner;
+import edu.pitt.dbmi.causal.cmd.sim.BayNetRandFwdDataSimulationRunner;
+import edu.pitt.dbmi.causal.cmd.sim.DataSimulationType;
+import edu.pitt.dbmi.causal.cmd.sim.SemRandFwdDataSimulationRunner;
 import edu.pitt.dbmi.causal.cmd.util.AppUtils;
 import edu.pitt.dbmi.causal.cmd.util.Args;
 import java.util.Map;
@@ -45,7 +48,7 @@ public class CausalCmdApplication {
     private static final String VERSION_OPT = "version";
 
     private static final Map<String, AlgorithmType> ALGO_TYPES = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private static final Map<String, SimulationType> SIM_TYPES = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private static final Map<String, DataSimulationType> DATA_SIM_TYPES = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     static {
         populateMainOptions();
@@ -82,21 +85,26 @@ public class CausalCmdApplication {
                         }
                     }
                 } else {
-                    runSimulation(args);
+                    String simulation = Args.getOptionValue(args, SIM_DATA_OPT);
+                    DataSimulationType dataSimulationType = DATA_SIM_TYPES.get(simulation);
+                    if (dataSimulationType == null) {
+                        showHelp();
+                    } else {
+                        args = Args.removeOption(args, SIM_DATA_OPT);
+                        switch (dataSimulationType) {
+                            case BAYES_NET_RAND_FWD:
+                                new BayNetRandFwdDataSimulationRunner().runDataSimulation(args);
+                                break;
+                            case SEM_RAND_FWD:
+                                new SemRandFwdDataSimulationRunner().runDataSimulation(args);
+                                break;
+                        }
+                    }
                 }
             } else {
                 showHelp();
             }
         }
-    }
-
-    private static void runSimulation(String[] args) {
-//        SimulationCli simulationCli = getSimulationCli(args);
-//        if (simulationCli == null) {
-//            showHelp();
-//        } else {
-//            simulationCli.simulate();
-//        }
     }
 
     private static void showHelp() {
@@ -107,8 +115,8 @@ public class CausalCmdApplication {
         for (AlgorithmType type : AlgorithmType.values()) {
             ALGO_TYPES.put(type.getCmd(), type);
         }
-        for (SimulationType type : SimulationType.values()) {
-            SIM_TYPES.put(type.getCmd(), type);
+        for (DataSimulationType type : DataSimulationType.values()) {
+            DATA_SIM_TYPES.put(type.getCmd(), type);
         }
     }
 
@@ -137,7 +145,7 @@ public class CausalCmdApplication {
 
     private static String simulationCmd() {
         StringBuilder algoOpt = new StringBuilder();
-        SimulationType[] types = SimulationType.values();
+        DataSimulationType[] types = DataSimulationType.values();
         int lastIndex = types.length - 1;
         for (int i = 0; i < lastIndex; i++) {
             algoOpt.append(types[i].getCmd());

@@ -52,6 +52,7 @@ public class FGESdCmdOption extends TetradCmdAlgoOpt implements CmdOption {
 
     @Override
     protected void parseRequiredOptions(CommandLine cmd) throws Exception {
+        // no required options
     }
 
     @Override

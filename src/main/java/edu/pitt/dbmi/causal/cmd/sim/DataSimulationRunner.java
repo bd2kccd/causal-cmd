@@ -16,34 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd;
+package edu.pitt.dbmi.causal.cmd.sim;
 
 /**
  *
- * Mar 10, 2017 12:55:49 PM
+ * Mar 15, 2017 12:48:24 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public enum SimulationType {
+public interface DataSimulationRunner {
 
-    SEM_RAND_FWD("Sem - Random Foward", "sem-rand-fwd"),
-    BAYES_NET_RAND_FWD("Bayes Net - Random Foward", "bayes-net-rand-fwd");
-
-    private final String title;
-
-    private final String cmd;
-
-    private SimulationType(String title, String cmd) {
-        this.title = title;
-        this.cmd = cmd;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getCmd() {
-        return cmd;
-    }
+    public void runDataSimulation(String[] args);
 
 }
