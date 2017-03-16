@@ -33,6 +33,8 @@ import edu.pitt.dbmi.causal.cmd.validation.UniqueVariableValidation;
 import edu.pitt.dbmi.data.Delimiter;
 import edu.pitt.dbmi.data.reader.DataReader;
 import edu.pitt.dbmi.data.reader.tabular.ContinuousTabularDataFileReader;
+import edu.pitt.dbmi.data.validation.tabular.ContinuousTabularDataFileValidation;
+import edu.pitt.dbmi.data.validation.tabular.TabularDataValidation;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.Formatter;
@@ -112,6 +114,14 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
         Delimiter delimiter = cmdAlgoOpt.getDelimiter();
 
         return new ContinuousTabularDataFileReader(dataFile, delimiter);
+    }
+
+    @Override
+    protected TabularDataValidation getTabularDataValidation(TetradCmdAlgoOpt cmdAlgoOpt) {
+        File dataFile = cmdAlgoOpt.getDataFile().toFile();
+        Delimiter delimiter = cmdAlgoOpt.getDelimiter();
+
+        return new ContinuousTabularDataFileValidation(dataFile, delimiter);
     }
 
     @Override

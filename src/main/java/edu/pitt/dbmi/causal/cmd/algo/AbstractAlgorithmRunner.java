@@ -41,10 +41,8 @@ import edu.pitt.dbmi.data.reader.DataReader;
 import static edu.pitt.dbmi.data.validation.ValidationCode.INFO;
 import static edu.pitt.dbmi.data.validation.ValidationCode.WARNING;
 import edu.pitt.dbmi.data.validation.ValidationResult;
-import edu.pitt.dbmi.data.validation.tabular.ContinuousTabularDataFileValidation;
 import edu.pitt.dbmi.data.validation.tabular.TabularDataValidation;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -80,6 +78,8 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
     protected abstract List<TetradDataValidation> getDataValidations(DataSet dataSet, TetradCmdAlgoOpt cmdAlgoOpt);
 
     protected abstract DataReader getDataReader(TetradCmdAlgoOpt cmdAlgoOpt);
+
+    protected abstract TabularDataValidation getTabularDataValidation(TetradCmdAlgoOpt cmdAlgoOpt);
 
     protected abstract void printParameterInfos(Formatter fmt, TetradCmdAlgoOpt cmdAlgoOpt);
 
@@ -118,7 +118,7 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
         }
 
         Set<String> excludedVariables = readInVariables(cmdAlgoOpt.getExcludedVariableFile());
-        doContinuousTabularDataFileValidation(cmdAlgoOpt, excludedVariables);
+        doTabularDataValidation(cmdAlgoOpt, excludedVariables);
 
         DataSet dataSet = readInDataSet(getDataReader(cmdAlgoOpt), excludedVariables);
         doDataValidation(dataSet, cmdAlgoOpt);
@@ -289,11 +289,8 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
         return knowledge;
     }
 
-    protected void doContinuousTabularDataFileValidation(TetradCmdAlgoOpt cmdAlgoOpt, Set<String> excludedVariables) {
-        File dataFile = cmdAlgoOpt.getDataFile().toFile();
-        Delimiter delimiter = cmdAlgoOpt.getDelimiter();
-
-        TabularDataValidation dataValidation = new ContinuousTabularDataFileValidation(dataFile, delimiter);
+    protected void doTabularDataValidation(TetradCmdAlgoOpt cmdAlgoOpt, Set<String> excludedVariables) {
+        TabularDataValidation dataValidation = getTabularDataValidation(cmdAlgoOpt);
         dataValidation.validate(excludedVariables);
         List<ValidationResult> results = dataValidation.getValidationResults();
         List<ValidationResult> infos = new LinkedList<>();

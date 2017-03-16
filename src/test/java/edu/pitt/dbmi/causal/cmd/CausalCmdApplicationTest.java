@@ -20,6 +20,7 @@ package edu.pitt.dbmi.causal.cmd;
 
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.sim.DataSimulationType;
+import edu.pitt.dbmi.data.Delimiter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -53,11 +54,11 @@ public class CausalCmdApplicationTest {
     @Test
     public void testBayNetRandFwdDataSimulation() throws IOException {
         String simulation = DataSimulationType.BAYES_NET_RAND_FWD.getCmd();
-        String numOfVariables = "8";
-        String numOfCases = "10";
-        String delimiter = "tab";
+        String delimiter = Delimiter.TAB.getName();
         String dirOut = tmpDir.newFolder(simulation).toString();
         String outputPrefix = simulation;
+        String numOfVariables = "8";
+        String numOfCases = "10";
         String[] args = {
             "--simulate-data", simulation,
             "--var", numOfVariables,
@@ -80,11 +81,11 @@ public class CausalCmdApplicationTest {
     @Test
     public void testSemRandFwdDataSimulation() throws IOException {
         String simulation = DataSimulationType.SEM_RAND_FWD.getCmd();
-        String numOfVariables = "8";
-        String numOfCases = "10";
-        String delimiter = "tab";
+        String delimiter = Delimiter.TAB.getName();
         String dirOut = tmpDir.newFolder(simulation).toString();
         String outputPrefix = simulation;
+        String numOfVariables = "8";
+        String numOfCases = "10";
         String[] args = {
             "--simulate-data", simulation,
             "--var", numOfVariables,
@@ -106,15 +107,17 @@ public class CausalCmdApplicationTest {
 
     @Test
     public void testGFCId() throws IOException {
-        Path dataFile = Paths.get("test", "data", "discrete", "sim_discrete_data_20vars_100cases.txt");
-        String delimiter = "tab";
+        Path dataFile = Paths.get("test", "data", "discrete", "pgh_bridges.csv");
+        String delimiter = Delimiter.COMMA.getName();
         String algorithm = AlgorithmType.GFCID.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
+        dirOut = Paths.get("/home", "kvb2", "shared", "tmp").toString();
         String outputPrefix = algorithm;
         String[] args = {
             "--algorithm", algorithm,
             "--data", dataFile.toString(),
             "--delimiter", delimiter,
+            "--skip-category-limit",
             "--out", dirOut,
             "--output-prefix", outputPrefix,
             "--json",
@@ -134,7 +137,7 @@ public class CausalCmdApplicationTest {
     @Test
     public void testGFCIc() throws IOException {
         Path dataFile = Paths.get("test", "data", "continuous", "sim_data_20vars_100cases.txt");
-        String delimiter = "tab";
+        String delimiter = Delimiter.TAB.getName();
         String algorithm = AlgorithmType.GFCIC.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
@@ -163,7 +166,7 @@ public class CausalCmdApplicationTest {
     @Test
     public void testFGESd() throws IOException {
         Path dataFile = Paths.get("test", "data", "discrete", "sim_discrete_data_20vars_100cases.txt");
-        String delimiter = "tab";
+        String delimiter = Delimiter.TAB.getName();
         String algorithm = AlgorithmType.FGESD.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
@@ -190,7 +193,7 @@ public class CausalCmdApplicationTest {
     @Test
     public void testFGESc() throws IOException {
         Path dataFile = Paths.get("test", "data", "continuous", "sim_data_20vars_100cases.txt");
-        String delimiter = "tab";
+        String delimiter = Delimiter.TAB.getName();
         String algorithm = AlgorithmType.FGESC.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
