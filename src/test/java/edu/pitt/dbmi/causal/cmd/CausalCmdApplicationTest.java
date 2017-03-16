@@ -111,7 +111,6 @@ public class CausalCmdApplicationTest {
         String delimiter = Delimiter.COMMA.getName();
         String algorithm = AlgorithmType.GFCID.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
-        dirOut = Paths.get("/home", "kvb2", "shared", "tmp").toString();
         String outputPrefix = algorithm;
         String[] args = {
             "--algorithm", algorithm,
