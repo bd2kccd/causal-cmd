@@ -107,14 +107,16 @@ public class CausalCmdApplicationTest {
 
     @Test
     public void testGFCId() throws IOException {
-        Path dataFile = Paths.get("test", "data", "discrete", "pgh_bridges.csv");
-        String delimiter = Delimiter.COMMA.getName();
+        Path dataFile = Paths.get("test", "data", "cmu", "avatarwithdependencies.esv");
+        Path knowledgeFile = Paths.get("test", "data", "cmu", "avatarknowledge.txt");
+        String delimiter = Delimiter.TAB.getName();
         String algorithm = AlgorithmType.GFCID.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
         String[] args = {
             "--algorithm", algorithm,
             "--data", dataFile.toString(),
+            "--knowledge", knowledgeFile.toString(),
             "--delimiter", delimiter,
             "--skip-category-limit",
             "--out", dirOut,
