@@ -156,7 +156,7 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
         }
     }
 
-    public static void writeOutTetradGraphJson(Graph graph, Path outputFile) {
+    public void writeOutTetradGraphJson(Graph graph, Path outputFile) {
         if (graph == null) {
             return;
         }
@@ -184,7 +184,7 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
         }
     }
 
-    public static void writeOutJson(String graphId, Graph graph, Path outputFile) {
+    public void writeOutJson(String graphId, Graph graph, Path outputFile) {
         String fileName = outputFile.getFileName().toString();
         String task = "writing out Json file " + fileName;
         logStartTask(task);
@@ -196,7 +196,7 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
         logEndTask(task);
     }
 
-    public static Graph search(DataSet dataSet, Algorithm algorithm, Parameters parameters) {
+    public Graph search(DataSet dataSet, Algorithm algorithm, Parameters parameters) {
         String task = "running algorithm " + algorithm.getDescription();
         logStartTask(task);
         Graph graph = algorithm.search(dataSet, parameters);
@@ -398,19 +398,19 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
         return args == null || args.length == 0 || Args.hasLongOption(args, "help");
     }
 
-    private static void logStartTask(String task) {
+    private void logStartTask(String task) {
         String msg = String.format("%s: Start %s.", AppUtils.fmtDateNow(), task);
         System.out.println(msg);
         LOGGER.info(String.format("Start %s.", task));
     }
 
-    private static void logEndTask(String task) {
+    private void logEndTask(String task) {
         String msg = String.format("%s: End %s.", AppUtils.fmtDateNow(), task);
         System.out.println(msg);
         LOGGER.info(String.format("End %s.", task));
     }
 
-    private static void logFailedTask(String task, Exception exception) {
+    private void logFailedTask(String task, Exception exception) {
         String errMsg = String.format("Failed %s.", task);
         System.err.println(errMsg);
         LOGGER.error(errMsg, exception);
