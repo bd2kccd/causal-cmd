@@ -137,7 +137,7 @@ public class CausalCmdApplicationTest {
 
     @Test
     public void testGFCIc() throws IOException {
-        Path dataFile = Paths.get("test", "data", "continuous", "sim_data_20vars_100cases.txt");
+        Path dataFile = Paths.get("test", "data", "cmu", "rawst.tetrad.txt");
         String delimiter = Delimiter.TAB.getName();
         String algorithm = AlgorithmType.GFCIC.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
@@ -146,7 +146,6 @@ public class CausalCmdApplicationTest {
             "--algorithm", algorithm,
             "--data", dataFile.toString(),
             "--delimiter", delimiter,
-            "--alpha", "0.05",
             "--out", dirOut,
             "--output-prefix", outputPrefix,
             "--json",
