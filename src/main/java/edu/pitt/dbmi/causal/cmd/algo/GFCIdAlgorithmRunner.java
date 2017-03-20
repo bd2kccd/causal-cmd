@@ -23,6 +23,8 @@ import edu.cmu.tetrad.algcomparison.algorithm.oracle.pag.Gfci;
 import edu.cmu.tetrad.algcomparison.independence.ChiSquare;
 import edu.cmu.tetrad.algcomparison.score.BdeuScore;
 import edu.cmu.tetrad.data.IKnowledge;
+import edu.cmu.tetrad.graph.Graph;
+import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.opt.algo.GFCIdCmdOption;
@@ -38,6 +40,11 @@ import java.util.Formatter;
 public class GFCIdAlgorithmRunner extends FGESdAlgorithmRunner {
 
     public GFCIdAlgorithmRunner() {
+    }
+
+    @Override
+    protected String graphToString(Graph graph) {
+        return (graph == null) ? "" : GraphUtils.graphToText(graph).trim();
     }
 
     @Override
