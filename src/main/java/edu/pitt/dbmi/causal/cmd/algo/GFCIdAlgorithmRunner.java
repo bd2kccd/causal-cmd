@@ -44,7 +44,13 @@ public class GFCIdAlgorithmRunner extends FGESdAlgorithmRunner {
 
     @Override
     protected String graphToString(Graph graph) {
-        return (graph == null) ? "" : GraphUtils.graphToText(graph).trim();
+        if (graph == null) {
+            return "";
+        }
+
+        GraphUtils.addPagColoring(graph);
+
+        return GraphUtils.graphToText(graph).trim();
     }
 
     @Override
