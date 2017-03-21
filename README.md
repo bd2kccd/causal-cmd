@@ -60,13 +60,14 @@ The GFCI algorithm has additional edge types:
 
 ## Command line interface usage
 
-Tetrad-cli has different switches for different algorithms. 
+causal-cmd has different switches for different algorithms. Typing 
+
 ```
-usage: java -jar causal-cmd-6.0.1-SNAPSHOT.jar --algorithm <arg> |
-       --simulate-data <arg>  [--version]
-    --algorithm <arg>       FGESc, FGESd, GFCIc
+usage: java -jar causal-cmd-0.1.0.jar --algorithm <arg> | --simulate-data <arg>  [--version]
+    --algorithm <arg>       FGESc, FGESd, GFCIc, GFCId
     --simulate-data <arg>   sem-rand-fwd, bayes-net-rand-fwd
-    --version               Version.
+    --version               Show software version.
+
 ```
 
 Use the `--algorithm <arg>` parameter to see specific algorithm usage information.
@@ -75,7 +76,7 @@ Use the `--algorithm <arg>` parameter to see specific algorithm usage informatio
 ### causal-cmd usage for FGES for continuous data
 
 ```
-usage: java -jar causal-cmd-0.1.0-jar-with-dependencies.jar --algorithm FGESc [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+usage: java -jar causal-cmd-0.1.0.jar --algorithm FGESc [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
  -f,--data <arg>                Data file.
@@ -83,7 +84,7 @@ usage: java -jar causal-cmd-0.1.0-jar-with-dependencies.jar --algorithm FGESc [-
     --help                      Show help.
     --json                      Create JSON output.
     --knowledge <arg>           A file containing prior knowledge.
-    --max-degree <arg>          The maximum degree of the output graph. Use -1 for unbounded.. Default is -1.
+    --max-degree <arg>          The maximum degree of the graph.. Default is 100.
     --no-validation-output      No validation output files created.
  -o,--out <arg>                 Output directory.
     --output-prefix <arg>       Prefix name for output files.
@@ -99,7 +100,7 @@ usage: java -jar causal-cmd-0.1.0-jar-with-dependencies.jar --algorithm FGESc [-
 ### causal-cmd usage for FGES for discrete data
 
 ```
-usage: java -jar causal-cmd-0.1.0-jar-with-dependencies.jar --algorithm FGESd [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+usage: java -jar causal-cmd-0.1.0.jar --algorithm FGESd [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
  -f,--data <arg>                Data file.
@@ -107,7 +108,7 @@ usage: java -jar causal-cmd-0.1.0-jar-with-dependencies.jar --algorithm FGESd [-
     --help                      Show help.
     --json                      Create JSON output.
     --knowledge <arg>           A file containing prior knowledge.
-    --max-degree <arg>          The maximum degree of the output graph. Use -1 for unbounded.. Default is -1.
+    --max-degree <arg>          The maximum degree of the graph.. Default is 100.
     --no-validation-output      No validation output files created.
  -o,--out <arg>                 Output directory.
     --output-prefix <arg>       Prefix name for output files.
@@ -124,7 +125,7 @@ usage: java -jar causal-cmd-0.1.0-jar-with-dependencies.jar --algorithm FGESd [-
 ### causal-cmd usage for GFCI for continuous data
 
 ```
-usage: java -jar causal-cmd-6.0.1-jar-with-dependencies.jar --algorithm GFCIc [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+usage: java -jar causal-cmd-0.1.0.jar --algorithm GFCIc [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
     --alpha <arg>               Cutoff for p values (alpha). Default is 0.01.
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
@@ -133,7 +134,7 @@ usage: java -jar causal-cmd-6.0.1-jar-with-dependencies.jar --algorithm GFCIc [-
     --help                      Show help.
     --json                      Create JSON output.
     --knowledge <arg>           A file containing prior knowledge.
-    --max-degree <arg>          The maximum degree of the output graph. Use -1 for unbounded.. Default is -1.
+    --max-degree <arg>          The maximum degree of the graph.. Default is 100.
     --no-validation-output      No validation output files created.
  -o,--out <arg>                 Output directory.
     --output-prefix <arg>       Prefix name for output files.
@@ -145,6 +146,33 @@ usage: java -jar causal-cmd-6.0.1-jar-with-dependencies.jar --algorithm GFCIc [-
     --thread <arg>              Number of threads.
     --verbose                   Print additional information.
 ```
+
+### causal-cmd usage for GFCI for discrete data
+
+```
+usage: java -jar causal-cmd-0.1.0.jar --algorithm GFCId [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+    --alpha <arg>               Cutoff for p values (alpha). Default is 0.01.
+ -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
+    --exclude-variables <arg>   A file containing variables to exclude.
+ -f,--data <arg>                Data file.
+    --faithfulness-assumed      Yes if (one edge) faithfulness should be assumed. Default is false.
+    --help                      Show help.
+    --json                      Create JSON output.
+    --knowledge <arg>           A file containing prior knowledge.
+    --max-degree <arg>          The maximum degree of the graph.. Default is 100.
+    --no-validation-output      No validation output files created.
+ -o,--out <arg>                 Output directory.
+    --output-prefix <arg>       Prefix name for output files.
+    --sample-prior <arg>        Sample prior. Default is 1.0.
+    --skip-category-limit       Skip 'limit number of categories' check.
+    --skip-latest               Skip checking for latest software version
+    --skip-unique-var-name      Skip check for unique variable names.
+    --structure-prior <arg>     Structure prior coefficient. Default is 1.0.
+    --tetrad-graph-json         Create Tetrad Graph JSON output.
+    --thread <arg>              Number of threads.
+    --verbose                   Print additional information.
+```
+
 
 ### Prior knowledge file example
 
