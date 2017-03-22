@@ -32,7 +32,7 @@ import org.junit.Test;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class CausalCmdApplicationGraphToStringTest {
+public class CausalCmdApplicationPagColoringTest {
 
     @Test
     public void testGFCIc() {
