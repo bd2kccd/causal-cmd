@@ -1,6 +1,6 @@
 # causal-cmd v0.1.0
 
-## What is causal-cmd
+## Introduction
 
 Causal-cmd is a Java application that provides a Command-Line Interface (CLI) tool for causal discovery algorithms produced by the [Center for Causal Discovery](http://www.ccd.pitt.edu/).  The application currently includes the following algorithms:
 
@@ -15,38 +15,104 @@ Causal discovery algorithms are a class of search algorithms that explore a spac
 
 Causal discovery algorithms allow a user to uncover the causal relationships between variables in a dataset. These discovered causal relationships may be used further--understanding the underlying the processes of a system (e.g., the metabolic pathways of an organism), hypothesis generation (e.g., variables that best explain an outcome), guide experimentation (e.g., what gene knockout experiments should be performed) or prediction (e.g. parameterization of the causal graph using data and then using it as a classifier).
 
-## How can I use it?
+## Usage Example
 
 Java 7 or higher is the only prerequisite to run the software. Note that by default Java will allocate the smaller of 1/4 system memory or 1GB to the Java virtual machine (JVM). If you run out of memory (heap memory space) running your analyses you should increase the memory allocated to the JVM with the following switch '-XmxXXG' where XX is the number of gigabytes of ram you allow the JVM to utilize. For example to allocate 8 gigabytes of ram you would add -Xmx8G immediately after the java command.
 
-### Run an example output using known data via command line
+In this example, we'll use download the [Retention.txt](http://www.ccd.pitt.edu/wp-content/uploads/files/Retention.txt) file, which is a dataset containing information on college graduation and used in the publication of "What Do College Ranking Data Tell Us About Student Retention?" by Drudzel and Glymour, 1994.
 
-Download the this file, [Retention.txt](http://www.ccd.pitt.edu/wp-content/uploads/files/Retention.txt), which is a dataset containing information on college graduation and used in the publication "What Do College Ranking Data Tell Us About Student Retention?" by Drudzel and Glymour, 1994.
+Keep in mind that causal-cmd has different switches for different algorithms. To start, type the following command in your terminal:
+
+```
+java -jar causal-cmd-0.1.0-jar-with-dependencies.jar
+```
+
+And you'll see the following instructions:
+
+```
+usage: java -jar causal-cmd-0.1.0.jar --algorithm <arg> | --simulate-data <arg>  [--version]
+    --algorithm <arg>       FGESc, FGESd, GFCIc, GFCId
+    --simulate-data <arg>   sem-rand-fwd, bayes-net-rand-fwd
+    --version               Show software version.
+
+```
+
+In this example, we'll be running FGESc on this `Retention.txt`.
 
 ```
 java -jar causal-cmd-0.1.0-jar-with-dependencies.jar --algorithm FGESc --data Retention.txt
 ```
 
-Note that the filename `causal-cmd-x.x.x-jar-with-dependencies.jar` should match the version you have downloaded. The program will output the results of the FGES search procedure as a text file (in this example to output). The beginning of the file contains the algorithm parameters used in the search.
+This command will output the following messages in your terminal:
 
-Inspect the output which should show a graph with the following edges.
+````
+================================================================================
+FGES Continuous (Wed, March 22, 2017 10:43:43 AM)
+================================================================================
+data = Retention.txt
+delimiter = tab
+verbose = false
+thread = 2
+penalty discount = 4.000000
+max degree = 100
+faithfulness assumed = false
+ensure variable names are unique = true
+ensure variables have non-zero variance = true
+out = .
+output-prefix = FGESc_Retention.txt_1490193823839
+no-validation-output = false
 
-```
+Running version 0.1.0 but unable to contact latest version server.  To disable checking use the skip-latest option.
+There are 170 cases and 8 variables.
+Wed, March 22, 2017 10:43:45 AM: Start reading in data file.
+Wed, March 22, 2017 10:43:45 AM: End reading in data file.
+Wed, March 22, 2017 10:43:45 AM: Start running algorithm FGES (Fast Greedy Equivalence Search) using Sem BIC Score.
+Wed, March 22, 2017 10:43:45 AM: End running algorithm FGES (Fast Greedy Equivalence Search) using Sem BIC Score.
+````
+
+Note that the filename `causal-cmd-x.x.x-jar-with-dependencies.jar` should match the version you have downloaded. 
+
+
+At the same time, this program will also write the results of the FGES search procedure into a text file named like "FGESc_Retention.txt_1490193823839.txt". Below is the content of this result file:
+
+````
+================================================================================
+FGES Continuous (Wed, March 22, 2017 10:43:43 AM)
+================================================================================
+
+Runtime Parameters:
+verbose = false
+number of threads = 2
+
+Dataset:
+file = Retention.txt
+delimiter = tab
+cases read in = 170
+variables read in = 8
+
+Algorithm Parameters:
+penalty discount = 4.000000
+max degree = 100
+faithfulness assumed = false
+
+Data Validations:
+ensure variable names are unique = true
+ensure variables have non-zero variance = true
+
+
+Graph Nodes:
+spending_per_stdt,grad_rate,stdt_clss_stndng,rjct_rate,tst_scores,stdt_accept_rate,stdt_tchr_ratio,fac_salary
+
 Graph Edges:
-1. fac_salary --- spending_per_stdt
-2. spending_per_stdt --> rjct_rate
-3. spending_per_stdt --- stdt_tchr_ratio
-4. stdt_accept_rate --- fac_salary
-5. stdt_clss_stndng --> rjct_rate
-6. tst_scores --- fac_salary
-7. tst_scores --- grad_rate
-8. tst_scores --- spending_per_stdt
-9. tst_scores --- stdt_clss_stndng
-```
+1. grad_rate --- tst_scores
+2. spending_per_stdt --- stdt_tchr_ratio
+3. stdt_clss_stndng --- rjct_rate
+4. tst_scores --- fac_salary
+5. tst_scores --- spending_per_stdt
+6. tst_scores --- stdt_clss_stndng
+````
 
-In FGES, "Elapsed getEffectEdges = XXms" refers to the amount of time it took to evaluate all pairs of variables for correlation. The file then details each step taken in the greedy search procedure i.e., insertion or deletion of edges based on a scoring function (i.e., BIC score difference for each chosen search operation).
-
-The end of the file contains the causal graph from the search procedure. Here is a key to the edge types:
+The end of the file contains the causal graph edgesfrom the search procedure. Here is a key to the edge types:
 
 - A --- B - There is causal relationship between variable A and B but we cannot determine the direction of the relationship
 - A --> B - There is a causal relationship from variable A to B
@@ -58,7 +124,7 @@ The GFCI algorithm has additional edge types:
 - A o-o B - Either (1) A is a cause of B or B is a cause of A, or (2) there is an unmeasured confounder of A and B, or both 1 and 2 hold.
 
 
-## Command line interface usage
+## Complete Usage Guide
 
 causal-cmd has different switches for different algorithms. Typing 
 
@@ -70,10 +136,9 @@ usage: java -jar causal-cmd-0.1.0.jar --algorithm <arg> | --simulate-data <arg> 
 
 ```
 
-Use the `--algorithm <arg>` parameter to see specific algorithm usage information.
+You can use the `--algorithm <arg>` parameter to see specific algorithm usage information, which we'll also list below.
 
-
-### causal-cmd usage for FGES for continuous data
+### FGESc
 
 ```
 usage: java -jar causal-cmd-0.1.0.jar --algorithm FGESc [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
@@ -97,7 +162,7 @@ usage: java -jar causal-cmd-0.1.0.jar --algorithm FGESc [-d <arg>] [--exclude-va
     --verbose                   Print additional information.
 ```
 
-### causal-cmd usage for FGES for discrete data
+### FGESd
 
 ```
 usage: java -jar causal-cmd-0.1.0.jar --algorithm FGESd [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
@@ -122,7 +187,7 @@ usage: java -jar causal-cmd-0.1.0.jar --algorithm FGESd [-d <arg>] [--exclude-va
     --verbose                   Print additional information.
 ```
 
-### causal-cmd usage for GFCI for continuous data
+### GFCIc
 
 ```
 usage: java -jar causal-cmd-0.1.0.jar --algorithm GFCIc [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
@@ -147,7 +212,7 @@ usage: java -jar causal-cmd-0.1.0.jar --algorithm GFCIc [--alpha <arg>] [-d <arg
     --verbose                   Print additional information.
 ```
 
-### causal-cmd usage for GFCI for discrete data
+### GFCId
 
 ```
 usage: java -jar causal-cmd-0.1.0.jar --algorithm GFCId [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
@@ -174,7 +239,7 @@ usage: java -jar causal-cmd-0.1.0.jar --algorithm GFCId [--alpha <arg>] [-d <arg
 ```
 
 
-### Prior knowledge file example
+### Sample Prior Knowledge File
 
 ```
 /knowledge
