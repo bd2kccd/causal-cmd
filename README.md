@@ -1,13 +1,13 @@
-# Documentation on using the causal-cmd v0.1.0 software
+# causal-cmd v0.1.0
 
 ## What is causal-cmd
 
-Causal-cmd is a Java application that provides a command-line interface (CLI) for causal discovery algorithms produced by the Center for Causal Discovery.  The application currently includes the algorithm(s):
+Causal-cmd is a Java application that provides a Command-Line Interface (CLI) tool for causal discovery algorithms produced by the [Center for Causal Discovery](http://www.ccd.pitt.edu/).  The application currently includes the following algorithms:
 
-- FGESc (Fast Greedy Search) for continuous data - is an optimization of the Greedy Equivalence Search algorithm (GES,	Meek	1995;	Chickering	2003). The optimizations are described in Scaling up Greedy Causal Search for Continuous Variables
-- FGESd (Fast Greedy Search) for discrete data
-- GFCIc (Greedy Fast Causal Inference) for continuous data
-- GFCId (Greedy Fast Causal Inference) for discrete data
+- FGESc - a version of FGES (Fast Greedy Search is an optimization and parallelized version of the Greedy Equivalence Search algorithm (GES)) that works with continuous variables
+- FGESd - a version of FGES that works with discrete variables
+- GFCIc - a version of GFCI (Greedy Fast Causal Inference) that works with continuous variables
+- GFCId - a version of FGES that works with discrete variables
 
 Note that in previous versions released by the Center, FGES was called FGS.
 
