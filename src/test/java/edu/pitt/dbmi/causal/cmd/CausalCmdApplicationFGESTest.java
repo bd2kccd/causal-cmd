@@ -79,8 +79,10 @@ public class CausalCmdApplicationFGESTest {
 
     @Test
     public void testFGESc() throws IOException {
-        Path dataFile = Paths.get("test", "data", "continuous", "sim_data_20vars_100cases.txt");
+        Path dataFile = Paths.get("test", "data", "cmu", "Retention.txt");
         String delimiter = Delimiter.TAB.getName();
+        String maxDegree = "100";
+        String penaltyDiscount = "4.0";
         String algorithm = AlgorithmType.FGESC.getCmd();
         String dirOut = tmpDir.newFolder(algorithm).toString();
         String outputPrefix = algorithm;
@@ -88,6 +90,8 @@ public class CausalCmdApplicationFGESTest {
             "--algorithm", algorithm,
             "--data", dataFile.toString(),
             "--delimiter", delimiter,
+            "--max-degree", maxDegree,
+            "--penalty-discount", penaltyDiscount,
             "--out", dirOut,
             "--output-prefix", outputPrefix,
             "--json",
