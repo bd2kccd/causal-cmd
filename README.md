@@ -126,14 +126,11 @@ The GFCI algorithm has additional edge types:
 
 ## Complete Usage Guide
 
-causal-cmd has different switches for different algorithms. Typing 
-
 ```
 usage: java -jar causal-cmd-0.1.0.jar --algorithm <arg> | --simulate-data <arg>  [--version]
     --algorithm <arg>       FGESc, FGESd, GFCIc, GFCId
     --simulate-data <arg>   sem-rand-fwd, bayes-net-rand-fwd
     --version               Show software version.
-
 ```
 
 You can use the `--algorithm <arg>` parameter to see specific algorithm usage information, which we'll also list below.
@@ -241,8 +238,11 @@ usage: java -jar causal-cmd-0.1.0.jar --algorithm GFCId [--alpha <arg>] [-d <arg
 
 ### Sample Prior Knowledge File
 
+From the above useage guide, we see the option of `--knowledge <arg>`, with which we can specify the prior knowledge file. Below is the content of a sample prior knowledge file:
+
 ```
 /knowledge
+
 addtemporal
 1 spending_per_stdt fac_salary stdt_tchr_ratio 
 2 rjct_rate stdt_accept_rate 
@@ -256,8 +256,8 @@ requiredirect
 x1 x2
 ```
 
-The first line must say /knowledge The three sections of knowledge are
+The first line of the prior knowledge file must say `/knowledge`. And a prior knowledge file consists of three sections:
 
+- addtemporal - tiers of variables where the first tier preceeds the last. Adding a asterisk next to the tier id prohibits edges between tier variables
 - forbiddirect - forbidden edges indicated by a list of pairs of variables
 - requireddirect - required edges indicated by a list of pairs of variables
-- addtemporal - tiers of variables where the first tier preceeds the last. Adding a asterisk next to the tier id prohibits edges between tier variables.
