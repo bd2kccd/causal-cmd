@@ -55,4 +55,11 @@ public interface ParamAttrs {
 
     public static final String PRINT_STREAM = "printStream";
 
+    // not to be exposed to the users (for particular algorithms calling it)
+    public static final String SYMMETRIC_FIRST_STEP = "symmetricFirstStep";
+
+    // to be exposed to the users in the future
+    public static final String COMPLETE_RULE_SET_USED = "completeRuleSetUsed";
+    public static final String MAX_PATH_LENGTH = "maxPathLength";
+
 }
