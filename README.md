@@ -269,67 +269,67 @@ In addition to using causal-cmd directly in the command line interface, you can 
 ````java
 public class FGEScApiExample {
 
-	/**
-	* @param args the command line arguments
-	*/
-	public static void main(String[] args) throws Exception {
-		// Set the data file and its properites
-		Path dataFile = Paths.get("test", "data", "cmu", "Retention.txt");
-		Delimiter delimiter = Delimiter.TAB;
-		char quoteCharacter = '"';
-		String missingValueMarker = "*";
-		String commentMarker = "//";
+    /**
+    * @param args the command line arguments
+    */
+    public static void main(String[] args) throws Exception {
+        // Set the data file and its properites
+        Path dataFile = Paths.get("test", "data", "cmu", "Retention.txt");
+        Delimiter delimiter = Delimiter.TAB;
+        char quoteCharacter = '"';
+        String missingValueMarker = "*";
+        String commentMarker = "//";
 
-		// Ensure the data file is valid format
-		TabularDataValidation dataFileValidation = new ContinuousTabularDataFileValidation(dataFile.toFile(), delimiter);
-		dataFileValidation.setQuoteCharacter(quoteCharacter);
-		dataFileValidation.setMissingValueMarker(missingValueMarker);
-		dataFileValidation.setCommentMarker(commentMarker);
-		dataFileValidation.validate();
+        // Ensure the data file is valid format
+        TabularDataValidation dataFileValidation = new ContinuousTabularDataFileValidation(dataFile.toFile(), delimiter);
+        dataFileValidation.setQuoteCharacter(quoteCharacter);
+        dataFileValidation.setMissingValueMarker(missingValueMarker);
+        dataFileValidation.setCommentMarker(commentMarker);
+        dataFileValidation.validate();
 
-		// Ensure there is no error
-		int errorCount = 0;
-		List<ValidationResult> fileValidResults = dataFileValidation.getValidationResults();
-		for (ValidationResult validation : fileValidResults) {
-			if (validation.getCode() == ValidationCode.ERROR) {
-				errorCount++;
-			}
-		}
-		Assert.assertTrue(errorCount == 0);
+        // Ensure there is no error
+        int errorCount = 0;
+        List<ValidationResult> fileValidResults = dataFileValidation.getValidationResults();
+        for (ValidationResult validation : fileValidResults) {
+            if (validation.getCode() == ValidationCode.ERROR) {
+                errorCount++;
+            }
+        }
+        Assert.assertTrue(errorCount == 0);
 
-		// Read in data
-		TabularDataReader reader = new ContinuousTabularDataFileReader(dataFile.toFile(), delimiter);
-		reader.setQuoteCharacter(quoteCharacter);
-		reader.setMissingValueMarker(missingValueMarker);
-		reader.setCommentMarker(commentMarker);
-		Dataset dataset = reader.readInData();
+        // Read in data
+        TabularDataReader reader = new ContinuousTabularDataFileReader(dataFile.toFile(), delimiter);
+        reader.setQuoteCharacter(quoteCharacter);
+        reader.setMissingValueMarker(missingValueMarker);
+        reader.setCommentMarker(commentMarker);
+        Dataset dataset = reader.readInData();
 
-		// Convert to Tetrad data model
-		DataModel dataModel = TetradDataUtils.toDataModel(dataset);
+        // Convert to Tetrad data model
+        DataModel dataModel = TetradDataUtils.toDataModel(dataset);
 
-		// Ensure the data read in is valid
-		TetradDataValidation dataValidation = new UniqueVariableValidation((DataSet) dataModel);
-		boolean isValidData = dataValidation.validate(System.err, true);
-		Assert.assertTrue(isValidData);
+        // Ensure the data read in is valid
+        TetradDataValidation dataValidation = new UniqueVariableValidation((DataSet) dataModel);
+        boolean isValidData = dataValidation.validate(System.err, true);
+        Assert.assertTrue(isValidData);
 
-		// Set algorithm parameters
-		Parameters parameters = new Parameters();
-		parameters.set(ParamAttrs.PENALTY_DISCOUNT, 2.0);
-		parameters.set(ParamAttrs.MAX_DEGREE, -1);
-		parameters.set(ParamAttrs.FAITHFULNESS_ASSUMED, false);
-		parameters.set(ParamAttrs.VERBOSE, false);
+        // Set algorithm parameters
+        Parameters parameters = new Parameters();
+        parameters.set(ParamAttrs.PENALTY_DISCOUNT, 2.0);
+        parameters.set(ParamAttrs.MAX_DEGREE, -1);
+        parameters.set(ParamAttrs.FAITHFULNESS_ASSUMED, false);
+        parameters.set(ParamAttrs.VERBOSE, false);
 
-		// Specify which algorithm to use
-		Fges fges = new Fges(new SemBicScore());
+        // Specify which algorithm to use
+        Fges fges = new Fges(new SemBicScore());
 
-		// Run the algorithm on this data with specified parameters
-		// and return the Graph object
-		Graph graph = fges.search(dataModel, parameters);
+        // Run the algorithm on this data with specified parameters
+        // and return the Graph object
+        Graph graph = fges.search(dataModel, parameters);
 
-		System.out.println();
-		System.out.println(graph.toString().trim());
-		System.out.flush();
-	}
+        System.out.println();
+        System.out.println(graph.toString().trim());
+        System.out.flush();
+    }
 
 }
 ````
