@@ -15,7 +15,7 @@ Causal discovery algorithms are a class of search algorithms that explore a spac
 
 Causal discovery algorithms allow a user to uncover the causal relationships between variables in a dataset. These discovered causal relationships may be used further--understanding the underlying the processes of a system (e.g., the metabolic pathways of an organism), hypothesis generation (e.g., variables that best explain an outcome), guide experimentation (e.g., what gene knockout experiments should be performed) or prediction (e.g. parameterization of the causal graph using data and then using it as a classifier).
 
-## Usage Example
+## Command Line Usage
 
 Java 7 or higher is the only prerequisite to run the software. Note that by default Java will allocate the smaller of 1/4 system memory or 1GB to the Java virtual machine (JVM). If you run out of memory (heap memory space) running your analyses you should increase the memory allocated to the JVM with the following switch '-XmxXXG' where XX is the number of gigabytes of ram you allow the JVM to utilize. For example to allocate 8 gigabytes of ram you would add -Xmx8G immediately after the java command.
 
@@ -261,3 +261,77 @@ The first line of the prior knowledge file must say `/knowledge`. And a prior kn
 - addtemporal - tiers of variables where the first tier preceeds the last. Adding a asterisk next to the tier id prohibits edges between tier variables
 - forbiddirect - forbidden edges indicated by a list of pairs of variables
 - requireddirect - required edges indicated by a list of pairs of variables
+
+## API Usage
+
+In addition to using causal-cmd directly in the command line interface, you can also use the Tetred library that is includedin in causal-cmd as an [Java API](http://cmu-phil.github.io/tetrad/tetrad-lib-apidocs/). Here we provide an example of how to run `FGESc` algorithm using this API.
+
+````java
+public class FGEScApiExample {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws Exception {
+        // Set the data file and its properites
+	    Path dataFile = Paths.get("test", "data", "cmu", "Retention.txt");
+	    Delimiter delimiter = Delimiter.TAB;
+	    char quoteCharacter = '"';
+	    String missingValueMarker = "*";
+	    String commentMarker = "//";
+
+	    // Ensure the data file is valid format
+	    TabularDataValidation dataFileValidation = new ContinuousTabularDataFileValidation(dataFile.toFile(), delimiter);
+	    dataFileValidation.setQuoteCharacter(quoteCharacter);
+	    dataFileValidation.setMissingValueMarker(missingValueMarker);
+	    dataFileValidation.setCommentMarker(commentMarker);
+	    dataFileValidation.validate();
+
+	    // Ensure there is no error
+	    int errorCount = 0;
+	    List<ValidationResult> fileValidResults = dataFileValidation.getValidationResults();
+	    for (ValidationResult validation : fileValidResults) {
+	        if (validation.getCode() == ValidationCode.ERROR) {
+	            errorCount++;
+	        }
+	    }
+	    Assert.assertTrue(errorCount == 0);
+
+	    // Read in data
+	    TabularDataReader reader = new ContinuousTabularDataFileReader(dataFile.toFile(), delimiter);
+	    reader.setQuoteCharacter(quoteCharacter);
+	    reader.setMissingValueMarker(missingValueMarker);
+	    reader.setCommentMarker(commentMarker);
+	    Dataset dataset = reader.readInData();
+
+	    // Convert to Tetrad data model
+	    DataModel dataModel = TetradDataUtils.toDataModel(dataset);
+
+	    // Ensure the data read in is valid
+	    TetradDataValidation dataValidation = new UniqueVariableValidation((DataSet) dataModel);
+	    boolean isValidData = dataValidation.validate(System.err, true);
+	    Assert.assertTrue(isValidData);
+
+	    // Set algorithm parameters
+	    Parameters parameters = new Parameters();
+	    parameters.set(ParamAttrs.PENALTY_DISCOUNT, 2.0);
+	    parameters.set(ParamAttrs.MAX_DEGREE, -1);
+	    parameters.set(ParamAttrs.FAITHFULNESS_ASSUMED, false);
+	    parameters.set(ParamAttrs.VERBOSE, false);
+
+        // Specify which algorithm to use
+	    Fges fges = new Fges(new SemBicScore());
+
+        // Run the algorithm on this data with specified parameters
+        // and return the Graph object
+	    Graph graph = fges.search(dataModel, parameters);
+
+	    System.out.println();
+	    System.out.println(graph.toString().trim());
+	    System.out.flush();
+    }
+
+}
+````
+
+
