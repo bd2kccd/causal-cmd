@@ -269,10 +269,10 @@ In addition to using causal-cmd directly in the command line interface, you can 
 ````java
 public class FGEScApiExample {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws Exception {
+	/**
+	* @param args the command line arguments
+	*/
+	public static void main(String[] args) throws Exception {
 		// Set the data file and its properites
 		Path dataFile = Paths.get("test", "data", "cmu", "Retention.txt");
 		Delimiter delimiter = Delimiter.TAB;
@@ -291,9 +291,9 @@ public class FGEScApiExample {
 		int errorCount = 0;
 		List<ValidationResult> fileValidResults = dataFileValidation.getValidationResults();
 		for (ValidationResult validation : fileValidResults) {
-		    if (validation.getCode() == ValidationCode.ERROR) {
-		        errorCount++;
-		    }
+			if (validation.getCode() == ValidationCode.ERROR) {
+				errorCount++;
+			}
 		}
 		Assert.assertTrue(errorCount == 0);
 
@@ -329,7 +329,7 @@ public class FGEScApiExample {
 		System.out.println();
 		System.out.println(graph.toString().trim());
 		System.out.flush();
-    }
+	}
 
 }
 ````
