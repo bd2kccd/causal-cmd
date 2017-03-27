@@ -9,15 +9,13 @@ Causal-cmd is a Java application that provides a Command-Line Interface (CLI) to
 - GFCIc - a version of GFCI (Greedy Fast Causal Inference) that works with continuous variables
 - GFCId - a version of FGES that works with discrete variables
 
-Note that in previous versions released by the Center, FGES was called FGS.
-
 Causal discovery algorithms are a class of search algorithms that explore a space of graphical causal models, i.e., graphical models where directed edges imply causation, for a model (or models) that are a good fit for a dataset. We suggest that newcomers to the field review Causation, Prediction and Search by Spirtes, Glymour and Scheines for a primer on the subject.
 
 Causal discovery algorithms allow a user to uncover the causal relationships between variables in a dataset. These discovered causal relationships may be used further--understanding the underlying the processes of a system (e.g., the metabolic pathways of an organism), hypothesis generation (e.g., variables that best explain an outcome), guide experimentation (e.g., what gene knockout experiments should be performed) or prediction (e.g. parameterization of the causal graph using data and then using it as a classifier).
 
 ## Command Line Usage
 
-Java 7 or higher is the only prerequisite to run the software. Note that by default Java will allocate the smaller of 1/4 system memory or 1GB to the Java virtual machine (JVM). If you run out of memory (heap memory space) running your analyses you should increase the memory allocated to the JVM with the following switch '-XmxXXG' where XX is the number of gigabytes of ram you allow the JVM to utilize. For example to allocate 8 gigabytes of ram you would add -Xmx8G immediately after the java command.
+Java 8 or higher is the only prerequisite to run the software. Note that by default Java will allocate the smaller of 1/4 system memory or 1GB to the Java virtual machine (JVM). If you run out of memory (heap memory space) running your analyses you should increase the memory allocated to the JVM with the following switch '-XmxXXG' where XX is the number of gigabytes of ram you allow the JVM to utilize. For example to allocate 8 gigabytes of ram you would add -Xmx8G immediately after the java command.
 
 In this example, we'll use download the [Retention.txt](http://www.ccd.pitt.edu/wp-content/uploads/files/Retention.txt) file, which is a dataset containing information on college graduation and used in the publication of "What Do College Ranking Data Tell Us About Student Retention?" by Drudzel and Glymour, 1994.
 
@@ -280,7 +278,8 @@ public class FGEScApiExample {
         String missingValueMarker = "*";
         String commentMarker = "//";
 
-        // Ensure the data file is valid format
+        // Data file validation: ensure the data file is valid format
+        // This is optional if you don't need to validate the data file
         TabularDataValidation dataFileValidation = new ContinuousTabularDataFileValidation(dataFile.toFile(), delimiter);
         dataFileValidation.setQuoteCharacter(quoteCharacter);
         dataFileValidation.setMissingValueMarker(missingValueMarker);
@@ -295,9 +294,9 @@ public class FGEScApiExample {
                 errorCount++;
             }
         }
-        Assert.assertTrue(errorCount == 0);
 
         // Read in data
+        // This is the actual data loading/reading section
         TabularDataReader reader = new ContinuousTabularDataFileReader(dataFile.toFile(), delimiter);
         reader.setQuoteCharacter(quoteCharacter);
         reader.setMissingValueMarker(missingValueMarker);
@@ -307,10 +306,9 @@ public class FGEScApiExample {
         // Convert to Tetrad data model
         DataModel dataModel = TetradDataUtils.toDataModel(dataset);
 
-        // Ensure the data read in is valid
+        // Data validation: ensure the data read in is valid
         TetradDataValidation dataValidation = new UniqueVariableValidation((DataSet) dataModel);
         boolean isValidData = dataValidation.validate(System.err, true);
-        Assert.assertTrue(isValidData);
 
         // Set algorithm parameters
         Parameters parameters = new Parameters();
