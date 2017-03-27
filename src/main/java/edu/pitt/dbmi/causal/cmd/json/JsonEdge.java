@@ -18,6 +18,8 @@
  */
 package edu.pitt.dbmi.causal.cmd.json;
 
+import java.util.List;
+
 /**
  * Author : Jeremy Espino MD Created 6/6/16 4:55 PM
  */
@@ -29,5 +31,7 @@ public class JsonEdge {
     public int target;
 
     public String etype;
+
+    public List<String> eproperties;
 
 }
