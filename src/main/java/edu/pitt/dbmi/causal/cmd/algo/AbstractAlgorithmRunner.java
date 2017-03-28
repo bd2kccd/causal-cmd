@@ -25,6 +25,7 @@ import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.IKnowledge;
 import edu.cmu.tetrad.graph.Graph;
+import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.latest.LatestClient;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
@@ -70,8 +71,6 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
 
     public AbstractAlgorithmRunner() {
     }
-
-    protected abstract String graphToString(Graph graph);
 
     protected abstract Parameters getParameters(TetradCmdAlgoOpt cmdAlgoOpt);
 
@@ -143,7 +142,7 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
 
             Graph graph = search(dataSet, algorithm, parameters);
             writer.println();
-            writer.println(graphToString(graph));
+            writer.println(GraphUtils.graphToText(graph).trim());
 
             if (cmdAlgoOpt.isIsSerializeJson()) {
                 writeOutJson(outputPrefix, graph, Paths.get(dirOut.toString(), outputPrefix + "_graph.json"));
