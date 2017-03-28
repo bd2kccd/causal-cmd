@@ -50,6 +50,7 @@ public class CausalCmdApplicationPagColoringTest {
         nodes[5].setNodeType(NodeType.LATENT);
 
         Graph graph = new EdgeListGraph();
+        graph.setPag(true);
         for (Node node : nodes) {
             graph.addNode(node);
         }
@@ -59,8 +60,6 @@ public class CausalCmdApplicationPagColoringTest {
         graph.addDirectedEdge(nodes[2], nodes[1]);
         graph.addNondirectedEdge(nodes[4], nodes[0]);
         graph.addBidirectedEdge(nodes[4], nodes[5]);
-
-        GraphUtils.addPagColoring(graph);
 
         System.out.println(GraphUtils.graphToText(graph).trim());
     }

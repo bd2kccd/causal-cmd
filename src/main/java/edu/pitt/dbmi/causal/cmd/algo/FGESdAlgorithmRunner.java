@@ -23,7 +23,6 @@ import edu.cmu.tetrad.algcomparison.algorithm.oracle.pattern.Fges;
 import edu.cmu.tetrad.algcomparison.score.BdeuScore;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.IKnowledge;
-import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.opt.algo.FGESdCmdOption;
@@ -51,11 +50,6 @@ import java.util.List;
 public class FGESdAlgorithmRunner extends AbstractAlgorithmRunner {
 
     public FGESdAlgorithmRunner() {
-    }
-
-    @Override
-    protected String graphToString(Graph graph) {
-        return (graph == null) ? "" : graph.toString().trim();
     }
 
     @Override

@@ -23,8 +23,6 @@ import edu.cmu.tetrad.algcomparison.algorithm.oracle.pag.Gfci;
 import edu.cmu.tetrad.algcomparison.independence.FisherZ;
 import edu.cmu.tetrad.algcomparison.score.SemBicScore;
 import edu.cmu.tetrad.data.IKnowledge;
-import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.opt.algo.GFCIcCmdOption;
@@ -40,17 +38,6 @@ import java.util.Formatter;
 public class GFCIcAlgorithmRunner extends FGEScAlgorithmRunner {
 
     public GFCIcAlgorithmRunner() {
-    }
-
-    @Override
-    protected String graphToString(Graph graph) {
-        if (graph == null) {
-            return "";
-        }
-
-        GraphUtils.addPagColoring(graph);
-
-        return GraphUtils.graphToText(graph).trim();
     }
 
     @Override
