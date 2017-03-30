@@ -32,6 +32,7 @@ import edu.pitt.dbmi.causal.cmd.json.JsonNode;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.JAXBException;
@@ -70,6 +71,14 @@ public class JsonSerializer {
             JsonEdge jsonEdge = new JsonEdge();
             jsonEdge.source = nodeIndexMap.get(edge.getNode1());
             jsonEdge.target = nodeIndexMap.get(edge.getNode2());
+
+            // add edge properties
+            List<String> edgeProps = new LinkedList<>();
+            List<Edge.Property> edgeProperties = edge.getProperties();
+            edgeProperties.forEach(prop -> {
+                edgeProps.add(prop.toString());
+            });
+            jsonEdge.eproperties = edgeProps;
 
             if (edge.getEndpoint1() == Endpoint.TAIL && edge.getEndpoint2() == Endpoint.ARROW) {
                 jsonEdge.etype = "-->";
