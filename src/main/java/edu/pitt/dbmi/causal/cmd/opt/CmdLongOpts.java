@@ -68,6 +68,8 @@ public class CmdLongOpts {
     public static final String MIN_CATEGORIES = "min-categories";
     public static final String MAX_CATEGORIES = "max-categories";
 
+    public static final String PERCENT_DISCRETE = "percent-discrete";
+
     public static final String SKIP_UNIQUE_VAR_NAME = "skip-unique-var-name";
     public static final String SKIP_NONZERO_VARIANCE = "skip-nonzero-variance";
     public static final String SKIP_CATEGORY_LIMIT = "skip-category-limit";

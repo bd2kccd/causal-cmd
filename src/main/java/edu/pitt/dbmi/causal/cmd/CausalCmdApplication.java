@@ -25,6 +25,7 @@ import edu.pitt.dbmi.causal.cmd.algo.GFCIcAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.GFCIdAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.sim.BayNetRandFwdDataSimulationRunner;
 import edu.pitt.dbmi.causal.cmd.sim.DataSimulationType;
+import edu.pitt.dbmi.causal.cmd.sim.LeeHastieDataSimulationRunner;
 import edu.pitt.dbmi.causal.cmd.sim.SemRandFwdDataSimulationRunner;
 import edu.pitt.dbmi.causal.cmd.util.AppUtils;
 import edu.pitt.dbmi.causal.cmd.util.Args;
@@ -101,6 +102,9 @@ public class CausalCmdApplication {
                                 break;
                             case SEM_RAND_FWD:
                                 new SemRandFwdDataSimulationRunner().runDataSimulation(args);
+                                break;
+                            case LEE_HASTIE:
+                                new LeeHastieDataSimulationRunner().runDataSimulation(args);
                                 break;
                         }
                     }

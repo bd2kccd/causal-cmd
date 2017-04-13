@@ -41,13 +41,16 @@ public interface ParamAttrs {
     public static final String MAX_INDEGREE = "maxIndegree";
     public static final String MAX_OUTDEGREE = "maxOutdegree";
     public static final String CONNECTED = "connected";
-    public static final String NUM_RUNS = "numRuns";
     public static final String STANDARDIZE = "standardize";
 
     public static final String FAITHFULNESS_ASSUMED = "faithfulnessAssumed";
 
+    public static final String NUM_RUNS = "numRuns";
+
+    public static final String NUM_CATEGORIES = "numCategories";
     public static final String MIN_CATEGORIES = "minCategories";
     public static final String MAX_CATEGORIES = "maxCategories";
+    public static final String PERCENT_DISCRETE = "percentDiscrete";
 
     public static final String DIFFERENT_GRAPHS = "differentGraphs";
     public static final String MEASUREMENT_VARIANCE = "measurementVariance";
