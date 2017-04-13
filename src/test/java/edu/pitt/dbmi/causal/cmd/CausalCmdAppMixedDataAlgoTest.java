@@ -21,8 +21,8 @@ package edu.pitt.dbmi.causal.cmd;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.search.Fges;
-import edu.cmu.tetrad.search.MixedBicScore;
+import edu.cmu.tetrad.search.IndTestConditionalGaussianLRT;
+import edu.cmu.tetrad.search.PcMax;
 import edu.pitt.dbmi.causal.cmd.util.TetradDataUtils;
 import edu.pitt.dbmi.data.Dataset;
 import edu.pitt.dbmi.data.Delimiter;
@@ -54,12 +54,11 @@ public class CausalCmdAppMixedDataAlgoTest {
         DataModel dataModel = TetradDataUtils.toDataModel(dataset);
         DataSet dataSet = (DataSet) dataModel;
 
-        int penaltyDiscount = 2;
+        double alpha = 0.001;
+        IndTestConditionalGaussianLRT indTest = new IndTestConditionalGaussianLRT(dataSet, alpha);
+        PcMax pcMax = new PcMax(indTest);
 
-        MixedBicScore score = new MixedBicScore(dataSet);
-        score.setPenaltyDiscount(penaltyDiscount);
-        Fges fges = new Fges(score);
-        Graph graph = fges.search();
+        Graph graph = pcMax.search();
         System.out.println(graph);
     }
 
