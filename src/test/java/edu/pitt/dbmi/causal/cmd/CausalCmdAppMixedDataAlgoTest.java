@@ -42,7 +42,7 @@ import org.junit.Test;
 public class CausalCmdAppMixedDataAlgoTest {
 
     @Test
-    public void testFGESm() throws IOException {
+    public void testMixedDataReaderWithPcMax() throws IOException {
         Path dataFile = Paths.get("test", "data", "mixed", "sim_data_20vars_100cases_5categories.txt");
         Delimiter delimiter = Delimiter.TAB;
 
