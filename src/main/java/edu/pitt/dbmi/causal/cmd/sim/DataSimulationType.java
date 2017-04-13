@@ -26,8 +26,9 @@ package edu.pitt.dbmi.causal.cmd.sim;
  */
 public enum DataSimulationType {
 
-    SEM_RAND_FWD("Sem - Random Foward", "sem-rand-fwd"),
-    BAYES_NET_RAND_FWD("Bayes Net - Random Foward", "bayes-net-rand-fwd");
+    SEM_RAND_FWD("Sem-Random Foward Continuous Data Simulation", "sem-rand-fwd"),
+    BAYES_NET_RAND_FWD("Bayes Net-Random Foward Discrete Data Simulation", "bayes-net-rand-fwd"),
+    LEE_HASTIE("Lee-Hastie Mixed Data Simulation", "lee-hastie");
 
     private final String title;
 
