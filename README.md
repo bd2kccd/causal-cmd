@@ -22,7 +22,7 @@ In this example, we'll use download the [Retention.txt](http://www.ccd.pitt.edu/
 Keep in mind that causal-cmd has different switches for different algorithms. To start, type the following command in your terminal:
 
 ````
-java -jar causal-cmd-0.1.2-jar-with-dependencies.jar
+java -jar <causal-cmd-jarfile>
 ````
 
 And you'll see the following instructions:
@@ -38,7 +38,7 @@ usage: java -jar <causal-cmd-jarfile> --algorithm <arg> | --simulate-data <arg> 
 In this example, we'll be running FGESc on this `Retention.txt`.
 
 ````
-java -jar causal-cmd-0.1.2-jar-with-dependencies.jar --algorithm FGESc --data Retention.txt
+java -jar <causal-cmd-jarfile> --algorithm FGESc --data Retention.txt
 ````
 
 This command will output the  following messages in your terminal:
