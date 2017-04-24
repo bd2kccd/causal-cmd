@@ -34,6 +34,8 @@ public class AppUtils {
 
     private static final DateFormat DF = new SimpleDateFormat("EEE, MMMM dd, yyyy hh:mm:ss a");
 
+    private static final String usageOf = "java -jar <causal-cmd-jarfile>";
+
     private AppUtils() {
     }
 
@@ -54,44 +56,19 @@ public class AppUtils {
     }
 
     public static void showHelp(Options options) {
-        String title = jarTitle();
-        String version = jarVersion();
-
-        String cmdLineSyntax;
-        if (title == null || version == null) {
-            cmdLineSyntax = "java -jar causal-cmd.jar";
-        } else {
-            cmdLineSyntax = String.format("java -jar %s-%s.jar", title, version);
-        }
-
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
-        formatter.printHelp(cmdLineSyntax, options, true);
+        formatter.printHelp(usageOf, options, true);
     }
 
     public static void showHelp(Options options, String footer) {
-        String title = jarTitle();
-        String version = jarVersion();
-
-        String cmdLineSyntax;
-        if (title == null || version == null) {
-            cmdLineSyntax = "java -jar causal-cmd.jar";
-        } else {
-            cmdLineSyntax = String.format("java -jar %s-%s.jar", title, version);
-        }
-
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
-        formatter.printHelp(cmdLineSyntax, null, options, footer, true);
+        formatter.printHelp(usageOf, null, options, footer, true);
     }
 
     public static void showHelp(String algorithmName, Options options) {
-        String title = jarTitle();
-        String version = jarVersion();
-
-        String cmdLineSyntax = (title == null || version == null)
-                ? String.format("java -jar causal-cmd.jar --algorithm %s", algorithmName)
-                : String.format("java -jar %s-%s.jar --algorithm %s", title, version, algorithmName);
+        String cmdLineSyntax = String.format("%s --algorithm %s", usageOf, algorithmName);
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
