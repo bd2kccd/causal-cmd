@@ -1,4 +1,4 @@
-# causal-cmd v0.1.1
+# causal-cmd v0.1.2
 
 ## Introduction
 
@@ -21,27 +21,27 @@ In this example, we'll use download the [Retention.txt](http://www.ccd.pitt.edu/
 
 Keep in mind that causal-cmd has different switches for different algorithms. To start, type the following command in your terminal:
 
-```
-java -jar causal-cmd-0.1.1-jar-with-dependencies.jar
-```
+````
+java -jar causal-cmd-0.1.2-jar-with-dependencies.jar
+````
 
 And you'll see the following instructions:
 
-```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm <arg> | --simulate-data <arg>  [--version]
+````
+usage: java -jar <causal-cmd-jarfile> --algorithm <arg> | --simulate-data <arg>  [--version]
     --algorithm <arg>       FGESc, FGESd, GFCIc, GFCId
     --simulate-data <arg>   sem-rand-fwd, bayes-net-rand-fwd
     --version               Show software version.
 
-```
+````
 
 In this example, we'll be running FGESc on this `Retention.txt`.
 
-```
-java -jar causal-cmd-0.1.1-jar-with-dependencies.jar --algorithm FGESc --data Retention.txt
-```
+````
+java -jar causal-cmd-0.1.2-jar-with-dependencies.jar --algorithm FGESc --data Retention.txt
+````
 
-This command will output the following messages in your terminal:
+This command will output the  following messages in your terminal:
 
 ````
 ================================================================================
@@ -60,7 +60,7 @@ out = .
 output-prefix = FGESc_Retention.txt_1490193823839
 no-validation-output = false
 
-Running version 0.1.1 but unable to contact latest version server.  To disable checking use the skip-latest option.
+Running version 0.1.0 but unable to contact latest version server.  To disable checking use the skip-latest option.
 There are 170 cases and 8 variables.
 Wed, March 22, 2017 10:43:45 AM: Start reading in data file.
 Wed, March 22, 2017 10:43:45 AM: End reading in data file.
@@ -121,22 +121,25 @@ The GFCI algorithm has additional edge types:
 - A o-> B - Either A is a cause of B or there is an unmeasured confounder of A and B or both
 - A o-o B - Either (1) A is a cause of B or B is a cause of A, or (2) there is an unmeasured confounder of A and B, or both 1 and 2 hold.
 
+- A --> B dd nl - Definitely direct causal relationship and no latent confounder
+- A --> B pd nl - Possibly direct and no latent confounder
+- A --> B pd pl - Possibly direct and possibly latent confounder
 
 ## Complete Usage Guide
 
-```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm <arg> | --simulate-data <arg>  [--version]
+````
+usage: java -jar <causal-cmd-jarfile> --algorithm <arg> | --simulate-data <arg>  [--version]
     --algorithm <arg>       FGESc, FGESd, GFCIc, GFCId
     --simulate-data <arg>   sem-rand-fwd, bayes-net-rand-fwd
     --version               Show software version.
-```
+````
 
 You can use the `--algorithm <arg>` parameter to see specific algorithm usage information, which we'll also list below.
 
 ### FGESc
 
-```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESc [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+````
+usage: java -jar <causal-cmd-jarfile> --algorithm FGESc [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
  -f,--data <arg>                Data file.
@@ -155,12 +158,12 @@ usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESc [-d <arg>] [--exclude-va
     --tetrad-graph-json         Create Tetrad Graph JSON output.
     --thread <arg>              Number of threads.
     --verbose                   Print additional information.
-```
+````
 
 ### FGESd
 
-```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESd [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+````
+usage: java -jar <causal-cmd-jarfile> --algorithm FGESd [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
  -f,--data <arg>                Data file.
@@ -180,12 +183,12 @@ usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESd [-d <arg>] [--exclude-va
     --tetrad-graph-json         Create Tetrad Graph JSON output.
     --thread <arg>              Number of threads.
     --verbose                   Print additional information.
-```
+````
 
 ### GFCIc
 
-```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm GFCIc [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+````
+usage: java -jar <causal-cmd-jarfile> --algorithm GFCIc [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
     --alpha <arg>               Cutoff for p values (alpha). Default is 0.01.
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
@@ -205,12 +208,12 @@ usage: java -jar causal-cmd-0.1.1.jar --algorithm GFCIc [--alpha <arg>] [-d <arg
     --tetrad-graph-json         Create Tetrad Graph JSON output.
     --thread <arg>              Number of threads.
     --verbose                   Print additional information.
-```
+````
 
 ### GFCId
 
-```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm GFCId [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+````
+usage: java -jar <causal-cmd-jarfile> --algorithm GFCId [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
     --alpha <arg>               Cutoff for p values (alpha). Default is 0.01.
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
@@ -231,14 +234,14 @@ usage: java -jar causal-cmd-0.1.1.jar --algorithm GFCId [--alpha <arg>] [-d <arg
     --tetrad-graph-json         Create Tetrad Graph JSON output.
     --thread <arg>              Number of threads.
     --verbose                   Print additional information.
-```
+````
 
 
 ### Sample Prior Knowledge File
 
 From the above useage guide, we see the option of `--knowledge <arg>`, with which we can specify the prior knowledge file. Below is the content of a sample prior knowledge file:
 
-```
+````
 /knowledge
 
 addtemporal
@@ -252,7 +255,7 @@ x3 x4
 
 requiredirect
 x1 x2
-```
+````
 
 The first line of the prior knowledge file must say `/knowledge`. And a prior knowledge file consists of three sections:
 
@@ -331,5 +334,4 @@ public class FGEScApiExample {
 
 }
 ````
-
 
