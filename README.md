@@ -68,10 +68,7 @@ Wed, March 22, 2017 10:43:45 AM: Start running algorithm FGES (Fast Greedy Equiv
 Wed, March 22, 2017 10:43:45 AM: End running algorithm FGES (Fast Greedy Equivalence Search) using Sem BIC Score.
 ````
 
-Note that the filename `causal-cmd-x.x.x-jar-with-dependencies.jar` should match the version you have downloaded. 
-
-
-At the same time, this program will also write the results of the FGES search procedure into a text file named like "FGESc_Retention.txt_1490193823839.txt". Below is the content of this result file:
+At the same time, this program will also write the results of the FGESc search procedure into a text file named like "FGESc_Retention.txt_1490193823839.txt". Below is the content of this result file:
 
 ````
 ================================================================================
@@ -124,6 +121,8 @@ The GFCI algorithm has additional edge types:
 - A --> B dd nl - Definitely direct causal relationship and no latent confounder
 - A --> B pd nl - Possibly direct and no latent confounder
 - A --> B pd pl - Possibly direct and possibly latent confounder
+
+Note: the generated result file name is based on the system clock.
 
 ## Complete Usage Guide
 
