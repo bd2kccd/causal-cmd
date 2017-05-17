@@ -1,4 +1,4 @@
-# causal-cmd v0.1.1
+# causal-cmd v0.1.2
 
 ## Introduction
 
@@ -28,7 +28,7 @@ java -jar causal-cmd-0.1.1-jar-with-dependencies.jar
 And you'll see the following instructions:
 
 ```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm <arg> | --simulate-data <arg>  [--version]
+usage: java -jar causal-cmd-0.1.2.jar --algorithm <arg> | --simulate-data <arg>  [--version]
     --algorithm <arg>       FGESc, FGESd, GFCIc, GFCId
     --simulate-data <arg>   sem-rand-fwd, bayes-net-rand-fwd
     --version               Show software version.
@@ -125,7 +125,7 @@ The GFCI algorithm has additional edge types:
 ## Complete Usage Guide
 
 ```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm <arg> | --simulate-data <arg>  [--version]
+usage: java -jar causal-cmd-0.1.2.jar --algorithm <arg> | --simulate-data <arg>  [--version]
     --algorithm <arg>       FGESc, FGESd, GFCIc, GFCId
     --simulate-data <arg>   sem-rand-fwd, bayes-net-rand-fwd
     --version               Show software version.
@@ -136,7 +136,7 @@ You can use the `--algorithm <arg>` parameter to see specific algorithm usage in
 ### FGESc
 
 ```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESc [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+usage: java -jar causal-cmd-0.1.2.jar --algorithm FGESc [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
  -f,--data <arg>                Data file.
@@ -160,7 +160,7 @@ usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESc [-d <arg>] [--exclude-va
 ### FGESd
 
 ```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESd [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+usage: java -jar causal-cmd-0.1.2.jar --algorithm FGESd [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
  -f,--data <arg>                Data file.
@@ -185,7 +185,7 @@ usage: java -jar causal-cmd-0.1.1.jar --algorithm FGESd [-d <arg>] [--exclude-va
 ### GFCIc
 
 ```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm GFCIc [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+usage: java -jar causal-cmd-0.1.2.jar --algorithm GFCIc [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--penalty-discount <arg>] [--skip-latest] [--skip-nonzero-variance] [--skip-unique-var-name] [--tetrad-graph-json] [--thread <arg>] [--verbose]
     --alpha <arg>               Cutoff for p values (alpha). Default is 0.01.
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
@@ -210,7 +210,7 @@ usage: java -jar causal-cmd-0.1.1.jar --algorithm GFCIc [--alpha <arg>] [-d <arg
 ### GFCId
 
 ```
-usage: java -jar causal-cmd-0.1.1.jar --algorithm GFCId [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
+usage: java -jar causal-cmd-0.1.2.jar --algorithm GFCId [--alpha <arg>] [-d <arg>] [--exclude-variables <arg>] -f <arg> [--faithfulness-assumed] [--help] [--json] [--knowledge <arg>] [--max-degree <arg>] [--no-validation-output] [-o <arg>] [--output-prefix <arg>] [--sample-prior <arg>] [--skip-category-limit] [--skip-latest] [--skip-unique-var-name] [--structure-prior <arg>] [--tetrad-graph-json] [--thread <arg>] [--verbose]
     --alpha <arg>               Cutoff for p values (alpha). Default is 0.01.
  -d,--delimiter <arg>           Data delimiter either comma, semicolon, space, colon, or tab. Default: comma for *.csv, else tab.
     --exclude-variables <arg>   A file containing variables to exclude.
