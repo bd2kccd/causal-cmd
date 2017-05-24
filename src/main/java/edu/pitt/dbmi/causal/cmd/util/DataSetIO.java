@@ -18,6 +18,7 @@
  */
 package edu.pitt.dbmi.causal.cmd.util;
 
+import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.DataWriter;
 import java.io.BufferedWriter;
@@ -37,9 +38,9 @@ public class DataSetIO {
     private DataSetIO() {
     }
 
-    public static void write(DataSet dataSet, char delimiter, Path path) throws IOException {
+    public static void write(DataModel dataModel, char delimiter, Path path) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            DataWriter.writeRectangularData(dataSet, writer, delimiter);
+            DataWriter.writeRectangularData((DataSet) dataModel, writer, delimiter);
         }
     }
 

@@ -19,7 +19,7 @@
 package edu.pitt.dbmi.causal.cmd.sim;
 
 import edu.cmu.tetrad.algcomparison.simulation.Simulation;
-import edu.cmu.tetrad.data.DataSet;
+import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.opt.sim.TetraDataSimCmdOpt;
@@ -71,17 +71,17 @@ public abstract class AbstractDataSimulationRunner implements DataSimulationRunn
         simulation.createData(getParameters(simCmdOpt));
 
         writeGraphToFile(simulation.getTrueGraph(0), simCmdOpt);
-        writeDatasetToFile(simulation.getDataSet(0), simCmdOpt);
+        writeDatasetToFile(simulation.getDataModel(0), simCmdOpt);
     }
 
-    protected void writeDatasetToFile(DataSet dataSet, TetraDataSimCmdOpt simCmdOpt) {
+    protected void writeDatasetToFile(DataModel dataModel, TetraDataSimCmdOpt simCmdOpt) {
         Delimiter delimiter = simCmdOpt.getDelimiter();
         Path dirOut = simCmdOpt.getDirOut();
         String outputPrefix = simCmdOpt.getOutputPrefix();
 
         Path outputFile = Paths.get(dirOut.toString(), outputPrefix + ".txt");
         try {
-            DataSetIO.write(dataSet, (char) delimiter.getDelimiterChar(), outputFile);
+            DataSetIO.write(dataModel, (char) delimiter.getDelimiterChar(), outputFile);
         } catch (IOException exception) {
             exception.printStackTrace(System.err);
         }
