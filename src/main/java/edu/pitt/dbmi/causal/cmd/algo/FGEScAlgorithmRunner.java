@@ -58,12 +58,14 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
 
         double penaltyDiscount = cmdOption.getPenaltyDiscount();
         int maxDegree = cmdOption.getMaxDegree();
+        boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
         boolean verbose = cmdOption.isVerbose();
 
         Parameters parameters = new Parameters();
         parameters.set(ParamAttrs.PENALTY_DISCOUNT, penaltyDiscount);
         parameters.set(ParamAttrs.MAX_DEGREE, maxDegree);
+        parameters.set(ParamAttrs.SYMMETRIC_FIRST_STEP, symmetricFirstStep);
         parameters.set(ParamAttrs.FAITHFULNESS_ASSUMED, faithfulnessAssumed);
         parameters.set(ParamAttrs.VERBOSE, verbose);
 
@@ -130,10 +132,12 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
 
         double penaltyDiscount = cmdOption.getPenaltyDiscount();
         int maxDegree = cmdOption.getMaxDegree();
+        boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
 
         fmt.format("penalty discount = %f%n", penaltyDiscount);
         fmt.format("max degree = %d%n", maxDegree);
+        fmt.format("symmetric first step = %s%n", symmetricFirstStep);
         fmt.format("faithfulness assumed = %s%n", faithfulnessAssumed);
     }
 

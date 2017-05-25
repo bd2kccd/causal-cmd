@@ -56,10 +56,13 @@ public class CmdLongOpts {
     public static final String MAX_DEGREE = "max-degree";
     public static final String MAX_INDEGREE = "max-indegree";
     public static final String MAX_OUTDEGREE = "max-outdegree";
+    public static final String MAX_PATH_LENGTH = "max-path-length";
     public static final String FAITHFULNESS_ASSUMED = "faithfulness-assumed";
+    public static final String SYMMETRIC_FIRST_STEP = "symmetric-first-step";
     public static final String ALPHA = "alpha";
     public static final String STRUCTURE_PRIOR = "structure-prior";
     public static final String SAMPLE_PRIOR = "sample-prior";
+    public static final String COMPLETE_RULE_SET_USED = "use-complete-rule-set";
 
     public static final String LATENT = "latent";
     public static final String AVG_DEGREE = "avg-degree";
@@ -67,6 +70,9 @@ public class CmdLongOpts {
 
     public static final String MIN_CATEGORIES = "min-categories";
     public static final String MAX_CATEGORIES = "max-categories";
+    public static final String NUM_CATEGORIES_TO_DISCRETIZE = "num-categories-to-discretize";
+
+    public static final String DISCRETIZE = "discretize";
 
     public static final String PERCENT_DISCRETE = "percent-discrete";
 

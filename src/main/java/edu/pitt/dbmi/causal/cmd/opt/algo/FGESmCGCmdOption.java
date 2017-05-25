@@ -22,78 +22,62 @@ import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.opt.CmdLongOpts;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
 /**
+ * FGES conditional Gaussian score for mixed variables.
  *
- * Mar 14, 2017 4:38:01 PM
+ * May 25, 2017 3:52:34 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class FGESdCmdOption extends AbstractFGESCmdOption {
+public class FGESmCGCmdOption extends AbstractFGESCmdOption {
 
-    public static final int CATEGORY_LIMIT = 10;
-
+    protected double penaltyDiscount;
     protected double structurePrior;
-    protected double samplePrior;
 
-    protected boolean skipUniqueVarName;
-    protected boolean skipCategoryLimit;
+    protected boolean discretize;
+    protected int numCategoriesToDiscretize;
 
-    public FGESdCmdOption() {
+    public FGESmCGCmdOption() {
         super();
     }
 
     @Override
-    protected void parseRequiredOptions(CommandLine cmd) throws Exception {
+    public void parseRequiredOptions(CommandLine cmd) throws Exception {
         // no required options
     }
 
     @Override
-    protected void parseOptionalOptions(CommandLine cmd) throws Exception {
+    public void parseOptionalOptions(CommandLine cmd) throws Exception {
+        super.parseOptionalOptions(cmd);
+
+        penaltyDiscount = CmdLongOpts.getDouble(CmdLongOpts.PENALTY_DISCOUNT, ParamAttrs.PENALTY_DISCOUNT, cmd);
         structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
-        samplePrior = CmdLongOpts.getDouble(CmdLongOpts.SAMPLE_PRIOR, ParamAttrs.SAMPLE_PRIOR, cmd);
 
-        skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
-        skipCategoryLimit = cmd.hasOption(CmdLongOpts.SKIP_CATEGORY_LIMIT);
+        numCategoriesToDiscretize = CmdLongOpts.getInt(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, ParamAttrs.NUM_CATEGORIES_TO_DISCRETIZE, cmd);
+        discretize = cmd.hasOption(CmdLongOpts.DISCRETIZE);
 
-        String prefix = String.format("%s_%s_%d", AlgorithmType.FGESD.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
+        String prefix = String.format("%s_%s_%d", AlgorithmType.FGESM_CG.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
         outputPrefix = cmd.getOptionValue("output-prefix", prefix);
     }
 
     @Override
-    protected List<Option> getRequiredOptions() {
+    public List<Option> getRequiredOptions() {
         return Collections.EMPTY_LIST;
     }
 
     @Override
-    protected List<Option> getOptionalOptions() {
-        List<Option> options = new LinkedList<>();
+    public List<Option> getOptionalOptions() {
+        List<Option> options = super.getOptionalOptions();
+        options.add(new Option(null, CmdLongOpts.PENALTY_DISCOUNT, true, CmdLongOpts.getDescription(CmdLongOpts.PENALTY_DISCOUNT)));
         options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
-        options.add(new Option(null, CmdLongOpts.SAMPLE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.SAMPLE_PRIOR)));
-        options.add(new Option(null, CmdLongOpts.SKIP_UNIQUE_VAR_NAME, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_UNIQUE_VAR_NAME)));
-        options.add(new Option(null, CmdLongOpts.SKIP_CATEGORY_LIMIT, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_CATEGORY_LIMIT)));
+        options.add(new Option(null, CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, true, CmdLongOpts.getDescription(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE)));
+        options.add(new Option(null, CmdLongOpts.DISCRETIZE, false, CmdLongOpts.getDescription(CmdLongOpts.DISCRETIZE)));
 
         return options;
-    }
-
-    public double getStructurePrior() {
-        return structurePrior;
-    }
-
-    public double getSamplePrior() {
-        return samplePrior;
-    }
-
-    public boolean isSkipUniqueVarName() {
-        return skipUniqueVarName;
-    }
-
-    public boolean isSkipCategoryLimit() {
-        return skipCategoryLimit;
     }
 
 }

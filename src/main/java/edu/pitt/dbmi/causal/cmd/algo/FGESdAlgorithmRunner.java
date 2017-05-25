@@ -59,6 +59,7 @@ public class FGESdAlgorithmRunner extends AbstractAlgorithmRunner {
         double structurePrior = cmdOption.getStructurePrior();
         double samplePrior = cmdOption.getSamplePrior();
         int maxDegree = cmdOption.getMaxDegree();
+        boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
         boolean verbose = cmdOption.isVerbose();
 
@@ -66,6 +67,7 @@ public class FGESdAlgorithmRunner extends AbstractAlgorithmRunner {
         parameters.set(ParamAttrs.SAMPLE_PRIOR, samplePrior);
         parameters.set(ParamAttrs.STRUCTURE_PRIOR, structurePrior);
         parameters.set(ParamAttrs.MAX_DEGREE, maxDegree);
+        parameters.set(ParamAttrs.SYMMETRIC_FIRST_STEP, symmetricFirstStep);
         parameters.set(ParamAttrs.FAITHFULNESS_ASSUMED, faithfulnessAssumed);
         parameters.set(ParamAttrs.VERBOSE, verbose);
 
@@ -131,11 +133,13 @@ public class FGESdAlgorithmRunner extends AbstractAlgorithmRunner {
         double structurePrior = cmdOption.getStructurePrior();
         double samplePrior = cmdOption.getSamplePrior();
         int maxDegree = cmdOption.getMaxDegree();
+        boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
 
         fmt.format("sample prior = %f%n", samplePrior);
         fmt.format("structure prior = %f%n", structurePrior);
         fmt.format("max degree = %d%n", maxDegree);
+        fmt.format("symmetric first step = %s%n", symmetricFirstStep);
         fmt.format("faithfulness assumed = %s%n", faithfulnessAssumed);
     }
 
