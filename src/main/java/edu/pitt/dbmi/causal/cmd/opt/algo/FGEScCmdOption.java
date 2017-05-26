@@ -35,6 +35,7 @@ import org.apache.commons.cli.Option;
 public class FGEScCmdOption extends AbstractFGESCmdOption {
 
     protected double penaltyDiscount;
+    protected double structurePrior;
 
     protected boolean skipUniqueVarName;
     protected boolean skipZeroVariance;
@@ -52,6 +53,7 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
     public void parseOptionalOptions(CommandLine cmd) throws Exception {
         super.parseOptionalOptions(cmd);
         penaltyDiscount = CmdLongOpts.getDouble(CmdLongOpts.PENALTY_DISCOUNT, ParamAttrs.PENALTY_DISCOUNT, cmd);
+        structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
 
         skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
         skipZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
@@ -69,6 +71,7 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
     public List<Option> getOptionalOptions() {
         List<Option> options = super.getOptionalOptions();
         options.add(new Option(null, CmdLongOpts.PENALTY_DISCOUNT, true, CmdLongOpts.getDescription(CmdLongOpts.PENALTY_DISCOUNT)));
+        options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
         options.add(new Option(null, CmdLongOpts.SKIP_UNIQUE_VAR_NAME, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_UNIQUE_VAR_NAME)));
         options.add(new Option(null, CmdLongOpts.SKIP_NONZERO_VARIANCE, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_NONZERO_VARIANCE)));
 
@@ -77,6 +80,10 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
 
     public double getPenaltyDiscount() {
         return penaltyDiscount;
+    }
+
+    public double getStructurePrior() {
+        return structurePrior;
     }
 
     public boolean isSkipUniqueVarName() {
