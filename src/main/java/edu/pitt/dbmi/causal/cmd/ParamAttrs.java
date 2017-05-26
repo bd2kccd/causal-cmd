@@ -63,4 +63,6 @@ public interface ParamAttrs {
     public static final String COMPLETE_RULE_SET_USED = "completeRuleSetUsed";
     public static final String MAX_PATH_LENGTH = "maxPathLength";
 
+    public static final String DISCRETIZE = "discretize";
+
 }

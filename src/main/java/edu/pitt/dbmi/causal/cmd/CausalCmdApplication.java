@@ -69,6 +69,9 @@ public class CausalCmdApplication {
             if (algoOpt ^ simDataOpt) {
                 if (algoOpt) {
                     String algorithm = Args.getOptionValue(args, ALGO_OPT);
+                    if (algorithm == null) {
+                        algorithm = "";
+                    }
                     AlgorithmType algorithmType = ALGO_TYPES.get(algorithm);
                     if (algorithmType == null) {
                         showHelp();

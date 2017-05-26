@@ -114,6 +114,8 @@ public class CmdLongOpts {
                 return createDescription(ParamAttrs.MAX_INDEGREE);
             case MAX_OUTDEGREE:
                 return createDescription(ParamAttrs.MAX_OUTDEGREE);
+            case MAX_PATH_LENGTH:
+                return createDescription(ParamAttrs.MAX_PATH_LENGTH);
             case FAITHFULNESS_ASSUMED:
                 return createDescription(ParamAttrs.FAITHFULNESS_ASSUMED);
             case ALPHA:
@@ -128,6 +130,12 @@ public class CmdLongOpts {
                 return createDescription(ParamAttrs.AVG_DEGREE);
             case CONNECTED:
                 return createDescription(ParamAttrs.CONNECTED);
+            case SYMMETRIC_FIRST_STEP:
+                return createDescription(ParamAttrs.SYMMETRIC_FIRST_STEP);
+            case DISCRETIZE:
+                return createDescription(ParamAttrs.DISCRETIZE);
+            case NUM_CATEGORIES_TO_DISCRETIZE:
+                return createDescription(ParamAttrs.NUM_CATEGORIES_TO_DISCRETIZE);
             case SKIP_UNIQUE_VAR_NAME:
                 return "Skip check for unique variable names.";
             case SKIP_NONZERO_VARIANCE:
