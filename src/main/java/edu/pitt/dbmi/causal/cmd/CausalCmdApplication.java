@@ -21,6 +21,7 @@ package edu.pitt.dbmi.causal.cmd;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.algo.FGEScAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.FGESdAlgorithmRunner;
+import edu.pitt.dbmi.causal.cmd.algo.FGESmCGAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.GFCIcAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.GFCIdAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.sim.BayNetRandFwdDataSimulationRunner;
@@ -83,6 +84,9 @@ public class CausalCmdApplication {
                                 break;
                             case FGESD:
                                 new FGESdAlgorithmRunner().runAlgorithm(args);
+                                break;
+                            case FGESM_CG:
+                                new FGESmCGAlgorithmRunner().runAlgorithm(args);
                                 break;
                             case GFCIC:
                                 new GFCIcAlgorithmRunner().runAlgorithm(args);

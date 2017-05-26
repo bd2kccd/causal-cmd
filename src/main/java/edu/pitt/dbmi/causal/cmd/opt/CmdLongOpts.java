@@ -42,6 +42,7 @@ public class CmdLongOpts {
     public static final String KNOWLEDGE = "knowledge";
     public static final String EXCLUDE_VARS = "exclude-variables";
     public static final String DELIMITER = "delimiter";
+    public static final String NUM_DISCRETE_CATEGORIES = "num-discrete-categories";
     public static final String VERBOSE = "verbose";
     public static final String THREAD = "thread";
     public static final String JSON = "json";

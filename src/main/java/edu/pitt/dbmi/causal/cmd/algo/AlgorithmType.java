@@ -28,7 +28,7 @@ public enum AlgorithmType {
 
     FGESC("FGES Continuous", "FGESc"),
     FGESD("FGES Discrete", "FGESd"),
-    FGESM_CG("FGES Discrete", "FGESm-cg"),
+    FGESM_CG("FGES Mixed - Conditional Gaussian", "FGESm-cg"),
     GFCIC("GFCI Continuous", "GFCIc"),
     GFCID("GFCI Discrete", "GFCId");
 

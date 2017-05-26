@@ -21,6 +21,7 @@ package edu.pitt.dbmi.causal.cmd.opt.algo;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.opt.CmdLongOpts;
+import edu.pitt.dbmi.causal.cmd.util.Args;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
@@ -41,6 +42,8 @@ public class FGESmCGCmdOption extends AbstractFGESCmdOption {
     protected boolean discretize;
     protected int numCategoriesToDiscretize;
 
+    protected int numberOfDiscreteCategories;
+
     public FGESmCGCmdOption() {
         super();
     }
@@ -60,6 +63,8 @@ public class FGESmCGCmdOption extends AbstractFGESCmdOption {
         numCategoriesToDiscretize = CmdLongOpts.getInt(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, ParamAttrs.NUM_CATEGORIES_TO_DISCRETIZE, cmd);
         discretize = cmd.hasOption(CmdLongOpts.DISCRETIZE);
 
+        numberOfDiscreteCategories = Args.getInteger(cmd.getOptionValue(CmdLongOpts.NUM_DISCRETE_CATEGORIES, "3"));
+
         String prefix = String.format("%s_%s_%d", AlgorithmType.FGESM_CG.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
         outputPrefix = cmd.getOptionValue("output-prefix", prefix);
     }
@@ -76,8 +81,29 @@ public class FGESmCGCmdOption extends AbstractFGESCmdOption {
         options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
         options.add(new Option(null, CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, true, CmdLongOpts.getDescription(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE)));
         options.add(new Option(null, CmdLongOpts.DISCRETIZE, false, CmdLongOpts.getDescription(CmdLongOpts.DISCRETIZE)));
+        options.add(new Option(null, CmdLongOpts.NUM_DISCRETE_CATEGORIES, true, "Number of category considered discrete variable."));
 
         return options;
+    }
+
+    public double getPenaltyDiscount() {
+        return penaltyDiscount;
+    }
+
+    public double getStructurePrior() {
+        return structurePrior;
+    }
+
+    public boolean isDiscretize() {
+        return discretize;
+    }
+
+    public int getNumCategoriesToDiscretize() {
+        return numCategoriesToDiscretize;
+    }
+
+    public int getNumberOfDiscreteCategories() {
+        return numberOfDiscreteCategories;
     }
 
 }
