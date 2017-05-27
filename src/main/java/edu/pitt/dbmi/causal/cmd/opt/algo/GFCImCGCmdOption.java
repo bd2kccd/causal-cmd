@@ -28,21 +28,22 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
 /**
- * FGES conditional Gaussian score for mixed variables.
+ * GFCI conditional Gaussian score for mixed variables.
  *
- * May 25, 2017 3:52:34 PM
+ * May 26, 2017 11:06:07 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class FGESmCGCmdOption extends AbstractFGESCmdOption {
+public class GFCImCGCmdOption extends AbstractGFCICmdOption {
 
+    protected double alpha;
     protected double penaltyDiscount;
     protected double structurePrior;
     protected int numCategoriesToDiscretize;
     protected int numberOfDiscreteCategories;
     protected boolean discretize;
 
-    public FGESmCGCmdOption() {
+    public GFCImCGCmdOption() {
         super();
     }
 
@@ -55,15 +56,14 @@ public class FGESmCGCmdOption extends AbstractFGESCmdOption {
     public void parseOptionalOptions(CommandLine cmd) throws Exception {
         super.parseOptionalOptions(cmd);
 
+        alpha = CmdLongOpts.getDouble(CmdLongOpts.ALPHA, ParamAttrs.ALPHA, cmd);
         penaltyDiscount = CmdLongOpts.getDouble(CmdLongOpts.PENALTY_DISCOUNT, ParamAttrs.PENALTY_DISCOUNT, cmd);
         structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
-
         numCategoriesToDiscretize = CmdLongOpts.getInt(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, ParamAttrs.NUM_CATEGORIES_TO_DISCRETIZE, cmd);
+        numberOfDiscreteCategories = Args.getInteger(cmd.getOptionValue(CmdLongOpts.NUM_DISCRETE_CATEGORIES, "3"));
         discretize = cmd.hasOption(CmdLongOpts.DISCRETIZE);
 
-        numberOfDiscreteCategories = Args.getInteger(cmd.getOptionValue(CmdLongOpts.NUM_DISCRETE_CATEGORIES, "3"));
-
-        String prefix = String.format("%s_%s_%d", AlgorithmType.FGESM_CG.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
+        String prefix = String.format("%s_%s_%d", AlgorithmType.GFCIM_CG.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
         outputPrefix = cmd.getOptionValue("output-prefix", prefix);
     }
 
@@ -75,13 +75,18 @@ public class FGESmCGCmdOption extends AbstractFGESCmdOption {
     @Override
     public List<Option> getOptionalOptions() {
         List<Option> options = super.getOptionalOptions();
+        options.add(new Option(null, CmdLongOpts.ALPHA, true, CmdLongOpts.getDescription(CmdLongOpts.ALPHA)));
         options.add(new Option(null, CmdLongOpts.PENALTY_DISCOUNT, true, CmdLongOpts.getDescription(CmdLongOpts.PENALTY_DISCOUNT)));
         options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
         options.add(new Option(null, CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, true, CmdLongOpts.getDescription(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE)));
-        options.add(new Option(null, CmdLongOpts.DISCRETIZE, false, CmdLongOpts.getDescription(CmdLongOpts.DISCRETIZE)));
         options.add(new Option(null, CmdLongOpts.NUM_DISCRETE_CATEGORIES, true, "Number of category considered discrete variable."));
+        options.add(new Option(null, CmdLongOpts.DISCRETIZE, false, CmdLongOpts.getDescription(CmdLongOpts.DISCRETIZE)));
 
         return options;
+    }
+
+    public double getAlpha() {
+        return alpha;
     }
 
     public double getPenaltyDiscount() {
@@ -92,16 +97,16 @@ public class FGESmCGCmdOption extends AbstractFGESCmdOption {
         return structurePrior;
     }
 
-    public boolean isDiscretize() {
-        return discretize;
-    }
-
     public int getNumCategoriesToDiscretize() {
         return numCategoriesToDiscretize;
     }
 
     public int getNumberOfDiscreteCategories() {
         return numberOfDiscreteCategories;
+    }
+
+    public boolean isDiscretize() {
+        return discretize;
     }
 
 }

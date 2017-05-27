@@ -30,7 +30,8 @@ public enum AlgorithmType {
     FGESD("FGES Discrete", "FGESd"),
     FGESM_CG("FGES Mixed - Conditional Gaussian", "FGESm-cg"),
     GFCIC("GFCI Continuous", "GFCIc"),
-    GFCID("GFCI Discrete", "GFCId");
+    GFCID("GFCI Discrete", "GFCId"),
+    GFCIM_CG("GFCI Mixed - Conditional Gaussian", "GFCIm-cg");
 
     private final String title;
 
