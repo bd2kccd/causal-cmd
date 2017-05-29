@@ -64,7 +64,7 @@ public class GFCImCGCmdOption extends AbstractGFCICmdOption {
         discretize = cmd.hasOption(CmdLongOpts.DISCRETIZE);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.GFCIM_CG.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
     @Override

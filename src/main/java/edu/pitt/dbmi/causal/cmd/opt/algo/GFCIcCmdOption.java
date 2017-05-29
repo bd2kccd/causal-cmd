@@ -60,7 +60,7 @@ public class GFCIcCmdOption extends AbstractGFCICmdOption {
         skipZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.GFCIC.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
     @Override

@@ -52,6 +52,7 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
     @Override
     public void parseOptionalOptions(CommandLine cmd) throws Exception {
         super.parseOptionalOptions(cmd);
+
         penaltyDiscount = CmdLongOpts.getDouble(CmdLongOpts.PENALTY_DISCOUNT, ParamAttrs.PENALTY_DISCOUNT, cmd);
         structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
 
@@ -59,7 +60,7 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
         skipZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.FGESC.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
     @Override

@@ -22,7 +22,6 @@ import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.opt.CmdLongOpts;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -54,6 +53,8 @@ public class FGESdCmdOption extends AbstractFGESCmdOption {
 
     @Override
     protected void parseOptionalOptions(CommandLine cmd) throws Exception {
+        super.parseOptionalOptions(cmd);
+
         structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
         samplePrior = CmdLongOpts.getDouble(CmdLongOpts.SAMPLE_PRIOR, ParamAttrs.SAMPLE_PRIOR, cmd);
 
@@ -61,7 +62,7 @@ public class FGESdCmdOption extends AbstractFGESCmdOption {
         skipCategoryLimit = cmd.hasOption(CmdLongOpts.SKIP_CATEGORY_LIMIT);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.FGESD.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class FGESdCmdOption extends AbstractFGESCmdOption {
 
     @Override
     protected List<Option> getOptionalOptions() {
-        List<Option> options = new LinkedList<>();
+        List<Option> options = super.getOptionalOptions();
         options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
         options.add(new Option(null, CmdLongOpts.SAMPLE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.SAMPLE_PRIOR)));
         options.add(new Option(null, CmdLongOpts.SKIP_UNIQUE_VAR_NAME, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_UNIQUE_VAR_NAME)));
