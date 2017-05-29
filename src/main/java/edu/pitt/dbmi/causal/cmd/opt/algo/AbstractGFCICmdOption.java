@@ -56,8 +56,8 @@ public abstract class AbstractGFCICmdOption extends TetradCmdAlgoOpt implements 
         List<Option> options = new LinkedList<>();
         options.add(new Option(null, CmdLongOpts.MAX_DEGREE, true, CmdLongOpts.getDescription(CmdLongOpts.MAX_DEGREE)));
         options.add(new Option(null, CmdLongOpts.MAX_PATH_LENGTH, true, CmdLongOpts.getDescription(CmdLongOpts.MAX_PATH_LENGTH)));
-        options.add(new Option(null, CmdLongOpts.SYMMETRIC_FIRST_STEP, false, CmdLongOpts.getDescription(CmdLongOpts.SYMMETRIC_FIRST_STEP)));
         options.add(new Option(null, CmdLongOpts.FAITHFULNESS_ASSUMED, false, CmdLongOpts.getDescription(CmdLongOpts.FAITHFULNESS_ASSUMED)));
+        options.add(new Option(null, CmdLongOpts.COMPLETE_RULE_SET_USED, false, CmdLongOpts.getDescription(CmdLongOpts.COMPLETE_RULE_SET_USED)));
 
         return options;
     }
