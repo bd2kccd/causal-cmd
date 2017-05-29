@@ -38,7 +38,7 @@ public class GFCIcCmdOption extends AbstractGFCICmdOption {
     protected double penaltyDiscount;
 
     protected boolean skipUniqueVarName;
-    protected boolean skipZeroVariance;
+    protected boolean skipNonZeroVariance;
 
     public GFCIcCmdOption() {
         super();
@@ -57,7 +57,7 @@ public class GFCIcCmdOption extends AbstractGFCICmdOption {
         penaltyDiscount = CmdLongOpts.getDouble(CmdLongOpts.PENALTY_DISCOUNT, ParamAttrs.PENALTY_DISCOUNT, cmd);
 
         skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
-        skipZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
+        skipNonZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.GFCIC.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
         outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
@@ -91,8 +91,8 @@ public class GFCIcCmdOption extends AbstractGFCICmdOption {
         return skipUniqueVarName;
     }
 
-    public boolean isSkipZeroVariance() {
-        return skipZeroVariance;
+    public boolean isSkipNonZeroVariance() {
+        return skipNonZeroVariance;
     }
 
 }

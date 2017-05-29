@@ -38,7 +38,7 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
     protected double structurePrior;
 
     protected boolean skipUniqueVarName;
-    protected boolean skipZeroVariance;
+    protected boolean skipNonZeroVariance;
 
     public FGEScCmdOption() {
         super();
@@ -57,7 +57,7 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
         structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
 
         skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
-        skipZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
+        skipNonZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.FGESC.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
         outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
@@ -91,8 +91,8 @@ public class FGEScCmdOption extends AbstractFGESCmdOption {
         return skipUniqueVarName;
     }
 
-    public boolean isSkipZeroVariance() {
-        return skipZeroVariance;
+    public boolean isSkipNonZeroVariance() {
+        return skipNonZeroVariance;
     }
 
 }

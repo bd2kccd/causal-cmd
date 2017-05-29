@@ -101,7 +101,7 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
                 validations.add(new UniqueVariableValidation(dataSet));
             }
         }
-        if (!cmdOption.isSkipZeroVariance()) {
+        if (!cmdOption.isSkipNonZeroVariance()) {
             if (validationOutput) {
                 validations.add(new NonZeroVarianceValidation(dataSet, numOfThreads, Paths.get(outputDir, filePrefix + "_zero_variance.txt")));
             } else {
@@ -150,10 +150,10 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
         FGEScCmdOption cmdOption = (FGEScCmdOption) cmdAlgoOpt;
 
         boolean skipUniqueVarName = cmdOption.isSkipUniqueVarName();
-        boolean skipZeroVariance = cmdOption.isSkipZeroVariance();
+        boolean skipNonZeroVariance = cmdOption.isSkipNonZeroVariance();
 
         fmt.format("ensure variable names are unique = %s%n", !skipUniqueVarName);
-        fmt.format("ensure variables have non-zero variance = %s%n", !skipZeroVariance);
+        fmt.format("ensure variables have non-zero variance = %s%n", !skipNonZeroVariance);
     }
 
     @Override
