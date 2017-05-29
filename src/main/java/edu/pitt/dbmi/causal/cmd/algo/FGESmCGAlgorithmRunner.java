@@ -123,6 +123,7 @@ public class FGESmCGAlgorithmRunner extends AbstractAlgorithmRunner {
         boolean discretize = cmdOption.isDiscretize();
         int numCategoriesToDiscretize = cmdOption.getNumCategoriesToDiscretize();
         int maxDegree = cmdOption.getMaxDegree();
+        int numberOfDiscreteCategories = cmdOption.getNumberOfDiscreteCategories();
         boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
 
@@ -133,6 +134,7 @@ public class FGESmCGAlgorithmRunner extends AbstractAlgorithmRunner {
         fmt.format("max degree = %d%n", maxDegree);
         fmt.format("symmetric first step = %s%n", symmetricFirstStep);
         fmt.format("faithfulness assumed = %s%n", faithfulnessAssumed);
+        fmt.format("number of discrete categories = %s%n", numberOfDiscreteCategories);
     }
 
     @Override
