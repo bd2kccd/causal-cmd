@@ -70,7 +70,7 @@ public class Args {
             return doubleValue;
         } else {
             throw new IllegalArgumentException(
-                    String.format("Parameter value (%d) must be between %f and %f.", doubleValue, minValue, maxValue));
+                    String.format("Parameter value (%f) must be between %f and %f.", doubleValue, minValue, maxValue));
         }
     }
 

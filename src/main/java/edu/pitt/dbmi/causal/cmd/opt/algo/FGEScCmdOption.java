@@ -21,9 +21,7 @@ package edu.pitt.dbmi.causal.cmd.opt.algo;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.opt.CmdLongOpts;
-import edu.pitt.dbmi.causal.cmd.opt.CmdOption;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -34,14 +32,13 @@ import org.apache.commons.cli.Option;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class FGEScCmdOption extends TetradCmdAlgoOpt implements CmdOption {
+public class FGEScCmdOption extends AbstractFGESCmdOption {
 
     protected double penaltyDiscount;
-    protected int maxDegree;
-    protected boolean faithfulnessAssumed;
+    protected double structurePrior;
 
     protected boolean skipUniqueVarName;
-    protected boolean skipZeroVariance;
+    protected boolean skipNonZeroVariance;
 
     public FGEScCmdOption() {
         super();
@@ -54,14 +51,16 @@ public class FGEScCmdOption extends TetradCmdAlgoOpt implements CmdOption {
 
     @Override
     public void parseOptionalOptions(CommandLine cmd) throws Exception {
+        super.parseOptionalOptions(cmd);
+
         penaltyDiscount = CmdLongOpts.getDouble(CmdLongOpts.PENALTY_DISCOUNT, ParamAttrs.PENALTY_DISCOUNT, cmd);
-        maxDegree = CmdLongOpts.getInt(CmdLongOpts.MAX_DEGREE, ParamAttrs.MAX_DEGREE, cmd);
-        faithfulnessAssumed = cmd.hasOption(CmdLongOpts.FAITHFULNESS_ASSUMED);
+        structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
+
         skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
-        skipZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
+        skipNonZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.FGESC.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
     @Override
@@ -71,10 +70,9 @@ public class FGEScCmdOption extends TetradCmdAlgoOpt implements CmdOption {
 
     @Override
     public List<Option> getOptionalOptions() {
-        List<Option> options = new LinkedList<>();
+        List<Option> options = super.getOptionalOptions();
         options.add(new Option(null, CmdLongOpts.PENALTY_DISCOUNT, true, CmdLongOpts.getDescription(CmdLongOpts.PENALTY_DISCOUNT)));
-        options.add(new Option(null, CmdLongOpts.MAX_DEGREE, true, CmdLongOpts.getDescription(CmdLongOpts.MAX_DEGREE)));
-        options.add(new Option(null, CmdLongOpts.FAITHFULNESS_ASSUMED, false, CmdLongOpts.getDescription(CmdLongOpts.FAITHFULNESS_ASSUMED)));
+        options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
         options.add(new Option(null, CmdLongOpts.SKIP_UNIQUE_VAR_NAME, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_UNIQUE_VAR_NAME)));
         options.add(new Option(null, CmdLongOpts.SKIP_NONZERO_VARIANCE, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_NONZERO_VARIANCE)));
 
@@ -85,20 +83,16 @@ public class FGEScCmdOption extends TetradCmdAlgoOpt implements CmdOption {
         return penaltyDiscount;
     }
 
-    public int getMaxDegree() {
-        return maxDegree;
-    }
-
-    public boolean isFaithfulnessAssumed() {
-        return faithfulnessAssumed;
+    public double getStructurePrior() {
+        return structurePrior;
     }
 
     public boolean isSkipUniqueVarName() {
         return skipUniqueVarName;
     }
 
-    public boolean isSkipZeroVariance() {
-        return skipZeroVariance;
+    public boolean isSkipNonZeroVariance() {
+        return skipNonZeroVariance;
     }
 
 }

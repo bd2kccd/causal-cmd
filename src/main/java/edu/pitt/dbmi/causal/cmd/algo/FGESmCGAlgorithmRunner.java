@@ -20,52 +20,55 @@ package edu.pitt.dbmi.causal.cmd.algo;
 
 import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.oracle.pattern.Fges;
-import edu.cmu.tetrad.algcomparison.score.BdeuScore;
+import edu.cmu.tetrad.algcomparison.score.ConditionalGaussianBicScore;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.IKnowledge;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
-import edu.pitt.dbmi.causal.cmd.opt.algo.FGESdCmdOption;
+import edu.pitt.dbmi.causal.cmd.opt.algo.FGESmCGCmdOption;
 import edu.pitt.dbmi.causal.cmd.opt.algo.TetradCmdAlgoOpt;
-import edu.pitt.dbmi.causal.cmd.validation.DiscreteCategoryLimitValidation;
 import edu.pitt.dbmi.causal.cmd.validation.TetradDataValidation;
-import edu.pitt.dbmi.causal.cmd.validation.UniqueVariableValidation;
 import edu.pitt.dbmi.data.Delimiter;
 import edu.pitt.dbmi.data.reader.DataReader;
-import edu.pitt.dbmi.data.reader.tabular.VerticalDiscreteTabularDataReader;
+import edu.pitt.dbmi.data.reader.tabular.MixedTabularDataFileReader;
+import edu.pitt.dbmi.data.validation.tabular.MixedTabularDataFileValidation;
 import edu.pitt.dbmi.data.validation.tabular.TabularDataValidation;
-import edu.pitt.dbmi.data.validation.tabular.VerticalDiscreteTabularDataFileValidation;
 import java.io.File;
-import java.nio.file.Paths;
 import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * FGES conditional Gaussian score for mixed variables.
  *
- * Mar 14, 2017 4:48:08 PM
+ * May 26, 2017 12:14:35 AM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class FGESdAlgorithmRunner extends AbstractAlgorithmRunner {
+public class FGESmCGAlgorithmRunner extends AbstractAlgorithmRunner {
 
-    public FGESdAlgorithmRunner() {
+    public FGESmCGAlgorithmRunner() {
     }
 
     @Override
     protected Parameters getParameters(TetradCmdAlgoOpt cmdAlgoOpt) {
-        FGESdCmdOption cmdOption = (FGESdCmdOption) cmdAlgoOpt;
+        FGESmCGCmdOption cmdOption = (FGESmCGCmdOption) cmdAlgoOpt;
 
+        double penaltyDiscount = cmdOption.getPenaltyDiscount();
         double structurePrior = cmdOption.getStructurePrior();
-        double samplePrior = cmdOption.getSamplePrior();
+        boolean discretize = cmdOption.isDiscretize();
+        int numCategoriesToDiscretize = cmdOption.getNumCategoriesToDiscretize();
         int maxDegree = cmdOption.getMaxDegree();
         boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
+
         boolean verbose = cmdOption.isVerbose();
 
         Parameters parameters = new Parameters();
-        parameters.set(ParamAttrs.SAMPLE_PRIOR, samplePrior);
+        parameters.set(ParamAttrs.PENALTY_DISCOUNT, penaltyDiscount);
         parameters.set(ParamAttrs.STRUCTURE_PRIOR, structurePrior);
+        parameters.set(ParamAttrs.DISCRETIZE, discretize);
+        parameters.set(ParamAttrs.NUM_CATEGORIES_TO_DISCRETIZE, numCategoriesToDiscretize);
         parameters.set(ParamAttrs.MAX_DEGREE, maxDegree);
         parameters.set(ParamAttrs.SYMMETRIC_FIRST_STEP, symmetricFirstStep);
         parameters.set(ParamAttrs.FAITHFULNESS_ASSUMED, faithfulnessAssumed);
@@ -76,7 +79,7 @@ public class FGESdAlgorithmRunner extends AbstractAlgorithmRunner {
 
     @Override
     protected Algorithm getAlgorithm(IKnowledge knowledge) {
-        Fges fges = new Fges(new BdeuScore());
+        Fges fges = new Fges(new ConditionalGaussianBicScore());
         if (knowledge != null) {
             fges.setKnowledge(knowledge);
         }
@@ -86,83 +89,66 @@ public class FGESdAlgorithmRunner extends AbstractAlgorithmRunner {
 
     @Override
     protected List<TetradDataValidation> getDataValidations(DataSet dataSet, TetradCmdAlgoOpt cmdAlgoOpt) {
-        FGESdCmdOption cmdOption = (FGESdCmdOption) cmdAlgoOpt;
-
-        String outputDir = cmdAlgoOpt.getDirOut().toString();
-        String filePrefix = cmdAlgoOpt.getOutputPrefix();
-        int categoryLimit = FGESdCmdOption.CATEGORY_LIMIT;
-        boolean validationOutput = cmdAlgoOpt.isValidationOutput();
-        boolean skipUniqueVarName = cmdOption.isSkipUniqueVarName();
-        boolean skipCategoryLimit = cmdOption.isSkipCategoryLimit();
-
         List<TetradDataValidation> validations = new LinkedList<>();
-        if (!skipUniqueVarName) {
-            if (validationOutput) {
-                validations.add(new UniqueVariableValidation(dataSet, Paths.get(outputDir, filePrefix + "_duplicate_var_name.txt")));
-            } else {
-                validations.add(new UniqueVariableValidation(dataSet));
-            }
-        }
-        if (!skipCategoryLimit) {
-            validations.add(new DiscreteCategoryLimitValidation(dataSet, categoryLimit));
-        }
 
         return validations;
     }
 
     @Override
     protected DataReader getDataReader(TetradCmdAlgoOpt cmdAlgoOpt) {
-        File dataFile = cmdAlgoOpt.getDataFile().toFile();
-        Delimiter delimiter = cmdAlgoOpt.getDelimiter();
+        FGESmCGCmdOption cmdOption = (FGESmCGCmdOption) cmdAlgoOpt;
+        File dataFile = cmdOption.getDataFile().toFile();
+        Delimiter delimiter = cmdOption.getDelimiter();
+        int numberOfDiscreteCategories = cmdOption.getNumberOfDiscreteCategories();
 
-        return new VerticalDiscreteTabularDataReader(dataFile, delimiter);
+        return new MixedTabularDataFileReader(numberOfDiscreteCategories, dataFile, delimiter);
     }
 
     @Override
     protected TabularDataValidation getTabularDataValidation(TetradCmdAlgoOpt cmdAlgoOpt) {
-        File dataFile = cmdAlgoOpt.getDataFile().toFile();
-        Delimiter delimiter = cmdAlgoOpt.getDelimiter();
+        FGESmCGCmdOption cmdOption = (FGESmCGCmdOption) cmdAlgoOpt;
+        File dataFile = cmdOption.getDataFile().toFile();
+        Delimiter delimiter = cmdOption.getDelimiter();
+        int numberOfDiscreteCategories = cmdOption.getNumberOfDiscreteCategories();
 
-        return new VerticalDiscreteTabularDataFileValidation(dataFile, delimiter);
+        return new MixedTabularDataFileValidation(numberOfDiscreteCategories, dataFile, delimiter);
     }
 
     @Override
     protected void printParameterInfos(Formatter fmt, TetradCmdAlgoOpt cmdAlgoOpt) {
-        FGESdCmdOption cmdOption = (FGESdCmdOption) cmdAlgoOpt;
+        FGESmCGCmdOption cmdOption = (FGESmCGCmdOption) cmdAlgoOpt;
 
+        double penaltyDiscount = cmdOption.getPenaltyDiscount();
         double structurePrior = cmdOption.getStructurePrior();
-        double samplePrior = cmdOption.getSamplePrior();
+        boolean discretize = cmdOption.isDiscretize();
+        int numCategoriesToDiscretize = cmdOption.getNumCategoriesToDiscretize();
         int maxDegree = cmdOption.getMaxDegree();
+        int numberOfDiscreteCategories = cmdOption.getNumberOfDiscreteCategories();
         boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
 
-        fmt.format("sample prior = %f%n", samplePrior);
+        fmt.format("penalty discount = %f%n", penaltyDiscount);
         fmt.format("structure prior = %f%n", structurePrior);
+        fmt.format("discretize = %s%n", discretize);
+        fmt.format("number of categories to discretize = %d%n", numCategoriesToDiscretize);
         fmt.format("max degree = %d%n", maxDegree);
         fmt.format("symmetric first step = %s%n", symmetricFirstStep);
         fmt.format("faithfulness assumed = %s%n", faithfulnessAssumed);
+        fmt.format("number of discrete categories = %s%n", numberOfDiscreteCategories);
     }
 
     @Override
     protected void printValidationInfos(Formatter fmt, TetradCmdAlgoOpt cmdAlgoOpt) {
-        FGESdCmdOption cmdOption = (FGESdCmdOption) cmdAlgoOpt;
-
-        boolean skipUniqueVarName = cmdOption.isSkipUniqueVarName();
-        boolean skipCategoryLimit = cmdOption.isSkipCategoryLimit();
-        int categoryLimit = FGESdCmdOption.CATEGORY_LIMIT;
-
-        fmt.format("ensure variable names are unique = %s%n", !skipUniqueVarName);
-        fmt.format("limit number of categories (%d) = %s%n", categoryLimit, !skipCategoryLimit);
     }
 
     @Override
     protected AlgorithmType getAlgorithmType() {
-        return AlgorithmType.FGESD;
+        return AlgorithmType.FGESM_CG;
     }
 
     @Override
     protected TetradCmdAlgoOpt getCommandLineOptions() {
-        return new FGESdCmdOption();
+        return new FGESmCGCmdOption();
     }
 
 }

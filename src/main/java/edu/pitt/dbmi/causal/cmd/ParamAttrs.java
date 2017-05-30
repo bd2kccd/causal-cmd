@@ -41,13 +41,18 @@ public interface ParamAttrs {
     public static final String MAX_INDEGREE = "maxIndegree";
     public static final String MAX_OUTDEGREE = "maxOutdegree";
     public static final String CONNECTED = "connected";
-    public static final String NUM_RUNS = "numRuns";
     public static final String STANDARDIZE = "standardize";
 
     public static final String FAITHFULNESS_ASSUMED = "faithfulnessAssumed";
+    public static final String SYMMETRIC_FIRST_STEP = "symmetricFirstStep";
 
+    public static final String NUM_RUNS = "numRuns";
+
+    public static final String NUM_CATEGORIES = "numCategories";
     public static final String MIN_CATEGORIES = "minCategories";
     public static final String MAX_CATEGORIES = "maxCategories";
+    public static final String PERCENT_DISCRETE = "percentDiscrete";
+    public static final String NUM_CATEGORIES_TO_DISCRETIZE = "numCategoriesToDiscretize";
 
     public static final String DIFFERENT_GRAPHS = "differentGraphs";
     public static final String MEASUREMENT_VARIANCE = "measurementVariance";
@@ -55,11 +60,9 @@ public interface ParamAttrs {
 
     public static final String PRINT_STREAM = "printStream";
 
-    // not to be exposed to the users (for particular algorithms calling it)
-    public static final String SYMMETRIC_FIRST_STEP = "symmetricFirstStep";
-
-    // to be exposed to the users in the future
     public static final String COMPLETE_RULE_SET_USED = "completeRuleSetUsed";
     public static final String MAX_PATH_LENGTH = "maxPathLength";
+
+    public static final String DISCRETIZE = "discretize";
 
 }

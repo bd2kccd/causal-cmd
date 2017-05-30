@@ -42,6 +42,7 @@ public class CmdLongOpts {
     public static final String KNOWLEDGE = "knowledge";
     public static final String EXCLUDE_VARS = "exclude-variables";
     public static final String DELIMITER = "delimiter";
+    public static final String NUM_DISCRETE_CATEGORIES = "num-discrete-categories";
     public static final String VERBOSE = "verbose";
     public static final String THREAD = "thread";
     public static final String JSON = "json";
@@ -56,10 +57,13 @@ public class CmdLongOpts {
     public static final String MAX_DEGREE = "max-degree";
     public static final String MAX_INDEGREE = "max-indegree";
     public static final String MAX_OUTDEGREE = "max-outdegree";
+    public static final String MAX_PATH_LENGTH = "max-path-length";
     public static final String FAITHFULNESS_ASSUMED = "faithfulness-assumed";
+    public static final String SYMMETRIC_FIRST_STEP = "symmetric-first-step";
     public static final String ALPHA = "alpha";
     public static final String STRUCTURE_PRIOR = "structure-prior";
     public static final String SAMPLE_PRIOR = "sample-prior";
+    public static final String COMPLETE_RULE_SET_USED = "use-complete-rule-set";
 
     public static final String LATENT = "latent";
     public static final String AVG_DEGREE = "avg-degree";
@@ -67,6 +71,11 @@ public class CmdLongOpts {
 
     public static final String MIN_CATEGORIES = "min-categories";
     public static final String MAX_CATEGORIES = "max-categories";
+    public static final String NUM_CATEGORIES_TO_DISCRETIZE = "num-categories-to-discretize";
+
+    public static final String DISCRETIZE = "discretize";
+
+    public static final String PERCENT_DISCRETE = "percent-discrete";
 
     public static final String SKIP_UNIQUE_VAR_NAME = "skip-unique-var-name";
     public static final String SKIP_NONZERO_VARIANCE = "skip-nonzero-variance";
@@ -106,6 +115,8 @@ public class CmdLongOpts {
                 return createDescription(ParamAttrs.MAX_INDEGREE);
             case MAX_OUTDEGREE:
                 return createDescription(ParamAttrs.MAX_OUTDEGREE);
+            case MAX_PATH_LENGTH:
+                return createDescription(ParamAttrs.MAX_PATH_LENGTH);
             case FAITHFULNESS_ASSUMED:
                 return createDescription(ParamAttrs.FAITHFULNESS_ASSUMED);
             case ALPHA:
@@ -120,6 +131,12 @@ public class CmdLongOpts {
                 return createDescription(ParamAttrs.AVG_DEGREE);
             case CONNECTED:
                 return createDescription(ParamAttrs.CONNECTED);
+            case SYMMETRIC_FIRST_STEP:
+                return createDescription(ParamAttrs.SYMMETRIC_FIRST_STEP);
+            case DISCRETIZE:
+                return createDescription(ParamAttrs.DISCRETIZE);
+            case NUM_CATEGORIES_TO_DISCRETIZE:
+                return createDescription(ParamAttrs.NUM_CATEGORIES_TO_DISCRETIZE);
             case SKIP_UNIQUE_VAR_NAME:
                 return "Skip check for unique variable names.";
             case SKIP_NONZERO_VARIANCE:

@@ -51,6 +51,39 @@ public class CausalCmdApplicationDataSimTest {
     }
 
     @Test
+    public void testLeeHastieDataSimulation() throws IOException {
+        String simulation = DataSimulationType.LEE_HASTIE.getCmd();
+        String delimiter = Delimiter.TAB.getName();
+        String dirOut = tmpDir.newFolder(simulation).toString();
+        String outputPrefix = simulation;
+        String numOfVariables = "10";
+        String numOfCases = "10";
+        String percentDiscrete = "50";
+        String minCategories = "3";
+        String maxCategories = "5";
+        String[] args = {
+            "--simulate-data", simulation,
+            "--var", numOfVariables,
+            "--case", numOfCases,
+            "--delimiter", delimiter,
+            "--percent-discrete", percentDiscrete,
+            "--min-categories", minCategories,
+            "--max-categories", maxCategories,
+            "--out", dirOut,
+            "--output-prefix", outputPrefix
+        };
+        CausalCmdApplication.main(args);
+
+        Path outFile = Paths.get(dirOut, outputPrefix + ".txt");
+        String errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+
+        outFile = Paths.get(dirOut, outputPrefix + ".graph");
+        errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+    }
+
+    @Test
     public void testBayNetRandFwdDataSimulation() throws IOException {
         String simulation = DataSimulationType.BAYES_NET_RAND_FWD.getCmd();
         String delimiter = Delimiter.TAB.getName();

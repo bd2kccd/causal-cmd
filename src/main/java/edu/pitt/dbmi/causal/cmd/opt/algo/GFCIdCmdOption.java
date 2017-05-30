@@ -21,6 +21,7 @@ package edu.pitt.dbmi.causal.cmd.opt.algo;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.opt.CmdLongOpts;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -31,33 +32,74 @@ import org.apache.commons.cli.Option;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class GFCIdCmdOption extends FGESdCmdOption {
+public class GFCIdCmdOption extends AbstractGFCICmdOption {
 
     protected double alpha;
+    protected double structurePrior;
+    protected double samplePrior;
+
+    protected boolean skipUniqueVarName;
+    protected boolean skipCategoryLimit;
 
     public GFCIdCmdOption() {
         super();
     }
 
     @Override
+    protected void parseRequiredOptions(CommandLine cmd) throws Exception {
+        // no required options
+    }
+
+    @Override
     public void parseOptionalOptions(CommandLine cmd) throws Exception {
         super.parseOptionalOptions(cmd);
+
         alpha = CmdLongOpts.getDouble(CmdLongOpts.ALPHA, ParamAttrs.ALPHA, cmd);
+        structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
+        samplePrior = CmdLongOpts.getDouble(CmdLongOpts.SAMPLE_PRIOR, ParamAttrs.SAMPLE_PRIOR, cmd);
+
+        skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
+        skipCategoryLimit = cmd.hasOption(CmdLongOpts.SKIP_CATEGORY_LIMIT);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.GFCID.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
+    }
+
+    @Override
+    protected List<Option> getRequiredOptions() {
+        return Collections.EMPTY_LIST;
     }
 
     @Override
     public List<Option> getOptionalOptions() {
         List<Option> options = super.getOptionalOptions();
         options.add(new Option(null, CmdLongOpts.ALPHA, true, CmdLongOpts.getDescription(CmdLongOpts.ALPHA)));
+        options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
+        options.add(new Option(null, CmdLongOpts.SAMPLE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.SAMPLE_PRIOR)));
+        options.add(new Option(null, CmdLongOpts.SKIP_UNIQUE_VAR_NAME, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_UNIQUE_VAR_NAME)));
+        options.add(new Option(null, CmdLongOpts.SKIP_CATEGORY_LIMIT, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_CATEGORY_LIMIT)));
 
         return options;
     }
 
     public double getAlpha() {
         return alpha;
+    }
+
+    public double getStructurePrior() {
+        return structurePrior;
+    }
+
+    public double getSamplePrior() {
+        return samplePrior;
+    }
+
+    public boolean isSkipUniqueVarName() {
+        return skipUniqueVarName;
+    }
+
+    public boolean isSkipCategoryLimit() {
+        return skipCategoryLimit;
     }
 
 }

@@ -80,22 +80,22 @@ public abstract class TetradCmdAlgoOpt {
     protected abstract List<Option> getOptionalOptions();
 
     public void parseCommonRequiredOptions(CommandLine cmd) throws Exception {
-        dataFile = Args.getPathFile(cmd.getOptionValue("data"), true);
+        dataFile = Args.getPathFile(cmd.getOptionValue(CmdLongOpts.DATA), true);
     }
 
     public void parseCommonOptionalOptions(CommandLine cmd) throws Exception {
-        knowledgeFile = Args.getPathFile(cmd.getOptionValue("knowledge", null), false);
-        excludedVariableFile = Args.getPathFile(cmd.getOptionValue("exclude-variables", null), false);
-        delimiter = Args.getDelimiterForName(cmd.getOptionValue("delimiter", dataFile.getFileName().toString().endsWith(".csv") ? "comma" : "tab"));
-        verbose = cmd.hasOption("verbose");
-        numOfThreads = Args.getInteger(cmd.getOptionValue("thread", Integer.toString(Runtime.getRuntime().availableProcessors())));
-        isSerializeJson = cmd.hasOption("json");
-        tetradGraphJson = cmd.hasOption("tetrad-graph-json");
+        knowledgeFile = Args.getPathFile(cmd.getOptionValue(CmdLongOpts.KNOWLEDGE, null), false);
+        excludedVariableFile = Args.getPathFile(cmd.getOptionValue(CmdLongOpts.EXCLUDE_VARS, null), false);
+        delimiter = Args.getDelimiterForName(cmd.getOptionValue(CmdLongOpts.DELIMITER, dataFile.getFileName().toString().endsWith(".csv") ? "comma" : "tab"));
+        verbose = cmd.hasOption(CmdLongOpts.VERBOSE);
+        numOfThreads = Args.getInteger(cmd.getOptionValue(CmdLongOpts.THREAD, Integer.toString(Runtime.getRuntime().availableProcessors())));
+        isSerializeJson = cmd.hasOption(CmdLongOpts.JSON);
+        tetradGraphJson = cmd.hasOption(CmdLongOpts.TETRAD_GRAPH_JSON);
 
-        dirOut = Args.getPathDir(cmd.getOptionValue("out", "."), false);
-        outputPrefix = cmd.getOptionValue("output-prefix", "");
-        validationOutput = !cmd.hasOption("no-validation-output");
-        skipLatest = cmd.hasOption("skip-latest");
+        dirOut = Args.getPathDir(cmd.getOptionValue(CmdLongOpts.OUT, "."), false);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, "");
+        validationOutput = !cmd.hasOption(CmdLongOpts.NO_VALIDATION_OUTPUT);
+        skipLatest = cmd.hasOption(CmdLongOpts.SKIP_LATEST);
     }
 
     private void setOptions() {
