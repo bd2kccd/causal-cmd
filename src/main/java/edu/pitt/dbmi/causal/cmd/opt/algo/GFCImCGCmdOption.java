@@ -21,26 +21,29 @@ package edu.pitt.dbmi.causal.cmd.opt.algo;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.opt.CmdLongOpts;
+import edu.pitt.dbmi.causal.cmd.util.Args;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 
 /**
+ * GFCI conditional Gaussian score for mixed variables.
  *
- * Mar 14, 2017 9:33:55 PM
+ * May 26, 2017 11:06:07 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class GFCIcCmdOption extends AbstractGFCICmdOption {
+public class GFCImCGCmdOption extends AbstractGFCICmdOption {
 
     protected double alpha;
     protected double penaltyDiscount;
+    protected double structurePrior;
+    protected int numCategoriesToDiscretize;
+    protected int numberOfDiscreteCategories;
+    protected boolean discretize;
 
-    protected boolean skipUniqueVarName;
-    protected boolean skipNonZeroVariance;
-
-    public GFCIcCmdOption() {
+    public GFCImCGCmdOption() {
         super();
     }
 
@@ -55,11 +58,12 @@ public class GFCIcCmdOption extends AbstractGFCICmdOption {
 
         alpha = CmdLongOpts.getDouble(CmdLongOpts.ALPHA, ParamAttrs.ALPHA, cmd);
         penaltyDiscount = CmdLongOpts.getDouble(CmdLongOpts.PENALTY_DISCOUNT, ParamAttrs.PENALTY_DISCOUNT, cmd);
+        structurePrior = CmdLongOpts.getDouble(CmdLongOpts.STRUCTURE_PRIOR, ParamAttrs.STRUCTURE_PRIOR, cmd);
+        numCategoriesToDiscretize = CmdLongOpts.getInt(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, ParamAttrs.NUM_CATEGORIES_TO_DISCRETIZE, cmd);
+        numberOfDiscreteCategories = Args.getInteger(cmd.getOptionValue(CmdLongOpts.NUM_DISCRETE_CATEGORIES, "3"));
+        discretize = cmd.hasOption(CmdLongOpts.DISCRETIZE);
 
-        skipUniqueVarName = cmd.hasOption(CmdLongOpts.SKIP_UNIQUE_VAR_NAME);
-        skipNonZeroVariance = cmd.hasOption(CmdLongOpts.SKIP_NONZERO_VARIANCE);
-
-        String prefix = String.format("%s_%s_%d", AlgorithmType.GFCIC.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
+        String prefix = String.format("%s_%s_%d", AlgorithmType.GFCIM_CG.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
         outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
@@ -73,8 +77,10 @@ public class GFCIcCmdOption extends AbstractGFCICmdOption {
         List<Option> options = super.getOptionalOptions();
         options.add(new Option(null, CmdLongOpts.ALPHA, true, CmdLongOpts.getDescription(CmdLongOpts.ALPHA)));
         options.add(new Option(null, CmdLongOpts.PENALTY_DISCOUNT, true, CmdLongOpts.getDescription(CmdLongOpts.PENALTY_DISCOUNT)));
-        options.add(new Option(null, CmdLongOpts.SKIP_UNIQUE_VAR_NAME, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_UNIQUE_VAR_NAME)));
-        options.add(new Option(null, CmdLongOpts.SKIP_NONZERO_VARIANCE, false, CmdLongOpts.getDescription(CmdLongOpts.SKIP_NONZERO_VARIANCE)));
+        options.add(new Option(null, CmdLongOpts.STRUCTURE_PRIOR, true, CmdLongOpts.createDescription(ParamAttrs.STRUCTURE_PRIOR)));
+        options.add(new Option(null, CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE, true, CmdLongOpts.getDescription(CmdLongOpts.NUM_CATEGORIES_TO_DISCRETIZE)));
+        options.add(new Option(null, CmdLongOpts.NUM_DISCRETE_CATEGORIES, true, "Number of category considered discrete variable."));
+        options.add(new Option(null, CmdLongOpts.DISCRETIZE, false, CmdLongOpts.getDescription(CmdLongOpts.DISCRETIZE)));
 
         return options;
     }
@@ -87,12 +93,20 @@ public class GFCIcCmdOption extends AbstractGFCICmdOption {
         return penaltyDiscount;
     }
 
-    public boolean isSkipUniqueVarName() {
-        return skipUniqueVarName;
+    public double getStructurePrior() {
+        return structurePrior;
     }
 
-    public boolean isSkipNonZeroVariance() {
-        return skipNonZeroVariance;
+    public int getNumCategoriesToDiscretize() {
+        return numCategoriesToDiscretize;
+    }
+
+    public int getNumberOfDiscreteCategories() {
+        return numberOfDiscreteCategories;
+    }
+
+    public boolean isDiscretize() {
+        return discretize;
     }
 
 }

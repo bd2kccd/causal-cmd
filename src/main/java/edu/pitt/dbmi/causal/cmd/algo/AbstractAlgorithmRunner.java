@@ -134,12 +134,11 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
             writer.println(heading);
             writer.println(createRunInfo(dataSet, excludedVariables, cmdAlgoOpt));
 
-            Algorithm algorithm = getAlgorithm(knowledge);
             Parameters parameters = getParameters(cmdAlgoOpt);
             if (verbose) {
                 parameters.set(ParamAttrs.PRINT_STREAM, writer);
             }
-
+            Algorithm algorithm = getAlgorithm(knowledge);
             Graph graph = search(dataSet, algorithm, parameters);
             writer.println();
             writer.println(GraphUtils.graphToText(graph).trim());

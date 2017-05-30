@@ -57,13 +57,17 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
         FGEScCmdOption cmdOption = (FGEScCmdOption) cmdAlgoOpt;
 
         double penaltyDiscount = cmdOption.getPenaltyDiscount();
+        double structurePrior = cmdOption.getStructurePrior();
         int maxDegree = cmdOption.getMaxDegree();
+        boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
         boolean verbose = cmdOption.isVerbose();
 
         Parameters parameters = new Parameters();
         parameters.set(ParamAttrs.PENALTY_DISCOUNT, penaltyDiscount);
+        parameters.set(ParamAttrs.STRUCTURE_PRIOR, structurePrior);
         parameters.set(ParamAttrs.MAX_DEGREE, maxDegree);
+        parameters.set(ParamAttrs.SYMMETRIC_FIRST_STEP, symmetricFirstStep);
         parameters.set(ParamAttrs.FAITHFULNESS_ASSUMED, faithfulnessAssumed);
         parameters.set(ParamAttrs.VERBOSE, verbose);
 
@@ -97,7 +101,7 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
                 validations.add(new UniqueVariableValidation(dataSet));
             }
         }
-        if (!cmdOption.isSkipZeroVariance()) {
+        if (!cmdOption.isSkipNonZeroVariance()) {
             if (validationOutput) {
                 validations.add(new NonZeroVarianceValidation(dataSet, numOfThreads, Paths.get(outputDir, filePrefix + "_zero_variance.txt")));
             } else {
@@ -129,11 +133,15 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
         FGEScCmdOption cmdOption = (FGEScCmdOption) cmdAlgoOpt;
 
         double penaltyDiscount = cmdOption.getPenaltyDiscount();
+        double structurePrior = cmdOption.getStructurePrior();
         int maxDegree = cmdOption.getMaxDegree();
+        boolean symmetricFirstStep = cmdOption.isSymmetricFirstStep();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
 
         fmt.format("penalty discount = %f%n", penaltyDiscount);
+        fmt.format("structure prior = %f%n", structurePrior);
         fmt.format("max degree = %d%n", maxDegree);
+        fmt.format("symmetric first step = %s%n", symmetricFirstStep);
         fmt.format("faithfulness assumed = %s%n", faithfulnessAssumed);
     }
 
@@ -142,10 +150,10 @@ public class FGEScAlgorithmRunner extends AbstractAlgorithmRunner {
         FGEScCmdOption cmdOption = (FGEScCmdOption) cmdAlgoOpt;
 
         boolean skipUniqueVarName = cmdOption.isSkipUniqueVarName();
-        boolean skipZeroVariance = cmdOption.isSkipZeroVariance();
+        boolean skipNonZeroVariance = cmdOption.isSkipNonZeroVariance();
 
         fmt.format("ensure variable names are unique = %s%n", !skipUniqueVarName);
-        fmt.format("ensure variables have non-zero variance = %s%n", !skipZeroVariance);
+        fmt.format("ensure variables have non-zero variance = %s%n", !skipNonZeroVariance);
     }
 
     @Override

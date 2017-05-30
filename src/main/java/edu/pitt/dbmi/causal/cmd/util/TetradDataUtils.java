@@ -25,14 +25,17 @@ import edu.cmu.tetrad.data.DataBox;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DiscreteVariable;
 import edu.cmu.tetrad.data.DoubleDataBox;
+import edu.cmu.tetrad.data.MixedDataBox;
 import edu.cmu.tetrad.data.VerticalIntDataBox;
 import edu.cmu.tetrad.graph.Node;
 import edu.cmu.tetrad.util.TetradMatrix;
 import edu.pitt.dbmi.data.ContinuousTabularDataset;
 import edu.pitt.dbmi.data.CovarianceDataset;
 import edu.pitt.dbmi.data.Dataset;
+import edu.pitt.dbmi.data.MixedTabularDataset;
 import edu.pitt.dbmi.data.VerticalDiscreteTabularDataset;
 import edu.pitt.dbmi.data.reader.tabular.DiscreteVarInfo;
+import edu.pitt.dbmi.data.reader.tabular.MixedVarInfo;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,11 +55,31 @@ public class TetradDataUtils {
             return toContinuousDataModel((ContinuousTabularDataset) dataset);
         } else if (dataset instanceof VerticalDiscreteTabularDataset) {
             return toVerticalDiscreteDataModel((VerticalDiscreteTabularDataset) dataset);
+        } else if (dataset instanceof MixedTabularDataset) {
+            return toMixedDataBox((MixedTabularDataset) dataset);
         } else if (dataset instanceof CovarianceDataset) {
             return toCovarianceMatrix((CovarianceDataset) dataset);
         } else {
             return null;
         }
+    }
+
+    public static DataModel toMixedDataBox(MixedTabularDataset mixedTabularDataset) {
+        int numOfRows = mixedTabularDataset.getNumOfRows();
+        MixedVarInfo[] mixedVarInfos = mixedTabularDataset.getMixedVarInfos();
+        double[][] continuousData = mixedTabularDataset.getContinuousData();
+        int[][] discreteData = mixedTabularDataset.getDiscreteData();
+
+        List<Node> nodes = new LinkedList<>();
+        for (MixedVarInfo mixedVarInfo : mixedVarInfos) {
+            if (mixedVarInfo.isContinuous()) {
+                nodes.add(new ContinuousVariable(mixedVarInfo.getName()));
+            } else {
+                nodes.add(new DiscreteVariable(mixedVarInfo.getName(), mixedVarInfo.getCategories()));
+            }
+        }
+
+        return new BoxDataSet(new MixedDataBox(nodes, numOfRows, continuousData, discreteData), nodes);
     }
 
     public static DataModel toCovarianceMatrix(CovarianceDataset dataset) {

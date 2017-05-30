@@ -21,10 +21,13 @@ package edu.pitt.dbmi.causal.cmd;
 import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
 import edu.pitt.dbmi.causal.cmd.algo.FGEScAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.FGESdAlgorithmRunner;
+import edu.pitt.dbmi.causal.cmd.algo.FGESmCGAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.GFCIcAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.algo.GFCIdAlgorithmRunner;
+import edu.pitt.dbmi.causal.cmd.algo.GFCImCGAlgorithmRunner;
 import edu.pitt.dbmi.causal.cmd.sim.BayNetRandFwdDataSimulationRunner;
 import edu.pitt.dbmi.causal.cmd.sim.DataSimulationType;
+import edu.pitt.dbmi.causal.cmd.sim.LeeHastieDataSimulationRunner;
 import edu.pitt.dbmi.causal.cmd.sim.SemRandFwdDataSimulationRunner;
 import edu.pitt.dbmi.causal.cmd.util.AppUtils;
 import edu.pitt.dbmi.causal.cmd.util.Args;
@@ -68,6 +71,9 @@ public class CausalCmdApplication {
             if (algoOpt ^ simDataOpt) {
                 if (algoOpt) {
                     String algorithm = Args.getOptionValue(args, ALGO_OPT);
+                    if (algorithm == null) {
+                        algorithm = "";
+                    }
                     AlgorithmType algorithmType = ALGO_TYPES.get(algorithm);
                     if (algorithmType == null) {
                         showHelp();
@@ -80,12 +86,17 @@ public class CausalCmdApplication {
                             case FGESD:
                                 new FGESdAlgorithmRunner().runAlgorithm(args);
                                 break;
+                            case FGESM_CG:
+                                new FGESmCGAlgorithmRunner().runAlgorithm(args);
+                                break;
                             case GFCIC:
                                 new GFCIcAlgorithmRunner().runAlgorithm(args);
                                 break;
                             case GFCID:
                                 new GFCIdAlgorithmRunner().runAlgorithm(args);
                                 break;
+                            case GFCIM_CG:
+                                new GFCImCGAlgorithmRunner().runAlgorithm(args);
                         }
                     }
                 } else {
@@ -101,6 +112,9 @@ public class CausalCmdApplication {
                                 break;
                             case SEM_RAND_FWD:
                                 new SemRandFwdDataSimulationRunner().runDataSimulation(args);
+                                break;
+                            case LEE_HASTIE:
+                                new LeeHastieDataSimulationRunner().runDataSimulation(args);
                                 break;
                         }
                     }
