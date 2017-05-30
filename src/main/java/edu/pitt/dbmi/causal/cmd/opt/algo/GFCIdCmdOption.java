@@ -62,7 +62,7 @@ public class GFCIdCmdOption extends AbstractGFCICmdOption {
         skipCategoryLimit = cmd.hasOption(CmdLongOpts.SKIP_CATEGORY_LIMIT);
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.GFCID.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
     @Override

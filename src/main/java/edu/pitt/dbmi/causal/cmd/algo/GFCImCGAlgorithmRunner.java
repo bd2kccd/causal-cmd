@@ -129,6 +129,7 @@ public class GFCImCGAlgorithmRunner extends AbstractAlgorithmRunner {
         boolean discretize = cmdOption.isDiscretize();
         int maxDegree = cmdOption.getMaxDegree();
         int maxPathLength = cmdOption.getMaxPathLength();
+        int numberOfDiscreteCategories = cmdOption.getNumberOfDiscreteCategories();
         boolean faithfulnessAssumed = cmdOption.isFaithfulnessAssumed();
         boolean completeRuleSetUsed = cmdOption.isCompleteRuleSetUsed();
 
@@ -141,6 +142,7 @@ public class GFCImCGAlgorithmRunner extends AbstractAlgorithmRunner {
         fmt.format("max path length = %d%n", maxPathLength);
         fmt.format("faithfulness assumed = %s%n", faithfulnessAssumed);
         fmt.format("complete rule set used = %s%n", completeRuleSetUsed);
+        fmt.format("number of discrete categories = %s%n", numberOfDiscreteCategories);
     }
 
     @Override

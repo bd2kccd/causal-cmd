@@ -120,7 +120,7 @@
         <dependency>
             <groupId>edu.pitt.dbmi</groupId>
             <artifactId>data-reader</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>0.2.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>edu.cmu</groupId>
             <artifactId>tetrad-lib</artifactId>
-            <version>6.3.0-SNAPSHOT</version>
+            <version>6.3.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

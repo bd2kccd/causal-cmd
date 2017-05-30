@@ -64,7 +64,7 @@ public class FGESmCGCmdOption extends AbstractFGESCmdOption {
         numberOfDiscreteCategories = Args.getInteger(cmd.getOptionValue(CmdLongOpts.NUM_DISCRETE_CATEGORIES, "3"));
 
         String prefix = String.format("%s_%s_%d", AlgorithmType.FGESM_CG.getCmd(), dataFile.getFileName(), System.currentTimeMillis());
-        outputPrefix = cmd.getOptionValue("output-prefix", prefix);
+        outputPrefix = cmd.getOptionValue(CmdLongOpts.OUTPUT_PREFIX, prefix);
     }
 
     @Override
