@@ -51,6 +51,33 @@ public class CausalCmdApplicationFGESTest {
     }
 
     @Test
+    public void testFGESmCG() throws IOException {
+        Path dataFile = Paths.get("test", "data", "mixed", "sim_data_20vars_100cases_5categories.txt");
+        String delimiter = Delimiter.TAB.getName();
+        String algorithm = AlgorithmType.FGESM_CG.getCmd();
+        String dirOut = tmpDir.newFolder(algorithm).toString();
+        String outputPrefix = algorithm;
+        String[] args = {
+            "--algorithm", algorithm,
+            "--data", dataFile.toString(),
+            "--delimiter", delimiter,
+            "--out", dirOut,
+            "--output-prefix", outputPrefix,
+            "--json",
+            "--skip-latest"
+        };
+        CausalCmdApplication.main(args);
+
+        Path outFile = Paths.get(dirOut, outputPrefix + ".txt");
+        String errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+
+        outFile = Paths.get(dirOut, outputPrefix + "_graph.json");
+        errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+    }
+
+    @Test
     public void testFGESd() throws IOException {
         Path dataFile = Paths.get("test", "data", "discrete", "sim_discrete_data_20vars_100cases.txt");
         String delimiter = Delimiter.TAB.getName();
