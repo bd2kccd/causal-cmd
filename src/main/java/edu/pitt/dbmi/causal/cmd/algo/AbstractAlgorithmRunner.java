@@ -29,6 +29,7 @@ import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.latest.LatestClient;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.ParamAttrs;
+import edu.pitt.dbmi.causal.cmd.opt.CmdLongOpts;
 import edu.pitt.dbmi.causal.cmd.opt.algo.TetradCmdAlgoOpt;
 import edu.pitt.dbmi.causal.cmd.util.AppUtils;
 import edu.pitt.dbmi.causal.cmd.util.Args;
@@ -55,6 +56,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -391,7 +393,9 @@ public abstract class AbstractAlgorithmRunner implements AlgorithmRunner {
     }
 
     protected void showHelp(String cmd, Options mainOptions) {
-        AppUtils.showHelp(cmd, mainOptions);
+        // show help but hide json option
+        Option jsonOpt = mainOptions.getOption(CmdLongOpts.JSON);
+        AppUtils.showHelp(cmd, mainOptions, jsonOpt);
     }
 
     protected boolean needsToShowHelp(String[] args) {

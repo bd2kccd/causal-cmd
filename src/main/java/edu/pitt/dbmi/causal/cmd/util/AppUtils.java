@@ -21,7 +21,10 @@ package edu.pitt.dbmi.causal.cmd.util;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 /**
@@ -96,6 +99,26 @@ public class AppUtils {
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
         formatter.printHelp(cmdLineSyntax, options, true);
+    }
+
+    public static void showHelp(String algorithmName, Options options, Option... hideOpts) {
+        if (hideOpts.length == 0) {
+            showHelp(algorithmName, options);
+        } else {
+            Set<String> optNames = new HashSet<>();
+            for (Option opt : hideOpts) {
+                optNames.add(opt.getLongOpt());
+            }
+
+            Options filteredOpts = new Options();
+            options.getOptions().forEach(opt -> {
+                if (!optNames.contains(opt.getLongOpt())) {
+                    filteredOpts.addOption(opt);
+                }
+            });
+
+            showHelp(algorithmName, filteredOpts);
+        }
     }
 
 }

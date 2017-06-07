@@ -51,6 +51,33 @@ public class CausalCmdApplicationGFCITest {
     }
 
     @Test
+    public void testGFCImCG() throws IOException {
+        Path dataFile = Paths.get("test", "data", "mixed", "sim_data_20vars_100cases_5categories.txt");
+        String delimiter = Delimiter.TAB.getName();
+        String algorithm = AlgorithmType.GFCIM_CG.getCmd();
+        String dirOut = tmpDir.newFolder(algorithm).toString();
+        String outputPrefix = algorithm;
+        String[] args = {
+            "--algorithm", algorithm,
+            "--data", dataFile.toString(),
+            "--delimiter", delimiter,
+            "--out", dirOut,
+            "--output-prefix", outputPrefix,
+            "--json",
+            "--skip-latest"
+        };
+        CausalCmdApplication.main(args);
+
+        Path outFile = Paths.get(dirOut, outputPrefix + ".txt");
+        String errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+
+        outFile = Paths.get(dirOut, outputPrefix + "_graph.json");
+        errMsg = outFile.getFileName().toString() + " does not exist.";
+        Assert.assertTrue(errMsg, Files.exists(outFile, LinkOption.NOFOLLOW_LINKS));
+    }
+
+    @Test
     public void testGFCId() throws IOException {
         Path dataFile = Paths.get("test", "data", "cmu", "avatarwithdependencies.esv");
         Path knowledgeFile = Paths.get("test", "data", "cmu", "avatarknowledge.txt");
