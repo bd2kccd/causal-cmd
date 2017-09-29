@@ -42,6 +42,9 @@ public class DataTypes {
         for (DataType type : types) {
             dataTypes.put(type.toString().toLowerCase(), type);
         }
+
+        // remove graph type
+        dataTypes.remove(DataType.Graph.toString().toLowerCase());
     }
 
     public static DataTypes getInstance() {

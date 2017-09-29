@@ -22,6 +22,7 @@ import edu.cmu.tetrad.annotation.AnnotatedClass;
 import edu.cmu.tetrad.annotation.Score;
 import edu.cmu.tetrad.annotation.ScoreAnnotations;
 import edu.cmu.tetrad.data.DataType;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -46,6 +47,7 @@ public class TetradScores {
 
     private TetradScores() {
         this.annotatedClasses = ScoreAnnotations.getInstance().getAnnotatedClasses().stream()
+                .filter(e -> !Arrays.asList(e.getAnnotation().dataType()).contains(DataType.Graph))
                 .collect(() -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
                         (m, e) -> m.put(e.getAnnotation().command(), e),
                         (m, u) -> m.putAll(u));
