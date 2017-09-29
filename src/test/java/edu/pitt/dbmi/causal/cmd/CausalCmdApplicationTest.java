@@ -18,8 +18,10 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import org.junit.Ignore;
+import java.io.IOException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  *
@@ -29,18 +31,21 @@ import org.junit.Test;
  */
 public class CausalCmdApplicationTest {
 
+    @Rule
+    public TemporaryFolder tmpFolder = new TemporaryFolder();
+
     public CausalCmdApplicationTest() {
     }
 
     /**
      * Test of main method, of class CausalCmdApplication.
+     *
+     * @throws IOException
      */
-    @Ignore
     @Test
-    public void testMain() {
-        String knowledge = TestFiles.getInstance().getKnowledge().toString();
+    public void testMain() throws IOException {
         String contData = TestFiles.getInstance().getContinuousData().toString();
-        String excludeVar = TestFiles.getInstance().getExcludeVars().toString();
+        String dirOut = tmpFolder.newFolder("gfci").toString();
         String[] args = {
             "--dataset", contData,
             "--delimiter", "tab",
@@ -48,7 +53,9 @@ public class CausalCmdApplicationTest {
             "--algorithm", "gfci",
             "--test", "sem-bic",
             "--score", "fisher-z",
-            "--verbose"
+            "--verbose",
+            "--maxDegree", "3",
+            "--out", dirOut
         };
         CausalCmdApplication.main(args);
     }
