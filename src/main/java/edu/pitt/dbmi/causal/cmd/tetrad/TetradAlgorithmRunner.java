@@ -29,8 +29,10 @@ import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
 import edu.pitt.dbmi.causal.cmd.ValidationException;
+import edu.pitt.dbmi.causal.cmd.util.DateTime;
 import edu.pitt.dbmi.causal.cmd.util.TetradUtils;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 
 /**
@@ -46,28 +48,24 @@ public class TetradAlgorithmRunner {
     public TetradAlgorithmRunner() {
     }
 
-    public void runAlgorithm(CmdArgs cmdArgs) throws IOException, ValidationException, IllegalAccessException, InstantiationException {
+    public void runAlgorithm(CmdArgs cmdArgs, PrintStream out) throws IOException, ValidationException, IllegalAccessException, InstantiationException {
         DataType dataType = cmdArgs.getDataType();
         switch (dataType) {
             case Covariance:
-                runOnCovariance(cmdArgs);
+                runOnCovariance(cmdArgs, out);
                 break;
-            case Graph:
-                runOnGraph(cmdArgs);
-                break;
-            default:
-                runOnTabularData(cmdArgs);
+            case Continuous:
+            case Discrete:
+            case Mixed:
+                runOnTabularData(cmdArgs, out);
                 break;
         }
     }
 
-    private void runOnCovariance(CmdArgs cmdArgs) {
+    private void runOnCovariance(CmdArgs cmdArgs, PrintStream out) {
     }
 
-    private void runOnGraph(CmdArgs cmdArgs) {
-    }
-
-    private void runOnTabularData(CmdArgs cmdArgs) throws IOException, ValidationException, IllegalAccessException, InstantiationException {
+    private void runOnTabularData(CmdArgs cmdArgs, PrintStream out) throws IOException, ValidationException, IllegalAccessException, InstantiationException {
         List<DataModel> dataModels = TetradUtils.getDataModels(cmdArgs);
         IKnowledge knowledge = TetradUtils.readInKnowledge(cmdArgs);
 
@@ -77,11 +75,17 @@ public class TetradAlgorithmRunner {
         }
 
         Parameters parameters = TetradUtils.getParameters(cmdArgs);
+        parameters.set("printStream", out);
+
+        out.printf("%nStart search: %s%n", DateTime.printNow());
+        out.println("--------------------------------------------------------------------------------");
         if (TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.getAlgorithmClass())) {
             graph = ((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters);
         } else {
             graph = algorithm.search(dataModels.get(0), parameters);
         }
+        out.println("--------------------------------------------------------------------------------");
+        out.printf("End search: %s%n", DateTime.printNow());
     }
 
     public Graph getGraph() {

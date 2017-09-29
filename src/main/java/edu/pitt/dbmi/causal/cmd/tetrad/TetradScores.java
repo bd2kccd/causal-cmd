@@ -102,4 +102,16 @@ public class TetradScores {
         return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }
 
+    public String getName(Class clazz) {
+        return (clazz != null && clazz.isAnnotationPresent(Score.class))
+                ? ((Score) clazz.getAnnotation(Score.class)).name()
+                : "";
+    }
+
+    public String getDescription(Class clazz) {
+        return (clazz != null && clazz.isAnnotationPresent(Score.class))
+                ? ((Score) clazz.getAnnotation(Score.class)).description()
+                : "";
+    }
+
 }

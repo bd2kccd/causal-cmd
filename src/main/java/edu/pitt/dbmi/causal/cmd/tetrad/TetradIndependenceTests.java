@@ -102,4 +102,16 @@ public class TetradIndependenceTests {
         return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }
 
+    public String getName(Class clazz) {
+        return (clazz != null && clazz.isAnnotationPresent(TestOfIndependence.class))
+                ? ((TestOfIndependence) clazz.getAnnotation(TestOfIndependence.class)).name()
+                : "";
+    }
+
+    public String getDescription(Class clazz) {
+        return (clazz != null && clazz.isAnnotationPresent(TestOfIndependence.class))
+                ? ((TestOfIndependence) clazz.getAnnotation(TestOfIndependence.class)).description()
+                : "";
+    }
+
 }

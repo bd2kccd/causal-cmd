@@ -81,4 +81,16 @@ public class TetradAlgorithms {
         return TetradAlgorithmAnnotations.getInstance().acceptKnowledge(clazz);
     }
 
+    public String getName(Class clazz) {
+        return (clazz != null && clazz.isAnnotationPresent(Algorithm.class))
+                ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).name()
+                : "";
+    }
+
+    public String getDescription(Class clazz) {
+        return (clazz != null && clazz.isAnnotationPresent(Algorithm.class))
+                ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).description()
+                : "";
+    }
+
 }
