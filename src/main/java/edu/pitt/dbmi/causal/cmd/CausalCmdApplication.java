@@ -74,10 +74,12 @@ public class CausalCmdApplication {
 
             TetradAlgorithmRunner algorithmRunner = new TetradAlgorithmRunner();
             try (PrintStream out = new PrintStream(Files.newOutputStream(getOutputFile(cmdArgs)), true)) {
+                algorithmRunner.setOut(out);
                 writeInputInfo(cmdArgs, out);
                 try {
-                    algorithmRunner.runAlgorithm(cmdArgs, out);
-                } catch (IOException | IllegalAccessException | InstantiationException | ValidationException exception) {
+                    algorithmRunner.runAlgorithm(cmdArgs);
+                } catch (IOException | IllegalAccessException | InstantiationException exception) {
+                    exception.printStackTrace(out);
                     LOGGER.error("Algorithm run failed.", exception);
                     System.exit(-1);
                 }
@@ -139,6 +141,7 @@ public class CausalCmdApplication {
             out.println("--------------------------------------------------------------------------------");
             cmdArgs.parameters.forEach((k, v) -> out.printf("%s: %s%n", k, (v == null) ? "true" : v));
         }
+        out.println();
     }
 
 }

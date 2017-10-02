@@ -23,14 +23,11 @@ import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.algcomparison.algorithm.MultiDataSetAlgorithm;
 import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
 import edu.cmu.tetrad.data.DataModel;
-import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.data.IKnowledge;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
-import edu.pitt.dbmi.causal.cmd.ValidationException;
 import edu.pitt.dbmi.causal.cmd.util.DateTime;
-import edu.pitt.dbmi.causal.cmd.util.TetradUtils;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
@@ -43,53 +40,55 @@ import java.util.List;
  */
 public class TetradAlgorithmRunner {
 
+    private PrintStream out;
     private Graph graph;
 
     public TetradAlgorithmRunner() {
     }
 
-    public void runAlgorithm(CmdArgs cmdArgs, PrintStream out) throws IOException, ValidationException, IllegalAccessException, InstantiationException {
-        DataType dataType = cmdArgs.getDataType();
-        switch (dataType) {
-            case Covariance:
-                runOnCovariance(cmdArgs, out);
-                break;
-            case Continuous:
-            case Discrete:
-            case Mixed:
-                runOnTabularData(cmdArgs, out);
-                break;
+    public void runAlgorithm(CmdArgs cmdArgs) throws IOException, IllegalAccessException, InstantiationException {
+        if (out == null) {
+            out = System.out;
         }
-    }
 
-    private void runOnCovariance(CmdArgs cmdArgs, PrintStream out) {
-    }
-
-    private void runOnTabularData(CmdArgs cmdArgs, PrintStream out) throws IOException, ValidationException, IllegalAccessException, InstantiationException {
-        List<DataModel> dataModels = TetradUtils.getDataModels(cmdArgs);
-        IKnowledge knowledge = TetradUtils.readInKnowledge(cmdArgs);
-
-        Algorithm algorithm = AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass());
-        if (knowledge != null && TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass())) {
-            ((HasKnowledge) algorithm).setKnowledge(knowledge);
-        }
+        List<DataModel> dataModels = TetradUtils.getDataModel(cmdArgs, out);
 
         Parameters parameters = TetradUtils.getParameters(cmdArgs);
         parameters.set("printStream", out);
 
+        boolean verbose = parameters.getBoolean("verbose", false);
+
+        Algorithm algorithm = AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass());
+        if (TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass())) {
+            IKnowledge knowledge = TetradUtils.readInKnowledge(cmdArgs, out);
+            if (knowledge != null) {
+                ((HasKnowledge) algorithm).setKnowledge(knowledge);
+            }
+        }
+
         out.printf("%nStart search: %s%n", DateTime.printNow());
-        out.println("--------------------------------------------------------------------------------");
+        if (verbose) {
+            out.println("--------------------------------------------------------------------------------");
+        }
+
         if (TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.getAlgorithmClass())) {
             graph = ((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters);
         } else {
             graph = algorithm.search(dataModels.get(0), parameters);
         }
-        out.println("--------------------------------------------------------------------------------");
+
+        if (verbose) {
+            out.println("--------------------------------------------------------------------------------");
+        }
         out.printf("End search: %s%n", DateTime.printNow());
     }
 
     public Graph getGraph() {
         return graph;
+    }
+
+    public void setOut(PrintStream out) {
+        this.out = out;
     }
 
 }
