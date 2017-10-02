@@ -19,12 +19,11 @@
 package edu.pitt.dbmi.causal.cmd.util;
 
 import edu.cmu.tetrad.graph.Graph;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.util.Scanner;
 
 /**
  *
@@ -38,8 +37,11 @@ public class GraphIO {
     }
 
     public static void write(Graph graph, Path path) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.defaultCharset(), StandardOpenOption.CREATE)) {
-            writer.write(graph.toString());
+        Scanner scanner = new Scanner(graph.toString());
+        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+            while (scanner.hasNextLine()) {
+                out.println(scanner.nextLine().trim());
+            }
         }
     }
 
