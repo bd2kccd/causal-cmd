@@ -30,6 +30,7 @@ import edu.pitt.dbmi.causal.cmd.util.DataTypes;
 import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import edu.pitt.dbmi.causal.cmd.util.FileUtils;
 import edu.pitt.dbmi.causal.cmd.util.OptionFactory;
+import edu.pitt.dbmi.causal.cmd.util.Validators;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -301,50 +302,15 @@ public class CmdParser {
         for (String param : params) {
             if (argsParseMap.containsKey(param)) {
                 ParamDescription paramDesc = paramDescs.get(param);
-                validateNumber(paramDesc.getDefaultValue(), argsParseMap.get(param), options);
+                try {
+                    Validators.validateNumber(paramDesc.getDefaultValue(), argsParseMap.get(param));
+                } catch (NumberFormatException exception) {
+                    throw new CmdParserException(options, exception);
+                }
             }
         }
 
         return options;
-    }
-
-    private static void validateNumber(Object obj, String value, Options options) throws CmdParserException {
-        if (obj instanceof Byte) {
-            try {
-                Byte.valueOf(value);
-            } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (byte) '%s'.", value);
-                throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-            }
-        } else if (obj instanceof Integer) {
-            try {
-                Integer.valueOf(value);
-            } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (int) '%s'.", value);
-                throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-            }
-        } else if (obj instanceof Long) {
-            try {
-                Long.valueOf(value);
-            } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (long) '%s'.", value);
-                throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-            }
-        } else if (obj instanceof Float) {
-            try {
-                Float.valueOf(value);
-            } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (float) '%s'.", value);
-                throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-            }
-        } else if (obj instanceof Double) {
-            try {
-                Double.valueOf(value);
-            } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (double) '%s'.", value);
-                throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-            }
-        }
     }
 
 }
