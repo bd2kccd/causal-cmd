@@ -78,8 +78,8 @@ public class CausalCmdApplication {
                 writeInputInfo(cmdArgs, out);
                 try {
                     algorithmRunner.runAlgorithm(cmdArgs);
-                } catch (IOException | IllegalAccessException | InstantiationException exception) {
-                    exception.printStackTrace(out);
+                } catch (AlgorithmRunException exception) {
+                    out.println(exception.getMessage());
                     LOGGER.error("Algorithm run failed.", exception);
                     System.exit(-1);
                 }

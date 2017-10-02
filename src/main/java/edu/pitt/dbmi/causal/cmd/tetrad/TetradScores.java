@@ -85,6 +85,15 @@ public class TetradScores {
         return annotatedClasses.containsKey(command);
     }
 
+    public boolean hasCommand(String command, DataType dataType) {
+        if (!groupByDataType.containsKey(dataType)) {
+            return false;
+        }
+
+        return groupByDataType.get(dataType).stream()
+                .anyMatch(e -> e.equalsIgnoreCase(command));
+    }
+
     public List<String> getCommands() {
         List<String> list = annotatedClasses.keySet().stream()
                 .collect(Collectors.toList());

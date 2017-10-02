@@ -79,11 +79,7 @@ public class CmdOptions {
 
         // dataset options
         opts.addOption(options.get(CmdParams.QUOTE_CHAR));
-        opts.addOption(options.get(CmdParams.MISSING_MARKER));
         opts.addOption(options.get(CmdParams.COMMENT_MARKER));
-
-        // additional data file options
-        opts.addOption(options.get(CmdParams.EXCLUDE_VARIABLE));
 
         // output options
         opts.addOption(options.get(CmdParams.FILE_PREFIX));

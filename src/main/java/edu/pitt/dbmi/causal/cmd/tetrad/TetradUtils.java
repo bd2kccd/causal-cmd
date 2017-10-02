@@ -26,6 +26,7 @@ import edu.cmu.tetrad.util.ParamDescription;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
+import edu.pitt.dbmi.causal.cmd.ValidationException;
 import edu.pitt.dbmi.causal.cmd.util.FileIO;
 import edu.pitt.dbmi.data.Dataset;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceDataReader;
@@ -34,15 +35,25 @@ import edu.pitt.dbmi.data.reader.tabular.ContinuousTabularDataFileReader;
 import edu.pitt.dbmi.data.reader.tabular.MixedTabularDataFileReader;
 import edu.pitt.dbmi.data.reader.tabular.TabularDataReader;
 import edu.pitt.dbmi.data.reader.tabular.VerticalDiscreteTabularDataReader;
+import edu.pitt.dbmi.data.validation.ValidationCode;
+import edu.pitt.dbmi.data.validation.ValidationResult;
+import edu.pitt.dbmi.data.validation.covariance.CovarianceDataFileValidation;
+import edu.pitt.dbmi.data.validation.tabular.ContinuousTabularDataFileValidation;
+import edu.pitt.dbmi.data.validation.tabular.DataFileValidation;
+import edu.pitt.dbmi.data.validation.tabular.MixedTabularDataFileValidation;
+import edu.pitt.dbmi.data.validation.tabular.TabularDataValidation;
+import edu.pitt.dbmi.data.validation.tabular.VerticalDiscreteTabularDataFileValidation;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,18 +70,71 @@ public class TetradUtils {
     private TetradUtils() {
     }
 
-    private static void logStart(Path file, PrintStream out) {
+    private static void logStartValidation(Path file, PrintStream out) {
+        String fileName = file.getFileName().toString();
+        String msg = "Start validating file: " + fileName;
+        out.println(msg);
+        LOGGER.info(msg);
+    }
+
+    private static void logFinishValidation(Path file, PrintStream out) {
+        String fileName = file.getFileName().toString();
+        String msg = "Finish validating file: " + fileName;
+        out.println(msg);
+        LOGGER.info(msg);
+    }
+
+    private static void logStartReading(Path file, PrintStream out) {
         String fileName = file.getFileName().toString();
         String msg = "Start reading in file: " + fileName;
         out.println(msg);
         LOGGER.info(msg);
     }
 
-    private static void logFinish(Path file, PrintStream out) {
+    private static void logFinishReading(Path file, PrintStream out) {
         String fileName = file.getFileName().toString();
         String msg = "Finish reading in file: " + fileName;
         out.println(msg);
         LOGGER.info(msg);
+    }
+
+    private static void logValidationResults(Map<ValidationCode, List<ValidationResult>> map, PrintStream out) {
+        if (map.containsKey(ValidationCode.INFO)) {
+            map.get(ValidationCode.INFO).stream()
+                    .map(e -> e.getMessage())
+                    .forEach(e -> {
+                        LOGGER.info(e);
+                        out.println(e);
+                    });
+        }
+        if (map.containsKey(ValidationCode.WARNING)) {
+            map.get(ValidationCode.WARNING).stream()
+                    .map(e -> e.getMessage())
+                    .forEach(e -> {
+                        LOGGER.info(e);
+                        out.println(e);
+                    });
+        }
+        if (map.containsKey(ValidationCode.ERROR)) {
+            map.get(ValidationCode.ERROR).stream()
+                    .map(e -> e.getMessage())
+                    .forEach(e -> {
+                        LOGGER.info(e);
+                        out.println(e);
+                    });
+        }
+    }
+
+    public static void validateDataModels(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
+        DataType dataType = cmdArgs.getDataType();
+        switch (dataType) {
+            case Covariance:
+                validateCovariance(cmdArgs, out);
+            case Continuous:
+            case Discrete:
+            case Mixed:
+                validateTabularData(cmdArgs, out);
+        }
     }
 
     public static IKnowledge readInKnowledge(CmdArgs cmdArgs, PrintStream out) throws IOException {
@@ -80,9 +144,9 @@ public class TetradUtils {
         if (file == null) {
             knowledge = null;
         } else {
-            logStart(file, out);
+            logStartReading(file, out);
             knowledge = new edu.cmu.tetrad.data.DataReader().parseKnowledge(file.toFile());
-            logFinish(file, out);
+            logFinishReading(file, out);
         }
 
         return knowledge;
@@ -95,46 +159,104 @@ public class TetradUtils {
         if (file == null) {
             excludeVars = new HashSet<>();
         } else {
-            logStart(file, out);
+            logStartReading(file, out);
             excludeVars = FileIO.extractUniqueLine(cmdArgs.getExcludeVariableFile());
-            logFinish(file, out);
+            logFinishReading(file, out);
         }
 
         return excludeVars;
     }
 
-    public static List<DataModel> getDataModel(CmdArgs cmdArgs, PrintStream out) throws IOException {
-        List<DataModel> dataModels = new LinkedList<>();
-
+    public static List<DataModel> getDataModels(CmdArgs cmdArgs, PrintStream out) throws IOException {
         DataType dataType = cmdArgs.getDataType();
         switch (dataType) {
             case Covariance:
-                getCovariance(cmdArgs, dataModels, out);
-                break;
+                return getCovariance(cmdArgs, out);
             case Continuous:
             case Discrete:
             case Mixed:
-                getTabularData(cmdArgs, dataModels, out);
-                break;
+                return getTabularData(cmdArgs, out);
+            default:
+                return Collections.EMPTY_LIST;
+        }
+    }
+
+    private static void validateCovariance(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
+        List<Path> dataFiles = cmdArgs.getDatasetFiles();
+        for (Path dataFile : dataFiles) {
+            DataFileValidation validation = new CovarianceDataFileValidation(dataFile.toFile(), cmdArgs.getDelimiter());
+            validation.setCommentMarker(cmdArgs.getCommentMarker());
+
+            logStartValidation(dataFile, out);
+            validation.validate();
+            logFinishValidation(dataFile, out);
+
+            List<ValidationResult> results = validation.getValidationResults();
+            Map<ValidationCode, List<ValidationResult>> map = results.stream()
+                    .collect(Collectors.groupingBy(ValidationResult::getCode));
+
+            logValidationResults(map, out);
+
+            if (map.containsKey(ValidationCode.ERROR)) {
+                throw new ValidationException();
+            }
+        }
+    }
+
+    private static void validateTabularData(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
+        Set<String> excludeVars = new HashSet<>();
+        try {
+            excludeVars.addAll(getExcludeVariables(cmdArgs, out));
+        } catch (IOException exception) {
+            throw new ValidationException(exception);
+        }
+
+        List<Path> dataFiles = cmdArgs.getDatasetFiles();
+        for (Path dataFile : dataFiles) {
+            TabularDataValidation dataReader = getDataValidationReader(dataFile.toFile(), cmdArgs);
+            if (dataReader != null) {
+                dataReader.setCommentMarker(cmdArgs.getCommentMarker());
+                dataReader.setMissingValueMarker(cmdArgs.getMissingValueMarker());
+                dataReader.setQuoteCharacter(cmdArgs.getQuoteChar());
+
+                logStartValidation(dataFile, out);
+                dataReader.validate(excludeVars);
+                logFinishValidation(dataFile, out);
+
+                List<ValidationResult> results = dataReader.getValidationResults();
+                Map<ValidationCode, List<ValidationResult>> map = results.stream()
+                        .collect(Collectors.groupingBy(ValidationResult::getCode));
+
+                logValidationResults(map, out);
+
+                if (map.containsKey(ValidationCode.ERROR)) {
+                    throw new ValidationException();
+                }
+            }
+        }
+    }
+
+    private static List<DataModel> getCovariance(CmdArgs cmdArgs, PrintStream out) throws IOException {
+        List<DataModel> dataModels = new LinkedList<>();
+
+        List<Path> dataFiles = cmdArgs.getDatasetFiles();
+        for (Path dataFile : dataFiles) {
+            CovarianceDataReader dataReader = new LowerCovarianceDataReader(dataFile.toFile(), cmdArgs.getDelimiter());
+            dataReader.setCommentMarker(cmdArgs.getCommentMarker());
+
+            logStartReading(dataFile, out);
+            Dataset dataset = dataReader.readInData();
+            logFinishReading(dataFile, out);
+
+            dataModels.add(DataConvertUtils.toDataModel(dataset));
         }
 
         return dataModels;
     }
 
-    private static void getCovariance(CmdArgs cmdArgs, List<DataModel> dataModels, PrintStream out) throws IOException {
-        List<Path> dataFiles = cmdArgs.getDatasetFiles();
-        for (Path dataFile : dataFiles) {
-            CovarianceDataReader dataReader = new LowerCovarianceDataReader(dataFile.toFile(), cmdArgs.getDelimiter());
+    private static List<DataModel> getTabularData(CmdArgs cmdArgs, PrintStream out) throws IOException {
+        List<DataModel> dataModels = new LinkedList<>();
 
-            logStart(dataFile, out);
-            Dataset dataset = dataReader.readInData();
-            logFinish(dataFile, out);
-
-            dataModels.add(DataConvertUtils.toDataModel(dataset));
-        }
-    }
-
-    private static void getTabularData(CmdArgs cmdArgs, List<DataModel> dataModels, PrintStream out) throws IOException {
         Set<String> excludeVars = getExcludeVariables(cmdArgs, out);
 
         List<Path> dataFiles = cmdArgs.getDatasetFiles();
@@ -145,12 +267,27 @@ public class TetradUtils {
                 dataReader.setMissingValueMarker(cmdArgs.getMissingValueMarker());
                 dataReader.setQuoteCharacter(cmdArgs.getQuoteChar());
 
-                logStart(dataFile, out);
+                logStartReading(dataFile, out);
                 Dataset dataset = dataReader.readInData(excludeVars);
-                logFinish(dataFile, out);
+                logFinishReading(dataFile, out);
 
                 dataModels.add(DataConvertUtils.toDataModel(dataset));
             }
+        }
+
+        return dataModels;
+    }
+
+    private static TabularDataValidation getDataValidationReader(File dataFile, CmdArgs cmdArgs) {
+        switch (cmdArgs.getDataType()) {
+            case Continuous:
+                return new ContinuousTabularDataFileValidation(dataFile, cmdArgs.getDelimiter());
+            case Discrete:
+                return new VerticalDiscreteTabularDataFileValidation(dataFile, cmdArgs.getDelimiter());
+            case Mixed:
+                return new MixedTabularDataFileValidation(cmdArgs.getNumCategories(), dataFile, cmdArgs.getDelimiter());
+            default:
+                return null;
         }
     }
 

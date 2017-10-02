@@ -158,7 +158,7 @@ public class CmdParser {
             throw new CmdParserException(options, exception);
         }
 
-        // ensure dataset is valid
+        // ensure dataset exists
         String dataset = argsParseMap.get(CmdParams.DATASET);
         String[] files = dataset.split(",");
         for (String file : files) {
@@ -169,13 +169,53 @@ public class CmdParser {
             }
         }
 
-        // ensure exclude variable file, if any, is valid
-        String excludeVar = argsParseMap.get(CmdParams.EXCLUDE_VARIABLE);
-        if (excludeVar != null) {
+        String dataTypeName = argsParseMap.get(CmdParams.DATA_TYPE);
+        if (!DataTypes.getInstance().exists(dataTypeName)) {
+            String errMsg = String.format("No such data type '%s'.", dataTypeName);
+            throw new CmdParserException(options, new IllegalArgumentException(errMsg));
+        }
+
+        DataType dataType = DataTypes.getInstance().get(dataTypeName);
+        if (dataType == DataType.Covariance) {
+            if (Args.hasLongParam(args, CmdParams.MISSING_MARKER)) {
+                rejectParamMsg(CmdParams.DATA_TYPE, DataType.Covariance.name().toLowerCase(), CmdParams.MISSING_MARKER, options);
+            }
+            if (Args.hasLongParam(args, CmdParams.EXCLUDE_VARIABLE)) {
+                rejectParamMsg(CmdParams.DATA_TYPE, DataType.Covariance.name().toLowerCase(), CmdParams.EXCLUDE_VARIABLE, options);
+            }
+        } else {
+            options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXCLUDE_VARIABLE));
+            options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MISSING_MARKER));
             try {
-                FileUtils.exists(Paths.get(excludeVar));
-            } catch (FileNotFoundException exception) {
+                Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+            } catch (ParseException exception) {
                 throw new CmdParserException(options, exception);
+            }
+
+            // ensure exclude variable file, if any, is valid
+            String excludeVar = argsParseMap.get(CmdParams.EXCLUDE_VARIABLE);
+            if (excludeVar != null) {
+                try {
+                    FileUtils.exists(Paths.get(excludeVar));
+                } catch (FileNotFoundException exception) {
+                    throw new CmdParserException(options, exception);
+                }
+            }
+
+            if (dataType == DataType.Mixed) {
+                options.addOption(OptionFactory.createRequiredNumCategoryOpt());
+                try {
+                    Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+                } catch (ParseException exception) {
+                    throw new CmdParserException(options, exception);
+                }
+                String numOfCategory = argsParseMap.get(CmdParams.NUM_CATEGORIES);
+                try {
+                    Integer.parseInt(numOfCategory);
+                } catch (NumberFormatException exception) {
+                    String errMsg = String.format("'%s' is not an integer.", numOfCategory);
+                    throw new CmdParserException(options, new NumberFormatException(errMsg));
+                }
             }
         }
 
@@ -183,36 +223,6 @@ public class CmdParser {
         if (!Delimiters.getInstance().exists(delimiterName)) {
             String errMsg = String.format("No such delimiter '%s'.", delimiterName);
             throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-        }
-
-        String dataTypeName = argsParseMap.get(CmdParams.DATA_TYPE);
-        if (!DataTypes.getInstance().exists(dataTypeName)) {
-            String errMsg = String.format("No such data type '%s'.", dataTypeName);
-            throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-        }
-
-        String quoteChar = argsParseMap.get(CmdParams.QUOTE_CHAR);
-        System.out.println(quoteChar);
-        if (quoteChar != null && quoteChar.length() > 1) {
-            String errMsg = "Quote character requires a single character.";
-            throw new CmdParserException(options, new IllegalArgumentException(errMsg));
-        }
-
-        DataType dataType = DataTypes.getInstance().get(dataTypeName);
-        if (dataType == DataType.Mixed) {
-            options.addOption(OptionFactory.createRequiredNumCategoryOpt());
-            try {
-                Args.parse(Args.extractOptions(args, options), options, argsParseMap);
-            } catch (ParseException exception) {
-                throw new CmdParserException(options, exception);
-            }
-            String numOfCategory = argsParseMap.get(CmdParams.NUM_CATEGORIES);
-            try {
-                Integer.parseInt(numOfCategory);
-            } catch (NumberFormatException exception) {
-                String errMsg = String.format("'%s' is not an integer.", numOfCategory);
-                throw new CmdParserException(options, new NumberFormatException(errMsg));
-            }
         }
 
         TetradAlgorithms algorithms = TetradAlgorithms.getInstance();
@@ -223,8 +233,6 @@ public class CmdParser {
         }
 
         Class algoClass = algorithms.getAlgorithmClass(algoCmd);
-        Class indTestClass = null;
-        Class scoreClass = null;
         if (files.length > 1 && !algorithms.acceptMultipleDataset(algoClass)) {
             String errMsg = String.format("Algorithm '%s' does not take multiple dataset.", algoCmd);
             throw new CmdParserException(options, new IllegalArgumentException(errMsg));
@@ -247,6 +255,8 @@ public class CmdParser {
                 }
             }
         }
+
+        Class indTestClass = null;
         if (algorithms.requireIndependenceTest(algoClass)) {
             options.addOption(OptionFactory.createRequiredTestOpt(dataType));
             try {
@@ -257,13 +267,15 @@ public class CmdParser {
 
             TetradIndependenceTests indTests = TetradIndependenceTests.getInstance();
             String testCmd = argsParseMap.get(CmdParams.TEST);
-            if (indTests.hasCommand(testCmd)) {
+            if (indTests.hasCommand(testCmd, dataType)) {
                 indTestClass = indTests.getTestOfIndependenceClass(testCmd);
             } else {
-                String errMsg = String.format("No such independence test '%s'.", testCmd);
+                String errMsg = String.format("No such independence test '%s' for data-type '%s'.", testCmd, argsParseMap.get(CmdParams.DATA_TYPE));
                 throw new CmdParserException(options, new IllegalArgumentException(errMsg));
             }
         }
+
+        Class scoreClass = null;
         if (algorithms.requireScore(algoClass)) {
             options.addOption(OptionFactory.createRequiredScoreOpt(dataType));
             try {
@@ -277,7 +289,7 @@ public class CmdParser {
             if (scores.hasCommand(scoreCmd)) {
                 scoreClass = scores.getScoreClass(scoreCmd);
             } else {
-                String errMsg = String.format("No such score '%s'.", scoreCmd);
+                String errMsg = String.format("No such score '%s' for data-type '%s'.", scoreCmd, argsParseMap.get(CmdParams.DATA_TYPE));
                 throw new CmdParserException(options, new IllegalArgumentException(errMsg));
             }
         }
@@ -311,6 +323,12 @@ public class CmdParser {
         }
 
         return options;
+    }
+
+    private static void rejectParamMsg(String param, String value, String rejectedParam, Options options) throws CmdParserException {
+        String errMsg = String.format("Parameter --%s with value '%s' cannot be used with parameter --%s.", param, value, rejectedParam);
+
+        throw new CmdParserException(options, new IllegalArgumentException(errMsg));
     }
 
 }
