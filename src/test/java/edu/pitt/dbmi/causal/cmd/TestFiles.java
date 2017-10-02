@@ -35,6 +35,7 @@ public class TestFiles {
     private static final String CONTINUOUS_DATA = "sim_data_continuous_20var_100case.txt";
     private static final String DISCRETE_DATA = "sim_data_discrete_20var_100case.txt";
     private static final String MIXED_DATA = "sim_data_mixed_20var_100case.txt";
+    private static final String COVARIANCE_DATA = "spartina.txt";
 
     private static final String KNOWLEDGE = "knowledge_sim_data_continuous_20var_100case.txt";
 
@@ -61,6 +62,10 @@ public class TestFiles {
 
     public Path getMixedData() {
         return Paths.get(directory, MIXED_DATA);
+    }
+
+    public Path getCovarianceData() {
+        return Paths.get(directory, COVARIANCE_DATA);
     }
 
     public Path getKnowledge() {
