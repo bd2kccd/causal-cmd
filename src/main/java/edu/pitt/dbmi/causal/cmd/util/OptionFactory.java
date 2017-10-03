@@ -38,6 +38,16 @@ public class OptionFactory {
     private OptionFactory() {
     }
 
+    public static Option createRequiredHelpOpt() {
+        Option opt = CmdOptions.getInstance().getLongOption(CmdParams.HELP);
+
+        return Option.builder()
+                .argName(opt.getArgName())
+                .longOpt(opt.getLongOpt())
+                .desc(opt.getDescription())
+                .required().build();
+    }
+
     public static Option createRequiredTestOpt(DataType dataType) {
         List<String> commands = TetradIndependenceTests.getInstance().getCommands(dataType);
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.TEST);

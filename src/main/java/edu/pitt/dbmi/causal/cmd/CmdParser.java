@@ -325,6 +325,121 @@ public class CmdParser {
         return options;
     }
 
+    public static Options getAlgorithmHelpOptions(String[] args) throws CmdParserException {
+        Options options = new Options();
+        options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.ALGORITHM));
+        options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.DATA_TYPE));
+        options.addOption(OptionFactory.createRequiredHelpOpt());
+
+        Map<String, String> argsParseMap = new HashMap<>();
+        try {
+            Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+        } catch (ParseException exception) {
+            throw new CmdParserException(options, exception);
+        }
+
+        String dataTypeName = argsParseMap.get(CmdParams.DATA_TYPE);
+        if (!DataTypes.getInstance().exists(dataTypeName)) {
+            String errMsg = String.format("No such data type '%s'.", dataTypeName);
+            throw new CmdParserException(options, new IllegalArgumentException(errMsg));
+        }
+
+        DataType dataType = DataTypes.getInstance().get(dataTypeName);
+        if (dataType == DataType.Covariance) {
+            if (Args.hasLongParam(args, CmdParams.MISSING_MARKER)) {
+                rejectParamMsg(CmdParams.DATA_TYPE, DataType.Covariance.name().toLowerCase(), CmdParams.MISSING_MARKER, options);
+            }
+            if (Args.hasLongParam(args, CmdParams.EXCLUDE_VARIABLE)) {
+                rejectParamMsg(CmdParams.DATA_TYPE, DataType.Covariance.name().toLowerCase(), CmdParams.EXCLUDE_VARIABLE, options);
+            }
+        } else {
+            options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXCLUDE_VARIABLE));
+            options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MISSING_MARKER));
+            try {
+                Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+            } catch (ParseException exception) {
+                throw new CmdParserException(options, exception);
+            }
+
+            if (dataType == DataType.Mixed) {
+                options.addOption(OptionFactory.createRequiredNumCategoryOpt());
+                try {
+                    Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+                } catch (ParseException exception) {
+                    throw new CmdParserException(options, exception);
+                }
+            }
+        }
+
+        TetradAlgorithms algorithms = TetradAlgorithms.getInstance();
+        String algoCmd = argsParseMap.get(CmdParams.ALGORITHM);
+        if (!algorithms.hasCommand(algoCmd)) {
+            String errMsg = String.format("No such algorithm '%s'.", algoCmd);
+            throw new CmdParserException(options, new IllegalArgumentException(errMsg));
+        }
+
+        Class algoClass = algorithms.getAlgorithmClass(algoCmd);
+        if (algorithms.acceptKnowledge(algoClass)) {
+            options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
+        }
+
+        Class indTestClass = null;
+        if (algorithms.requireIndependenceTest(algoClass)) {
+            options.addOption(OptionFactory.createRequiredTestOpt(dataType));
+            try {
+                Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+            } catch (ParseException exception) {
+                throw new CmdParserException(options, exception);
+            }
+
+            TetradIndependenceTests indTests = TetradIndependenceTests.getInstance();
+            String testCmd = argsParseMap.get(CmdParams.TEST);
+            if (indTests.hasCommand(testCmd, dataType)) {
+                indTestClass = indTests.getTestOfIndependenceClass(testCmd);
+            } else {
+                String errMsg = String.format("No such independence test '%s' for data-type '%s'.", testCmd, argsParseMap.get(CmdParams.DATA_TYPE));
+                throw new CmdParserException(options, new IllegalArgumentException(errMsg));
+            }
+        }
+
+        Class scoreClass = null;
+        if (algorithms.requireScore(algoClass)) {
+            options.addOption(OptionFactory.createRequiredScoreOpt(dataType));
+            try {
+                Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+            } catch (ParseException exception) {
+                throw new CmdParserException(options, exception);
+            }
+
+            TetradScores scores = TetradScores.getInstance();
+            String scoreCmd = argsParseMap.get(CmdParams.SCORE);
+            if (scores.hasCommand(scoreCmd)) {
+                scoreClass = scores.getScoreClass(scoreCmd);
+            } else {
+                String errMsg = String.format("No such score '%s' for data-type '%s'.", scoreCmd, argsParseMap.get(CmdParams.DATA_TYPE));
+                throw new CmdParserException(options, new IllegalArgumentException(errMsg));
+            }
+        }
+
+        try {
+            Args.parse(args, options, argsParseMap);
+        } catch (ParseException exception) {
+            throw new CmdParserException(options, exception);
+        }
+
+        List<String> params = new LinkedList<>();
+        try {
+            params.addAll(AlgorithmFactory.create(algoClass, indTestClass, scoreClass).getParameters());
+        } catch (IllegalAccessException | InstantiationException exception) {
+            throw new CmdParserException(options, exception);
+        }
+        params.forEach(param -> {
+            options.addOption(CmdOptions.getInstance().getLongOption(param));
+        });
+
+        return options;
+    }
+
     private static void rejectParamMsg(String param, String value, String rejectedParam, Options options) throws CmdParserException {
         String errMsg = String.format("Parameter --%s with value '%s' cannot be used with parameter --%s.", param, value, rejectedParam);
 
