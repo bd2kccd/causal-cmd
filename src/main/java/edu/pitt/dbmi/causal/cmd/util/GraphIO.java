@@ -18,15 +18,14 @@
  */
 package edu.pitt.dbmi.causal.cmd.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import edu.cmu.tetrad.graph.Graph;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 /**
  *
@@ -49,12 +48,9 @@ public class GraphIO {
     }
 
     public static void writeAsJSON(Graph graph, Path path) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
-            try {
-                JsonSerializer.writeToStream(JsonSerializer.serialize(graph, path.toFile().getName()), out);
-            } catch (IllegalArgumentException | JAXBException | TransformerException | TransformerFactoryConfigurationError exception) {
-                throw new IOException(exception);
-            }
+            out.println(gson.toJson(graph));
         }
     }
 

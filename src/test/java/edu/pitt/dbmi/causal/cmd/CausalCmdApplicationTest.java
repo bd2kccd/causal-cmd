@@ -37,6 +37,26 @@ public class CausalCmdApplicationTest {
     public CausalCmdApplicationTest() {
     }
 
+    @Test
+    public void testMainWithBootstrap() throws IOException {
+        String contData = TestFiles.getInstance().getContinuousData().toString();
+        String dirOut = tmpFolder.newFolder("gfci_bootstrap").toString();
+        String[] args = {
+            "--bootstrapEnsemble", "0",
+            "--bootstrapSampleSize", "10",
+            "--bootstrapping",
+            "--dataset", contData,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "gfci",
+            "--test", "sem-bic",
+            "--score", "fisher-z",
+            "--verbose",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
     /**
      * Test of main method, of class CausalCmdApplication.
      *
