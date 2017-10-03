@@ -91,9 +91,9 @@ public class CmdParser {
         if (argsMap.containsKey(CmdParams.FILE_PREFIX)) {
             cmdArgs.filePrefix = argsMap.get(CmdParams.FILE_PREFIX);
         }
-        if (argsMap.containsKey(CmdParams.SKIP_VALIDATION)) {
-            cmdArgs.skipValidation = true;
-        }
+
+        cmdArgs.skipValidation = argsMap.containsKey(CmdParams.SKIP_VALIDATION);
+        cmdArgs.json = argsMap.containsKey(CmdParams.JSON);
 
         if (cmdArgs.outDirectory == null) {
             cmdArgs.outDirectory = Paths.get(".");

@@ -54,6 +54,7 @@ public class CmdArgs {
     protected int numCategories;
 
     protected boolean skipValidation;
+    protected boolean json;
 
     protected Map<String, String> parameters;
 
@@ -122,6 +123,10 @@ public class CmdArgs {
 
     public boolean isSkipValidation() {
         return skipValidation;
+    }
+
+    public boolean isJson() {
+        return json;
     }
 
     public Map<String, String> getParameters() {

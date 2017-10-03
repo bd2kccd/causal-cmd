@@ -24,6 +24,9 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 /**
  *
@@ -36,11 +39,21 @@ public class GraphIO {
     private GraphIO() {
     }
 
-    public static void write(Graph graph, Path path) throws IOException {
+    public static void writeAsTXT(Graph graph, Path path) throws IOException {
         Scanner scanner = new Scanner(graph.toString());
         try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
             while (scanner.hasNextLine()) {
                 out.println(scanner.nextLine().trim());
+            }
+        }
+    }
+
+    public static void writeAsJSON(Graph graph, Path path) throws IOException {
+        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+            try {
+                JsonSerializer.writeToStream(JsonSerializer.serialize(graph, path.toFile().getName()), out);
+            } catch (IllegalArgumentException | JAXBException | TransformerException | TransformerFactoryConfigurationError exception) {
+                throw new IOException(exception);
             }
         }
     }

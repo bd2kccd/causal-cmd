@@ -83,6 +83,7 @@ public class CmdOptions {
 
         // output options
         opts.addOption(options.get(CmdParams.FILE_PREFIX));
+        opts.addOption(options.get(CmdParams.JSON));
         opts.addOption(options.get(CmdParams.DIR_OUT));
 
         // data validation options
@@ -103,6 +104,7 @@ public class CmdOptions {
         options.put(CmdParams.HELP, new Option(null, CmdParams.HELP, false, "Show help."));
         options.put(CmdParams.VERSION, new Option(null, CmdParams.VERSION, false, "Show version."));
         options.put(CmdParams.FILE_PREFIX, new Option(null, CmdParams.FILE_PREFIX, true, "Output filename prefix."));
+        options.put(CmdParams.JSON, new Option(null, CmdParams.JSON, false, "Write out graph as json."));
         options.put(CmdParams.DIR_OUT, new Option(null, CmdParams.DIR_OUT, true, "Output directory."));
 
         options.put(CmdParams.KNOWLEDGE, new Option(null, CmdParams.KNOWLEDGE, true, "Prior Knowledge."));

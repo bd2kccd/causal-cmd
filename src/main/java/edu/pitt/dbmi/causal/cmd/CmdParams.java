@@ -34,6 +34,7 @@ public interface CmdParams {
 
     // output
     public static final String FILE_PREFIX = "prefix";
+    public static final String JSON = "json";
     public static final String DIR_OUT = "out";
 
     // file

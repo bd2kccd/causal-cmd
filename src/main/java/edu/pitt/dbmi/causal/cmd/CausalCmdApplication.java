@@ -103,7 +103,11 @@ public class CausalCmdApplication {
 
             Graph graph = algorithmRunner.getGraph();
             try {
-                GraphIO.write(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + ".graph"));
+                if (cmdArgs.json) {
+                    GraphIO.writeAsJSON(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.json"));
+                } else {
+                    GraphIO.writeAsTXT(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.txt"));
+                }
             } catch (IOException exception) {
                 LOGGER.error("Unable to write out graph.", exception);
                 System.exit(-1);
