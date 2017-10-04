@@ -33,7 +33,6 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,15 +60,11 @@ public class CausalCmdApplication {
             if (args.length == 1) {
                 Application.showHelp(CmdOptions.getInstance().getOptions(), FOOTER);
             } else {
-                Options options = null;
                 try {
-                    options = CmdParser.getAlgorithmHelpOptions(args);
+                    CmdParser.showAlgorithmHelpOptions(args);
                 } catch (CmdParserException exception) {
                     System.err.println(exception.getCause().getMessage());
                     Application.showHelp(exception.getOptions(), FOOTER);
-                }
-                if (options != null) {
-                    Application.showHelp(options, FOOTER);
                 }
             }
         } else if (Args.hasLongParam(args, CmdParams.VERSION)) {

@@ -25,6 +25,7 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
+import edu.pitt.dbmi.causal.cmd.util.Application;
 import edu.pitt.dbmi.causal.cmd.util.Args;
 import edu.pitt.dbmi.causal.cmd.util.DataTypes;
 import edu.pitt.dbmi.causal.cmd.util.Delimiters;
@@ -94,6 +95,7 @@ public class CmdParser {
 
         cmdArgs.skipValidation = argsMap.containsKey(CmdParams.SKIP_VALIDATION);
         cmdArgs.json = argsMap.containsKey(CmdParams.JSON);
+        cmdArgs.skipLatest = argsMap.containsKey(CmdParams.SKIP_LATEST);
 
         if (cmdArgs.outDirectory == null) {
             cmdArgs.outDirectory = Paths.get(".");
@@ -325,7 +327,7 @@ public class CmdParser {
         return options;
     }
 
-    public static Options getAlgorithmHelpOptions(String[] args) throws CmdParserException {
+    public static void showAlgorithmHelpOptions(String[] args) throws CmdParserException {
         Options options = new Options();
         options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.ALGORITHM));
         options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.DATA_TYPE));
@@ -382,16 +384,21 @@ public class CmdParser {
         if (algorithms.acceptKnowledge(algoClass)) {
             options.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
         }
-
-        Class indTestClass = null;
         if (algorithms.requireIndependenceTest(algoClass)) {
             options.addOption(OptionFactory.createRequiredTestOpt(dataType));
-            try {
-                Args.parse(Args.extractOptions(args, options), options, argsParseMap);
-            } catch (ParseException exception) {
-                throw new CmdParserException(options, exception);
-            }
+        }
+        if (algorithms.requireScore(algoClass)) {
+            options.addOption(OptionFactory.createRequiredScoreOpt(dataType));
+        }
 
+        try {
+            Args.parse(Args.extractOptions(args, options), options, argsParseMap);
+        } catch (ParseException exception) {
+            throw new CmdParserException(options, exception);
+        }
+
+        Class indTestClass = null;
+        if (options.hasLongOption(CmdParams.TEST)) {
             TetradIndependenceTests indTests = TetradIndependenceTests.getInstance();
             String testCmd = argsParseMap.get(CmdParams.TEST);
             if (indTests.hasCommand(testCmd, dataType)) {
@@ -403,14 +410,7 @@ public class CmdParser {
         }
 
         Class scoreClass = null;
-        if (algorithms.requireScore(algoClass)) {
-            options.addOption(OptionFactory.createRequiredScoreOpt(dataType));
-            try {
-                Args.parse(Args.extractOptions(args, options), options, argsParseMap);
-            } catch (ParseException exception) {
-                throw new CmdParserException(options, exception);
-            }
-
+        if (options.hasLongOption(CmdParams.SCORE)) {
             TetradScores scores = TetradScores.getInstance();
             String scoreCmd = argsParseMap.get(CmdParams.SCORE);
             if (scores.hasCommand(scoreCmd)) {
@@ -419,12 +419,6 @@ public class CmdParser {
                 String errMsg = String.format("No such score '%s' for data-type '%s'.", scoreCmd, argsParseMap.get(CmdParams.DATA_TYPE));
                 throw new CmdParserException(options, new IllegalArgumentException(errMsg));
             }
-        }
-
-        try {
-            Args.parse(args, options, argsParseMap);
-        } catch (ParseException exception) {
-            throw new CmdParserException(options, exception);
         }
 
         List<String> params = new LinkedList<>();
@@ -437,7 +431,7 @@ public class CmdParser {
             options.addOption(CmdOptions.getInstance().getLongOption(param));
         });
 
-        return options;
+        Application.showHelp(options);
     }
 
     private static void rejectParamMsg(String param, String value, String rejectedParam, Options options) throws CmdParserException {
