@@ -52,6 +52,7 @@ public class CausalCmdApplicationTest {
             "--test", "sem-bic",
             "--score", "fisher-z",
             "--verbose",
+            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -75,6 +76,7 @@ public class CausalCmdApplicationTest {
             "--score", "fisher-z",
             "--verbose",
             "--maxDegree", "3",
+            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
