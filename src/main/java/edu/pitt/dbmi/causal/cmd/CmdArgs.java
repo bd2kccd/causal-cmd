@@ -55,6 +55,7 @@ public class CmdArgs {
 
     protected boolean skipValidation;
     protected boolean json;
+    protected boolean skipLatest;
 
     protected Map<String, String> parameters;
 
@@ -127,6 +128,10 @@ public class CmdArgs {
 
     public boolean isJson() {
         return json;
+    }
+
+    public boolean isSkipLatest() {
+        return skipLatest;
     }
 
     public Map<String, String> getParameters() {

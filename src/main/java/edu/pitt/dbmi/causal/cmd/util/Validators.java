@@ -34,35 +34,35 @@ public class Validators {
             try {
                 Byte.valueOf(value);
             } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (byte) '%s'.", value);
+                String errMsg = String.format("Invalid byte number '%s'.", value);
                 throw new NumberFormatException(errMsg);
             }
         } else if (type instanceof Integer) {
             try {
                 Integer.valueOf(value);
             } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (int) '%s'.", value);
+                String errMsg = String.format("Invalid integer number '%s'.", value);
                 throw new NumberFormatException(errMsg);
             }
         } else if (type instanceof Long) {
             try {
                 Long.valueOf(value);
             } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (long) '%s'.", value);
+                String errMsg = String.format("Invalid long number '%s'.", value);
                 throw new NumberFormatException(errMsg);
             }
         } else if (type instanceof Float) {
             try {
                 Float.valueOf(value);
             } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (float) '%s'.", value);
+                String errMsg = String.format("Invalid float number '%s'.", value);
                 throw new NumberFormatException(errMsg);
             }
         } else if (type instanceof Double) {
             try {
                 Double.valueOf(value);
             } catch (NumberFormatException exception) {
-                String errMsg = String.format("Invalid number (double) '%s'.", value);
+                String errMsg = String.format("Invalid double number '%s'.", value);
                 throw new NumberFormatException(errMsg);
             }
         }

@@ -53,20 +53,8 @@ public class CausalCmdApplication {
      */
     public static void main(String[] args) {
         args = Args.clean(args);
-        if (Args.isEmpty(args)) {
-            Application.showHelp(CmdOptions.getInstance().getMainOptions(), FOOTER);
-            System.exit(-1);
-        } else if (Args.hasLongParam(args, CmdParams.HELP)) {
-            if (args.length == 1) {
-                Application.showHelp(CmdOptions.getInstance().getOptions(), FOOTER);
-            } else {
-                try {
-                    CmdParser.showAlgorithmHelpOptions(args);
-                } catch (CmdParserException exception) {
-                    System.err.println(exception.getCause().getMessage());
-                    Application.showHelp(exception.getOptions(), FOOTER);
-                }
-            }
+        if (Args.hasLongParam(args, CmdParams.HELP)) {
+            Application.showHelp(CmdOptions.getInstance().getOptions(), FOOTER);
         } else if (Args.hasLongParam(args, CmdParams.VERSION)) {
             System.out.println(Application.getVersion());
         } else {

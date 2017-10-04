@@ -82,10 +82,14 @@ public class TetradIndependenceTests {
     }
 
     public boolean hasCommand(String command) {
-        return annotatedClasses.containsKey(command);
+        return (command == null) ? false : annotatedClasses.containsKey(command);
     }
 
     public boolean hasCommand(String command, DataType dataType) {
+        if (command == null || dataType == null) {
+            return false;
+        }
+
         if (!groupByDataType.containsKey(dataType)) {
             return false;
         }
@@ -102,7 +106,13 @@ public class TetradIndependenceTests {
     }
 
     public List<String> getCommands(DataType dataType) {
-        return Collections.unmodifiableList(groupByDataType.get(dataType));
+        List<String> list = new LinkedList<>();
+
+        if (groupByDataType.containsKey(dataType)) {
+            list.addAll(groupByDataType.get(dataType));
+        }
+
+        return Collections.unmodifiableList(list);
     }
 
     public Class getTestOfIndependenceClass(String command) {

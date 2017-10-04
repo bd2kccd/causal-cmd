@@ -31,6 +31,7 @@ public interface CmdParams {
     public static final String VERSION = "version";
 
     public static final String SKIP_VALIDATION = "skip-validation";
+    public static final String SKIP_LATEST = "skip-latest";
 
     // output
     public static final String FILE_PREFIX = "prefix";
