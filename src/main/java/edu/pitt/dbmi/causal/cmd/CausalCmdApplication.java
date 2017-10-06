@@ -55,6 +55,8 @@ public class CausalCmdApplication {
     public static void main(String[] args) {
         args = Args.clean(args);
         if (Args.hasLongParam(args, CmdParams.HELP)) {
+            Application.showHelp(args, CmdParser.getHelpOptions(args));
+        } else if (Args.hasLongParam(args, CmdParams.HELP_ALL)) {
             Application.showHelp(CmdOptions.getInstance().getOptions(), FOOTER);
         } else if (Args.hasLongParam(args, CmdParams.VERSION)) {
             System.out.println(Application.getVersion());

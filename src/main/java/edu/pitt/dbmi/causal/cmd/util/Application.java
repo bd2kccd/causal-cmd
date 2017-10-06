@@ -18,10 +18,17 @@
  */
 package edu.pitt.dbmi.causal.cmd.util;
 
+import edu.pitt.dbmi.causal.cmd.HelpOptions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 /**
@@ -35,6 +42,39 @@ public class Application {
     private static final DateFormat DF = new SimpleDateFormat("EEE, MMMM dd, yyyy hh:mm:ss a");
 
     private Application() {
+    }
+
+    public static void showHelp(String[] args, HelpOptions helpOptions) {
+        Options opts = helpOptions.getOptions();
+        Options invalidOpts = helpOptions.getInvalidValueOptions();
+
+        Map<String, String> argsMap = new TreeMap<>(Args.toMapOptions(args));
+
+        // remove all the options with invalid value
+        invalidOpts.getOptions().forEach(e -> argsMap.remove(e.getLongOpt()));
+
+        List<String> optList = new LinkedList<>();
+        argsMap.forEach((k, v) -> {
+            Option opt = opts.getOption(k);
+            if (opt != null) {
+                optList.add(String.format("--%s", opt.getLongOpt()));
+                optList.add(v);
+            }
+        });
+        String header = optList.stream().collect(Collectors.joining(" "));
+        String helpHeader = String.format("%s %s", getHelpTitle(), header);
+
+        // create new options
+        Options helpOpts = new Options();
+        opts.getOptions().stream()
+                .filter(e -> !argsMap.containsKey(e.getLongOpt()))
+                .forEach(e -> helpOpts.addOption(e));
+
+        invalidOpts.getOptions().forEach(e -> helpOpts.addOption(e));
+
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.setWidth(-1);
+        formatter.printHelp(helpHeader, helpOpts, true);
     }
 
     public static void showHelp(Options options) {

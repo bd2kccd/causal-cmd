@@ -94,6 +94,7 @@ public class CmdOptions {
         // info options
         opts.addOption(options.get(CmdParams.VERSION));
         opts.addOption(options.get(CmdParams.HELP));
+        opts.addOption(options.get(CmdParams.HELP_ALL));
 
         return opts;
     }
@@ -103,7 +104,8 @@ public class CmdOptions {
         options.put(CmdParams.MISSING_MARKER, new Option(null, CmdParams.MISSING_MARKER, true, "Denote missing value."));
         options.put(CmdParams.COMMENT_MARKER, new Option(null, CmdParams.COMMENT_MARKER, true, "Comment character."));
 
-        options.put(CmdParams.HELP, new Option(null, CmdParams.HELP, false, "Show all options and descriptions."));
+        options.put(CmdParams.HELP, new Option(null, CmdParams.HELP, false, "Show help."));
+        options.put(CmdParams.HELP_ALL, new Option(null, CmdParams.HELP_ALL, false, "Show all options and descriptions."));
         options.put(CmdParams.VERSION, new Option(null, CmdParams.VERSION, false, "Show version."));
         options.put(CmdParams.FILE_PREFIX, new Option(null, CmdParams.FILE_PREFIX, true, "Output filename prefix."));
         options.put(CmdParams.JSON, new Option(null, CmdParams.JSON, false, "Write out graph as json."));

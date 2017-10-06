@@ -372,10 +372,135 @@ public class CmdParser {
         return options;
     }
 
-    private static void rejectParamMsg(String param, String value, String rejectedParam, Options options) throws CmdParserException {
-        String errMsg = String.format("Parameter --%s with value '%s' cannot be used with parameter --%s.", param, value, rejectedParam);
+    public static HelpOptions getHelpOptions(String[] args) {
+        HelpOptions helpOptions = new HelpOptions();
+        Options opts = helpOptions.getOptions();
+        Options invalidOpts = helpOptions.getInvalidValueOptions();
 
-        throw new CmdParserException(options, new IllegalArgumentException(errMsg));
+        CmdOptions.getInstance().getRequiredOptions()
+                .forEach(e -> opts.addOption(e));
+
+        Map<String, String> argsMap = Args.toMapOptions(args);
+        argsMap.forEach((k, v) -> {
+            if (v == null && opts.hasLongOption(k)) {
+                invalidOpts.addOption(opts.getOption(k));
+            }
+        });
+
+        DataType dataType = null;
+        String dataTypeCmd = argsMap.get(CmdParams.DATA_TYPE);
+        if (dataTypeCmd != null) {
+            if (DataTypes.getInstance().exists(dataTypeCmd)) {
+                dataType = DataTypes.getInstance().get(dataTypeCmd);
+                if (dataType != DataType.Covariance) {
+                    opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXCLUDE_VARIABLE));
+                    opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MISSING_MARKER));
+                    if (dataType == DataType.Mixed) {
+                        opts.addOption(OptionFactory.createRequiredNumCategoryOpt());
+                    }
+                }
+            } else {
+                invalidOpts.addOption(opts.getOption(CmdParams.DATA_TYPE));
+                System.err.println(createNoSuchValueMsg(CmdParams.DATA_TYPE, dataTypeCmd));
+            }
+
+        }
+
+        if (argsMap.containsKey(CmdParams.ALGORITHM) && argsMap.get(CmdParams.ALGORITHM) != null) {
+            String algoCmd = argsMap.get(CmdParams.ALGORITHM);
+            TetradAlgorithms algorithms = TetradAlgorithms.getInstance();
+            if (algorithms.hasCommand(algoCmd)) {
+                Class algoClass = algorithms.getAlgorithmClass(algoCmd);
+                if (algorithms.acceptKnowledge(algoClass)) {
+                    opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
+                }
+
+                if (dataType != null) {
+                    if (algorithms.requireIndependenceTest(algoClass)) {
+                        opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
+                    }
+                    if (algorithms.requireScore(algoClass)) {
+                        opts.addOption(OptionFactory.createRequiredScoreOpt(dataType));
+                    }
+
+                    Class testClass = null;
+                    if (argsMap.containsKey(CmdParams.TEST) && argsMap.get(CmdParams.TEST) != null) {
+                        String testCmd = argsMap.get(CmdParams.TEST);
+                        TetradIndependenceTests tests = TetradIndependenceTests.getInstance();
+                        if (tests.hasCommand(testCmd)) {
+                            if (tests.hasCommand(testCmd, dataType)) {
+                                testClass = tests.getTestOfIndependenceClass(testCmd);
+                            } else {
+                                invalidOpts.addOption(opts.getOption(CmdParams.TEST));
+
+                                String errMsg = String.format("Invalid test '%s' for data-type '%s'.", testCmd, dataTypeCmd);
+                                System.err.println(errMsg);
+                            }
+                        } else {
+                            invalidOpts.addOption(opts.getOption(CmdParams.TEST));
+                            System.err.println(createNoSuchValueMsg(CmdParams.TEST, testCmd));
+                        }
+                    }
+
+                    Class scoreClass = null;
+                    if (argsMap.containsKey(CmdParams.SCORE) && argsMap.get(CmdParams.SCORE) != null) {
+                        String scoreCmd = argsMap.get(CmdParams.SCORE);
+                        TetradScores scores = TetradScores.getInstance();
+                        if (scores.hasCommand(scoreCmd)) {
+                            if (scores.hasCommand(scoreCmd, dataType)) {
+                                scoreClass = scores.getScoreClass(scoreCmd);
+                            } else {
+                                invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
+
+                                String errMsg = String.format("Invalid score '%s' for data-type '%s'.", scoreCmd, dataTypeCmd);
+                                System.err.println(errMsg);
+                            }
+                        } else {
+                            invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
+                            System.err.println(createNoSuchValueMsg(CmdParams.SCORE, scoreCmd));
+                        }
+                    }
+
+                    List<String> params = new LinkedList<>();
+                    try {
+                        params.addAll(AlgorithmFactory.create(algoClass, testClass, scoreClass).getParameters());
+                    } catch (IllegalAccessException | InstantiationException | IllegalArgumentException exception) {
+                    }
+
+                    // add Tetrad parameters
+                    params.forEach(param -> {
+                        opts.addOption(CmdOptions.getInstance().getLongOption(param));
+                    });
+                }
+            } else {
+                invalidOpts.addOption(opts.getOption(CmdParams.ALGORITHM));
+                System.err.println(createNoSuchValueMsg(CmdParams.ALGORITHM, algoCmd));
+            }
+
+            if (argsMap.containsKey(CmdParams.DELIMITER) && argsMap.get(CmdParams.DELIMITER) != null) {
+                String delimiterName = argsMap.get(CmdParams.DELIMITER);
+                if (!Delimiters.getInstance().exists(delimiterName)) {
+                    invalidOpts.addOption(opts.getOption(CmdParams.DELIMITER));
+
+                    String errMsg = String.format("No such delimiter '%s'.", delimiterName);
+                    System.err.println(errMsg);
+                }
+            }
+        }
+
+        return helpOptions;
+    }
+
+    private static String createNoSuchValueMsg(String param, String value) {
+        return String.format("Invalid value for parameter --%s: %s", param, value);
+    }
+
+    private static String createRejectParamMsg(String param, String value, String rejectedParam) {
+        return String.format("Parameter --%s with value '%s' cannot be used with parameter --%s.", param, value, rejectedParam);
+    }
+
+    private static void rejectParamMsg(String param, String value, String rejectedParam, Options options) throws CmdParserException {
+        throw new CmdParserException(options, new IllegalArgumentException(createRejectParamMsg(param, value, rejectedParam)));
     }
 
 }

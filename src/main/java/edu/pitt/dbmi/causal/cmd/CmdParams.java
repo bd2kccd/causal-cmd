@@ -28,6 +28,7 @@ public interface CmdParams {
 
     // user guide
     public static final String HELP = "help";
+    public static final String HELP_ALL = "help-all";
     public static final String VERSION = "version";
 
     public static final String SKIP_VALIDATION = "skip-validation";
