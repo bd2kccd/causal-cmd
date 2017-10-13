@@ -45,7 +45,9 @@ public class OptionFactory {
                 .argName(opt.getArgName())
                 .longOpt(opt.getLongOpt())
                 .desc(opt.getDescription())
-                .required().build();
+                .required()
+                .type((Class) opt.getType())
+                .build();
     }
 
     public static Option createRequiredTestOpt(DataType dataType) {
@@ -57,7 +59,9 @@ public class OptionFactory {
                 .longOpt(opt.getLongOpt())
                 .desc("Independence Test: " + commands.stream().collect(Collectors.joining(", ")))
                 .hasArg()
-                .required().build();
+                .required()
+                .type((Class) opt.getType())
+                .build();
     }
 
     public static Option createRequiredScoreOpt(DataType dataType) {
@@ -69,7 +73,9 @@ public class OptionFactory {
                 .longOpt(opt.getLongOpt())
                 .desc("Score: " + commands.stream().collect(Collectors.joining(", ")))
                 .hasArg()
-                .required().build();
+                .required()
+                .type((Class) opt.getType())
+                .build();
     }
 
     public static Option createRequiredNumCategoryOpt() {
@@ -80,7 +86,9 @@ public class OptionFactory {
                 .longOpt(opt.getLongOpt())
                 .desc(opt.getDescription())
                 .hasArg()
-                .required().build();
+                .required()
+                .type((Class) opt.getType())
+                .build();
     }
 
 }
