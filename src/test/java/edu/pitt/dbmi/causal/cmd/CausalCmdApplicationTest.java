@@ -43,7 +43,7 @@ public class CausalCmdApplicationTest {
         String dirOut = tmpFolder.newFolder("gfci_bootstrap").toString();
         String[] args = {
             "--bootstrapEnsemble", "0",
-            "--bootstrapSampleSize", "10",
+            "--bootstrapSampleSize", "5",
             "--bootstrapping",
             "--dataset", contData,
             "--delimiter", "tab",
@@ -66,6 +66,8 @@ public class CausalCmdApplicationTest {
     @Test
     public void testMain() throws IOException {
         String contData = TestFiles.getInstance().getContinuousData().toString();
+        String excludeVar = TestFiles.getInstance().getExcludeVars().toString();
+        String knowledge = TestFiles.getInstance().getKnowledge().toString();
         String dirOut = tmpFolder.newFolder("gfci").toString();
         String[] args = {
             "--dataset", contData,
@@ -77,6 +79,8 @@ public class CausalCmdApplicationTest {
             "--verbose",
             "--maxDegree", "3",
             "--skip-latest",
+            "--exclude-var", excludeVar,
+            "--knowledge", knowledge,
             "--out", dirOut
         };
         CausalCmdApplication.main(args);

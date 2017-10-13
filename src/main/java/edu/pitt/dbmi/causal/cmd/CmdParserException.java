@@ -30,34 +30,34 @@ public class CmdParserException extends Exception {
 
     private static final long serialVersionUID = 4277546481941173659L;
 
-    private final Options options;
+    private final HelpOptions helpOptions;
 
-    public CmdParserException(Options options) {
-        this.options = options;
+    public CmdParserException(HelpOptions helpOptions) {
+        this.helpOptions = helpOptions;
     }
 
-    public CmdParserException(Options options, String message) {
+    public CmdParserException(HelpOptions helpOptions, String message) {
         super(message);
-        this.options = options;
+        this.helpOptions = helpOptions;
     }
 
-    public CmdParserException(Options options, String message, Throwable cause) {
+    public CmdParserException(HelpOptions helpOptions, String message, Throwable cause) {
         super(message, cause);
-        this.options = options;
+        this.helpOptions = helpOptions;
     }
 
-    public CmdParserException(Options options, Throwable cause) {
+    public CmdParserException(HelpOptions helpOptions, Throwable cause) {
         super(cause);
-        this.options = options;
+        this.helpOptions = helpOptions;
     }
 
-    public CmdParserException(Options options, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public CmdParserException(HelpOptions helpOptions, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
-        this.options = options;
+        this.helpOptions = helpOptions;
     }
 
-    public Options getOptions() {
-        return options;
+    public HelpOptions getHelpOptions() {
+        return helpOptions;
     }
 
 }

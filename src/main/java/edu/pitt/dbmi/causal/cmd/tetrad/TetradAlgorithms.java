@@ -56,10 +56,16 @@ public class TetradAlgorithms {
     }
 
     public boolean hasCommand(String command) {
-        return annotatedClasses.containsKey(command);
+        return (command == null)
+                ? false
+                : annotatedClasses.containsKey(command);
     }
 
     public Class getAlgorithmClass(String command) {
+        if (command == null) {
+            return null;
+        }
+
         AnnotatedClass<Algorithm> annotatedClass = annotatedClasses.get(command);
 
         return (annotatedClass == null) ? null : annotatedClass.getClazz();

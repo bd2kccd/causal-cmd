@@ -32,8 +32,12 @@ public class HelpOptions {
     private final Options invalidValueOptions;
 
     public HelpOptions() {
-        this.options = new Options();
-        this.invalidValueOptions = new Options();
+        this(new Options(), new Options());
+    }
+
+    public HelpOptions(Options options, Options invalidValueOptions) {
+        this.options = (options == null) ? new Options() : options;
+        this.invalidValueOptions = (invalidValueOptions == null) ? new Options() : invalidValueOptions;
     }
 
     public Options getOptions() {

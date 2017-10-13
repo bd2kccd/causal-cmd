@@ -44,7 +44,7 @@ public class Application {
     private Application() {
     }
 
-    public static void showHelp(String[] args, HelpOptions helpOptions) {
+    public static void showHelp(String[] args, HelpOptions helpOptions, String footer) {
         Options opts = helpOptions.getOptions();
         Options invalidOpts = helpOptions.getInvalidValueOptions();
 
@@ -62,7 +62,7 @@ public class Application {
             }
         });
         String header = optList.stream().collect(Collectors.joining(" "));
-        String helpHeader = String.format("%s %s", getHelpTitle(), header);
+        String cmdLineSyntax = String.format("%s %s", getHelpTitle(), header);
 
         // create new options
         Options helpOpts = new Options();
@@ -74,19 +74,17 @@ public class Application {
 
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
-        formatter.printHelp(helpHeader, helpOpts, true);
+        if (footer == null) {
+            formatter.printHelp(cmdLineSyntax, helpOpts, true);
+        } else {
+            formatter.printHelp(cmdLineSyntax, null, helpOpts, footer, true);
+        }
     }
 
     public static void showHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
         formatter.printHelp(getHelpTitle(), options, true);
-    }
-
-    public static void showHelp(String algorithmName, Options options) {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.setWidth(-1);
-        formatter.printHelp(String.format("%s --algorithm %s", getHelpTitle(), algorithmName), options, true);
     }
 
     public static void showHelp(Options options, String footer) {

@@ -108,7 +108,7 @@ public class TetradIndependenceTests {
     public List<String> getCommands(DataType dataType) {
         List<String> list = new LinkedList<>();
 
-        if (groupByDataType.containsKey(dataType)) {
+        if (dataType != null && groupByDataType.containsKey(dataType)) {
             list.addAll(groupByDataType.get(dataType));
         }
 
@@ -116,6 +116,10 @@ public class TetradIndependenceTests {
     }
 
     public Class getTestOfIndependenceClass(String command) {
+        if (command == null) {
+            return null;
+        }
+
         AnnotatedClass<TestOfIndependence> annotatedClass = annotatedClasses.get(command);
 
         return (annotatedClass == null) ? null : annotatedClass.getClazz();

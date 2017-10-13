@@ -47,7 +47,7 @@ public class CausalCmdApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CausalCmdApplication.class);
 
-    public static final String FOOTER = "Additional parameters are available when using --algorithm <arg>.";
+    public static final String FOOTER = "Use --help for guidance list of options.  Use --help-all to show all options.";
 
     /**
      * @param args the command line arguments
@@ -55,7 +55,7 @@ public class CausalCmdApplication {
     public static void main(String[] args) {
         args = Args.clean(args);
         if (Args.hasLongParam(args, CmdParams.HELP)) {
-            Application.showHelp(args, CmdParser.getHelpOptions(args));
+            Application.showHelp(args, CmdParser.getHelpOptions(args), null);
         } else if (Args.hasLongParam(args, CmdParams.HELP_ALL)) {
             Application.showHelp(CmdOptions.getInstance().getOptions(), FOOTER);
         } else if (Args.hasLongParam(args, CmdParams.VERSION)) {
@@ -66,7 +66,7 @@ public class CausalCmdApplication {
                 cmdArgs = CmdParser.parse(args);
             } catch (CmdParserException exception) {
                 System.err.println(exception.getCause().getMessage());
-                Application.showHelp(exception.getOptions(), FOOTER);
+                Application.showHelp(args, exception.getHelpOptions(), FOOTER);
             }
             if (cmdArgs == null) {
                 System.exit(-1);
@@ -135,7 +135,7 @@ public class CausalCmdApplication {
             out.printf("Knowledge: %s%n", cmdArgs.knowledgeFile.toAbsolutePath().toString());
         }
         if (cmdArgs.excludeVariableFile != null) {
-            out.printf("Knowledge: %s%n", cmdArgs.excludeVariableFile.toAbsolutePath().toString());
+            out.printf("Exclude Variables: %s%n", cmdArgs.excludeVariableFile.toAbsolutePath().toString());
         }
         out.printf("Data Type: %s%n", cmdArgs.dataType.name().toLowerCase());
         out.printf("Delimiter: %s%n", cmdArgs.delimiter.name().toLowerCase());

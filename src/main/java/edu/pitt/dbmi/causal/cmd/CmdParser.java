@@ -31,6 +31,7 @@ import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import edu.pitt.dbmi.causal.cmd.util.FileUtils;
 import edu.pitt.dbmi.causal.cmd.util.OptionFactory;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,7 +52,91 @@ public class CmdParser {
     private CmdParser() {
     }
 
-    public static Map<String, String> parse(String[] args) throws CmdParserException {
+    public static CmdArgs parse(String[] args) throws CmdParserException {
+        CmdArgs cmdArgs = new CmdArgs();
+
+        Map<String, String> argsMap = parseToMap(args);
+        parseRequiredOptions(cmdArgs, argsMap);
+        parseOptionalOptions(cmdArgs, argsMap);
+
+        return cmdArgs;
+    }
+
+    private static String extractName(Class clazz) {
+        String name = clazz.getName();
+        String[] fields = name.toLowerCase().split("\\.");
+
+        return fields[fields.length - 1];
+    }
+
+    private static void parseOptionalOptions(CmdArgs cmdArgs, Map<String, String> argsMap) {
+        if (argsMap.containsKey(CmdParams.KNOWLEDGE)) {
+            cmdArgs.knowledgeFile = Paths.get(argsMap.get(CmdParams.KNOWLEDGE));
+        }
+        if (argsMap.containsKey(CmdParams.EXCLUDE_VARIABLE)) {
+            cmdArgs.excludeVariableFile = Paths.get(argsMap.get(CmdParams.EXCLUDE_VARIABLE));
+        }
+        if (argsMap.containsKey(CmdParams.DIR_OUT)) {
+            cmdArgs.outDirectory = Paths.get(argsMap.get(CmdParams.DIR_OUT));
+        }
+        if (argsMap.containsKey(CmdParams.QUOTE_CHAR)) {
+            cmdArgs.quoteChar = argsMap.get(CmdParams.QUOTE_CHAR).charAt(0);
+        }
+        if (argsMap.containsKey(CmdParams.MISSING_MARKER)) {
+            cmdArgs.missingValueMarker = argsMap.get(CmdParams.MISSING_MARKER);
+        }
+        if (argsMap.containsKey(CmdParams.COMMENT_MARKER)) {
+            cmdArgs.commentMarker = argsMap.get(CmdParams.COMMENT_MARKER);
+        }
+        if (argsMap.containsKey(CmdParams.FILE_PREFIX)) {
+            cmdArgs.filePrefix = argsMap.get(CmdParams.FILE_PREFIX);
+        }
+
+        cmdArgs.skipValidation = argsMap.containsKey(CmdParams.SKIP_VALIDATION);
+        cmdArgs.json = argsMap.containsKey(CmdParams.JSON);
+        cmdArgs.skipLatest = argsMap.containsKey(CmdParams.SKIP_LATEST);
+
+        if (cmdArgs.outDirectory == null) {
+            cmdArgs.outDirectory = Paths.get(".");
+        }
+
+        cmdArgs.fileName = (cmdArgs.filePrefix == null)
+                ? extractName(cmdArgs.algorithmClass) + "_" + System.currentTimeMillis()
+                : cmdArgs.filePrefix;
+
+        List<String> params = new LinkedList<>();
+        try {
+            params.addAll(AlgorithmFactory.create(cmdArgs.algorithmClass, cmdArgs.testClass, cmdArgs.scoreClass).getParameters());
+        } catch (IllegalAccessException | InstantiationException exception) {
+            exception.printStackTrace(System.err);
+        }
+        cmdArgs.parameters = params.stream()
+                .filter(e -> argsMap.containsKey(e))
+                .collect(HashMap::new, (m, e) -> m.put(e, argsMap.get(e)), HashMap::putAll);
+    }
+
+    private static void parseRequiredOptions(CmdArgs cmdArgs, Map<String, String> argsMap) {
+        String value = argsMap.get(CmdParams.DATASET);
+        String[] values = value.split(",");
+        List<Path> datasetFiles = new LinkedList<>();
+        for (String val : values) {
+            datasetFiles.add(Paths.get(val));
+        }
+        cmdArgs.datasetFiles = datasetFiles;
+
+        cmdArgs.dataType = DataTypes.getInstance().get(argsMap.get(CmdParams.DATA_TYPE));
+        cmdArgs.delimiter = Delimiters.getInstance().getDelimiter(argsMap.get(CmdParams.DELIMITER));
+        cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(argsMap.get(CmdParams.ALGORITHM));
+
+        if (argsMap.containsKey(CmdParams.TEST)) {
+            cmdArgs.testClass = TetradIndependenceTests.getInstance().getTestOfIndependenceClass(argsMap.get(CmdParams.TEST));
+        }
+        if (argsMap.containsKey(CmdParams.SCORE)) {
+            cmdArgs.scoreClass = TetradScores.getInstance().getScoreClass(argsMap.get(CmdParams.SCORE));
+        }
+    }
+
+    private static Map<String, String> parseToMap(String[] args) throws CmdParserException {
         Map<String, String> argsMap = new HashMap<>();
 
         Options options = getValidOptions(args);
