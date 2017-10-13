@@ -25,6 +25,7 @@ import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
 import edu.pitt.dbmi.causal.cmd.util.DataTypes;
 import edu.pitt.dbmi.causal.cmd.util.Delimiters;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,40 +101,46 @@ public class CmdOptions {
     }
 
     private void addOptionalOptions() {
-        options.put(CmdParams.QUOTE_CHAR, new Option(null, CmdParams.QUOTE_CHAR, true, "Single character denotes quote."));
-        options.put(CmdParams.MISSING_MARKER, new Option(null, CmdParams.MISSING_MARKER, true, "Denote missing value."));
-        options.put(CmdParams.COMMENT_MARKER, new Option(null, CmdParams.COMMENT_MARKER, true, "Comment character."));
+        options.put(CmdParams.QUOTE_CHAR, Option.builder().longOpt(CmdParams.QUOTE_CHAR).desc("Single character denotes quote.").hasArg().argName("character").build());
+        options.put(CmdParams.MISSING_MARKER, Option.builder().longOpt(CmdParams.MISSING_MARKER).desc("Denotes missing value.").hasArg().argName("string").build());
+        options.put(CmdParams.COMMENT_MARKER, Option.builder().longOpt(CmdParams.COMMENT_MARKER).desc("Comment marker.").hasArg().argName("string").build());
 
         options.put(CmdParams.HELP, new Option(null, CmdParams.HELP, false, "Show help."));
         options.put(CmdParams.HELP_ALL, new Option(null, CmdParams.HELP_ALL, false, "Show all options and descriptions."));
         options.put(CmdParams.VERSION, new Option(null, CmdParams.VERSION, false, "Show version."));
-        options.put(CmdParams.FILE_PREFIX, new Option(null, CmdParams.FILE_PREFIX, true, "Output filename prefix."));
+        options.put(CmdParams.FILE_PREFIX, Option.builder().longOpt(CmdParams.FILE_PREFIX).desc("Output file name prefix.").hasArg().argName("string").build());
         options.put(CmdParams.JSON, new Option(null, CmdParams.JSON, false, "Write out graph as json."));
-        options.put(CmdParams.DIR_OUT, new Option(null, CmdParams.DIR_OUT, true, "Output directory."));
+        options.put(CmdParams.DIR_OUT, Option.builder().longOpt(CmdParams.DIR_OUT).desc("Output directory").hasArg().argName("directory").build());
 
-        options.put(CmdParams.KNOWLEDGE, new Option(null, CmdParams.KNOWLEDGE, true, "Prior Knowledge."));
-        options.put(CmdParams.EXCLUDE_VARIABLE, new Option(null, CmdParams.EXCLUDE_VARIABLE, true, "Exclude variables."));
+        options.put(CmdParams.KNOWLEDGE, Option.builder().longOpt(CmdParams.KNOWLEDGE).desc("Prior knowledge file.").hasArg().argName("file").build());
+        options.put(CmdParams.EXCLUDE_VARIABLE, Option.builder().longOpt(CmdParams.EXCLUDE_VARIABLE).desc("Variables to be excluded from run.").hasArg().argName("file").build());
 
         options.put(CmdParams.SKIP_VALIDATION, new Option(null, CmdParams.SKIP_VALIDATION, false, "Skip validation."));
         options.put(CmdParams.SKIP_LATEST, new Option(null, CmdParams.SKIP_LATEST, false, "Skip checking for latest software version."));
 
-        options.put(CmdParams.TEST, new Option(null, CmdParams.TEST, true, getIndependenceTestDesc()));
-        options.put(CmdParams.SCORE, new Option(null, CmdParams.SCORE, true, getScoreDesc()));
+        options.put(CmdParams.TEST, Option.builder().longOpt(CmdParams.TEST).desc(getIndependenceTestDesc()).hasArg().argName("string").build());
+        options.put(CmdParams.SCORE, Option.builder().longOpt(CmdParams.SCORE).desc(getScoreDesc()).hasArg().argName("string").build());
 
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
         Set<String> params = paramDescs.getNames();
         params.forEach(param -> {
             ParamDescription paramDesc = paramDescs.get(param);
-            options.put(param, new Option(null, param, !(paramDesc.getDefaultValue() instanceof Boolean), paramDesc.getDescription()));
+            String longOpt = param;
+            String desc = paramDesc.getDescription();
+            Serializable defaultVal = paramDesc.getDefaultValue();
+            String argName = defaultVal.getClass().getSimpleName().toLowerCase();
+            boolean hasArg = !(paramDesc.getDefaultValue() instanceof Boolean);
+            Class type = paramDesc.getDefaultValue().getClass();
+            options.put(param, Option.builder().longOpt(longOpt).desc(desc).hasArg(hasArg).type(type).argName(argName).build());
         });
     }
 
     private void addRequiredOptions() {
-        options.put(CmdParams.ALGORITHM, Option.builder().longOpt(CmdParams.ALGORITHM).desc(getAlgorithmDesc()).hasArg().required().build());
-        options.put(CmdParams.DATASET, Option.builder().longOpt(CmdParams.DATASET).desc("Dataset. Multiple files are seperated by commas.").hasArg().required().build());
-        options.put(CmdParams.DELIMITER, Option.builder().longOpt(CmdParams.DELIMITER).desc(getDelimiterDesc()).hasArg().required().build());
-        options.put(CmdParams.DATA_TYPE, Option.builder().longOpt(CmdParams.DATA_TYPE).desc(getDataTypeDesc()).hasArg().required().build());
+        options.put(CmdParams.ALGORITHM, Option.builder().longOpt(CmdParams.ALGORITHM).desc(getAlgorithmDesc()).hasArg().argName("string").required().build());
+        options.put(CmdParams.DATASET, Option.builder().longOpt(CmdParams.DATASET).desc("Dataset. Multiple files are seperated by commas.").hasArg().argName("files").required().build());
+        options.put(CmdParams.DELIMITER, Option.builder().longOpt(CmdParams.DELIMITER).desc(getDelimiterDesc()).hasArg().argName("string").required().build());
+        options.put(CmdParams.DATA_TYPE, Option.builder().longOpt(CmdParams.DATA_TYPE).desc(getDataTypeDesc()).hasArg().argName("string").required().build());
     }
 
     public List<Option> getRequiredOptions() {
