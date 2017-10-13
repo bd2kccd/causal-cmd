@@ -40,6 +40,16 @@ public class Args {
     private Args() {
     }
 
+    public static void parseLongOptions(String[] args, Options options, Map<String, String> argsMap) throws ParseException {
+        CommandLine cmd = (new DefaultParser()).parse(options, args);
+        options.getOptions().forEach(option -> {
+            String opt = option.getLongOpt();
+            if (opt != null && cmd.hasOption(opt)) {
+                argsMap.put(opt, cmd.getOptionValue(opt));
+            }
+        });
+    }
+
     public static void parse(String[] args, Options options, Map<String, String> argsMap) throws ParseException {
         CommandLine cmd = (new DefaultParser()).parse(options, args);
         options.getOptions().forEach(option -> {
@@ -53,6 +63,25 @@ public class Args {
                 argsMap.put(opt, cmd.getOptionValue(opt));
             }
         });
+    }
+
+    public static String[] extractLongOptions(String[] args, Options options) {
+        List<String> argsList = new LinkedList<>();
+
+        Map<String, String> argsMap = toMapLongOptions(args);
+        options.getOptions().forEach(opt -> {
+            String param = opt.getLongOpt();
+            if (param != null && argsMap.containsKey(param)) {
+                argsList.add("--" + param);
+
+                String value = argsMap.get(param);
+                if (value != null) {
+                    argsList.add(value);
+                }
+            }
+        });
+
+        return argsList.toArray(new String[argsList.size()]);
     }
 
     public static String[] extractOptions(String[] args, Options options) {
@@ -81,6 +110,31 @@ public class Args {
         });
 
         return argsList.toArray(new String[argsList.size()]);
+    }
+
+    public static Map<String, String> toMapLongOptions(String[] args) {
+        Map<String, String> map = new HashMap<>();
+
+        String key = null;
+        for (String arg : args) {
+            if (key != null) {
+                if (arg.startsWith("--")) {
+                    map.put(key, null);
+                } else {
+                    map.put(key, arg);
+                }
+                key = null;
+            }
+
+            if (arg.startsWith("--")) {
+                key = arg.substring(2, arg.length());
+            }
+        }
+        if (key != null) {
+            map.put(key, null);
+        }
+
+        return map;
     }
 
     public static Map<String, String> toMapOptions(String[] args) {
