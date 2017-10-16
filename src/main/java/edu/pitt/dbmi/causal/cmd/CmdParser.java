@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -90,6 +91,36 @@ public class CmdParser {
         }
         if (argsMap.containsKey(CmdParams.FILE_PREFIX)) {
             cmdArgs.filePrefix = argsMap.get(CmdParams.FILE_PREFIX);
+        }
+        if (argsMap.containsKey(CmdParams.TIMEOUT)) {
+            String timeout = argsMap.get(CmdParams.TIMEOUT).toLowerCase();
+
+            // get time
+            String time = timeout.substring(0, timeout.length() - 1);
+            try {
+                cmdArgs.time = Long.parseLong(time);
+            } catch (NumberFormatException exception) {
+                cmdArgs.time = -1;
+            }
+
+            // get time unit
+            char unit = timeout.charAt(timeout.length() - 1);
+            switch (unit) {
+                case 'd':
+                    cmdArgs.timeUnit = TimeUnit.DAYS;
+                    break;
+                case 'h':
+                    cmdArgs.timeUnit = TimeUnit.HOURS;
+                    break;
+                case 'm':
+                    cmdArgs.timeUnit = TimeUnit.MINUTES;
+                    break;
+                default:
+                    cmdArgs.timeUnit = TimeUnit.SECONDS;
+                    break;
+            }
+        } else {
+            cmdArgs.time = -1;
         }
 
         cmdArgs.skipValidation = argsMap.containsKey(CmdParams.SKIP_VALIDATION);
@@ -190,6 +221,45 @@ public class CmdParser {
             } catch (FileNotFoundException exception) {
                 invalidOpts.addOption(opts.getOption(CmdParams.DATASET));
                 throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
+            }
+        }
+
+        if (argsParseMap.containsKey(CmdParams.QUOTE_CHAR)) {
+            String quoteChar = argsParseMap.get(CmdParams.QUOTE_CHAR);
+            if (quoteChar.length() != 1) {
+                invalidOpts.addOption(opts.getOption(CmdParams.QUOTE_CHAR));
+                String errMsg = String.format("Parameter %s requires a single character.", CmdParams.QUOTE_CHAR);
+                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+            }
+        }
+
+        if (argsParseMap.containsKey(CmdParams.TIMEOUT)) {
+            String timeout = argsParseMap.get(CmdParams.TIMEOUT).toLowerCase();
+            char unit = timeout.charAt(timeout.length() - 1);
+            if (unit >= 'a' && unit <= 'z') {
+                if (!(unit == 'd' || unit == 'h' || unit == 'm' || unit == 's')) {
+                    invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+                    String errMsg = String.format("Value '%s' does not a valid time unit.", timeout);
+                    throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+                }
+            } else {
+                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+                String errMsg = String.format("Value '%s' requires time unit.", timeout);
+                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+            }
+            String time = timeout.substring(0, timeout.length() - 1);
+            if (time.isEmpty()) {
+                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+                String errMsg = String.format("Value '%s' requires time.", timeout);
+                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+            } else {
+                try {
+                    Long.parseLong(time);
+                } catch (NumberFormatException exception) {
+                    invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+                    String errMsg = String.format("Value '%s' is either not a number or of a type long.", timeout);
+                    throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+                }
             }
         }
 
@@ -420,6 +490,7 @@ public class CmdParser {
 
         CmdOptions.getInstance().getRequiredOptions()
                 .forEach(e -> opts.addOption(e));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.TIMEOUT));
 
         Map<String, String> argsMap = Args.toMapOptions(args);
         argsMap.forEach((k, v) -> {

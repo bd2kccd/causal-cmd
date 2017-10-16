@@ -90,6 +90,8 @@ public class CmdOptions {
         // data validation options
         opts.addOption(options.get(CmdParams.SKIP_VALIDATION));
 
+        opts.addOption(options.get(CmdParams.TIMEOUT));
+
         opts.addOption(options.get(CmdParams.SKIP_LATEST));
 
         // info options
@@ -121,6 +123,8 @@ public class CmdOptions {
         options.put(CmdParams.TEST, Option.builder().longOpt(CmdParams.TEST).desc(getIndependenceTestDesc()).hasArg().argName("string").build());
         options.put(CmdParams.SCORE, Option.builder().longOpt(CmdParams.SCORE).desc(getScoreDesc()).hasArg().argName("string").build());
 
+        options.put(CmdParams.TIMEOUT, Option.builder().longOpt(CmdParams.TIMEOUT).desc(getTimeoutDesc()).hasArg().argName("string").build());
+
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
         Set<String> params = paramDescs.getNames();
@@ -148,6 +152,15 @@ public class CmdOptions {
                 .filter(e -> e.getValue().isRequired())
                 .map(e -> e.getValue())
                 .collect(Collectors.toList());
+    }
+
+    private String getTimeoutDesc() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Set the time limit for graph searching. ");
+        sb.append("Units: s=second, m=minute, h=hour, d=day. ");
+        sb.append("For an example, 12m = 12 minutes");
+
+        return sb.toString();
     }
 
     private String getDataTypeDesc() {

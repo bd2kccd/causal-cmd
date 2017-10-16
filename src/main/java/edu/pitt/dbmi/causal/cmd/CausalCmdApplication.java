@@ -102,15 +102,17 @@ public class CausalCmdApplication {
             }
 
             Graph graph = algorithmRunner.getGraph();
-            try {
-                if (cmdArgs.json) {
-                    GraphIO.writeAsJSON(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.json"));
-                } else {
-                    GraphIO.writeAsTXT(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.txt"));
+            if (graph != null) {
+                try {
+                    if (cmdArgs.json) {
+                        GraphIO.writeAsJSON(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.json"));
+                    } else {
+                        GraphIO.writeAsTXT(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.txt"));
+                    }
+                } catch (IOException exception) {
+                    LOGGER.error("Unable to write out graph.", exception);
+                    System.exit(-1);
                 }
-            } catch (IOException exception) {
-                LOGGER.error("Unable to write out graph.", exception);
-                System.exit(-1);
             }
         }
     }
@@ -152,6 +154,10 @@ public class CausalCmdApplication {
             out.printf("Comment Marker: %s%n", cmdArgs.commentMarker);
         }
         out.printf("Skip Validation: %s%n", cmdArgs.skipValidation);
+
+        if (cmdArgs.time > 0) {
+            out.printf("Time Out: %d %s%n", cmdArgs.time, cmdArgs.timeUnit.name().toLowerCase());
+        }
 
         if (!cmdArgs.parameters.isEmpty()) {
             out.println();
