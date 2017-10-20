@@ -38,6 +38,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -56,355 +58,185 @@ public class CmdParser {
     public static CmdArgs parse(String[] args) throws CmdParserException {
         CmdArgs cmdArgs = new CmdArgs();
 
-        Map<String, String> argsMap = parseToMap(args);
-        parseRequiredOptions(cmdArgs, argsMap);
-        parseOptionalOptions(cmdArgs, argsMap);
+        ParseOptions parseOptions = getValidOptions(args, CmdOptions.getInstance().getMainOptions());
+
+        try {
+            CommandLine cmd = (new DefaultParser()).parse(parseOptions.getOptions(), args);
+            parseRequiredOptions(cmd, parseOptions, cmdArgs);
+            parseOptionalOptions(cmd, parseOptions, cmdArgs);
+        } catch (ParseException exception) {
+            throw new CmdParserException(parseOptions, exception);
+        }
 
         return cmdArgs;
     }
 
-    private static String extractName(Class clazz) {
-        String name = clazz.getName();
-        String[] fields = name.toLowerCase().split("\\.");
+    private static void parseOptionalOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
+        cmdArgs.knowledgeFile = cmd.hasOption(CmdParams.KNOWLEDGE)
+                ? getValidFile(cmd.getOptionValue(CmdParams.KNOWLEDGE), parseOptions, CmdParams.KNOWLEDGE)
+                : null;
+        cmdArgs.excludeVariableFile = cmd.hasOption(CmdParams.EXCLUDE_VARIABLE)
+                ? getValidFile(cmd.getOptionValue(CmdParams.EXCLUDE_VARIABLE), parseOptions, CmdParams.EXCLUDE_VARIABLE)
+                : null;
+        cmdArgs.outDirectory = cmd.hasOption(CmdParams.DIR_OUT)
+                ? Paths.get(cmd.getOptionValue(CmdParams.DIR_OUT))
+                : Paths.get(".");
+        cmdArgs.missingValueMarker = cmd.hasOption(CmdParams.MISSING_MARKER)
+                ? cmd.getOptionValue(CmdParams.MISSING_MARKER)
+                : null;
+        cmdArgs.commentMarker = cmd.hasOption(CmdParams.COMMENT_MARKER)
+                ? cmd.getOptionValue(CmdParams.COMMENT_MARKER)
+                : null;
+        cmdArgs.quoteChar = cmd.hasOption(CmdParams.QUOTE_CHAR)
+                ? getValidChar(cmd.getOptionValue(CmdParams.QUOTE_CHAR), parseOptions, CmdParams.QUOTE_CHAR)
+                : 0;
+        cmdArgs.filePrefix = cmd.hasOption(CmdParams.FILE_PREFIX)
+                ? cmd.getOptionValue(CmdParams.FILE_PREFIX)
+                : null;
+        cmdArgs.testClass = cmd.hasOption(CmdParams.TEST)
+                ? TetradIndependenceTests.getInstance().getClass(cmd.getOptionValue(CmdParams.TEST))
+                : null;
+        cmdArgs.scoreClass = cmd.hasOption(CmdParams.SCORE)
+                ? TetradScores.getInstance().getClass(cmd.getOptionValue(CmdParams.SCORE))
+                : null;
+        cmdArgs.time = cmd.hasOption(CmdParams.TIMEOUT)
+                ? getValidLong(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions, CmdParams.TIMEOUT)
+                : -1;
+        cmdArgs.timeUnit = cmd.hasOption(CmdParams.TIMEOUT)
+                ? getValidTimeUnit(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions, CmdParams.TIMEOUT)
+                : null;
+        cmdArgs.json = cmd.hasOption(CmdParams.JSON);
+        cmdArgs.skipLatest = cmd.hasOption(CmdParams.SKIP_LATEST);
+        cmdArgs.skipValidation = cmd.hasOption(CmdParams.SKIP_VALIDATION);
 
-        return fields[fields.length - 1];
+        cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
 
-    private static void parseOptionalOptions(CmdArgs cmdArgs, Map<String, String> argsMap) {
-        if (argsMap.containsKey(CmdParams.KNOWLEDGE)) {
-            cmdArgs.knowledgeFile = Paths.get(argsMap.get(CmdParams.KNOWLEDGE));
+    private static void parseRequiredOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
+        String datasetCmd = cmd.getOptionValue(CmdParams.DATASET);
+        String[] datasetFiles = datasetCmd.split(",");
+        List<Path> dataset = new LinkedList<>();
+        for (String datasetFile : datasetFiles) {
+            dataset.add(getValidFile(datasetFile, parseOptions, CmdParams.DATASET));
         }
-        if (argsMap.containsKey(CmdParams.EXCLUDE_VARIABLE)) {
-            cmdArgs.excludeVariableFile = Paths.get(argsMap.get(CmdParams.EXCLUDE_VARIABLE));
-        }
-        if (argsMap.containsKey(CmdParams.DIR_OUT)) {
-            cmdArgs.outDirectory = Paths.get(argsMap.get(CmdParams.DIR_OUT));
-        }
-        if (argsMap.containsKey(CmdParams.QUOTE_CHAR)) {
-            cmdArgs.quoteChar = argsMap.get(CmdParams.QUOTE_CHAR).charAt(0);
-        }
-        if (argsMap.containsKey(CmdParams.MISSING_MARKER)) {
-            cmdArgs.missingValueMarker = argsMap.get(CmdParams.MISSING_MARKER);
-        }
-        if (argsMap.containsKey(CmdParams.COMMENT_MARKER)) {
-            cmdArgs.commentMarker = argsMap.get(CmdParams.COMMENT_MARKER);
-        }
-        if (argsMap.containsKey(CmdParams.FILE_PREFIX)) {
-            cmdArgs.filePrefix = argsMap.get(CmdParams.FILE_PREFIX);
-        }
-        if (argsMap.containsKey(CmdParams.TIMEOUT)) {
-            String timeout = argsMap.get(CmdParams.TIMEOUT).toLowerCase();
+        cmdArgs.datasetFiles = dataset;
 
-            // get time
-            String time = timeout.substring(0, timeout.length() - 1);
-            try {
-                cmdArgs.time = Long.parseLong(time);
-            } catch (NumberFormatException exception) {
-                cmdArgs.time = -1;
-            }
-
-            // get time unit
-            char unit = timeout.charAt(timeout.length() - 1);
-            switch (unit) {
-                case 'd':
-                    cmdArgs.timeUnit = TimeUnit.DAYS;
-                    break;
-                case 'h':
-                    cmdArgs.timeUnit = TimeUnit.HOURS;
-                    break;
-                case 'm':
-                    cmdArgs.timeUnit = TimeUnit.MINUTES;
-                    break;
-                default:
-                    cmdArgs.timeUnit = TimeUnit.SECONDS;
-                    break;
-            }
-        } else {
-            cmdArgs.time = -1;
-        }
-
-        cmdArgs.skipValidation = argsMap.containsKey(CmdParams.SKIP_VALIDATION);
-        cmdArgs.json = argsMap.containsKey(CmdParams.JSON);
-        cmdArgs.skipLatest = argsMap.containsKey(CmdParams.SKIP_LATEST);
-
-        if (cmdArgs.outDirectory == null) {
-            cmdArgs.outDirectory = Paths.get(".");
-        }
-
-        cmdArgs.fileName = (cmdArgs.filePrefix == null)
-                ? extractName(cmdArgs.algorithmClass) + "_" + System.currentTimeMillis()
-                : cmdArgs.filePrefix;
-
-        List<String> params = new LinkedList<>();
-        try {
-            params.addAll(AlgorithmFactory.create(cmdArgs.algorithmClass, cmdArgs.testClass, cmdArgs.scoreClass).getParameters());
-        } catch (IllegalAccessException | InstantiationException exception) {
-            exception.printStackTrace(System.err);
-        }
-        cmdArgs.parameters = params.stream()
-                .filter(e -> argsMap.containsKey(e))
-                .collect(HashMap::new, (m, e) -> m.put(e, argsMap.get(e)), HashMap::putAll);
+        cmdArgs.dataType = DataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
+        cmdArgs.delimiter = Delimiters.getInstance().get(cmd.getOptionValue(CmdParams.DELIMITER));
+        cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(cmd.getOptionValue(CmdParams.ALGORITHM));
     }
 
-    private static void parseRequiredOptions(CmdArgs cmdArgs, Map<String, String> argsMap) {
-        String value = argsMap.get(CmdParams.DATASET);
-        String[] values = value.split(",");
-        List<Path> datasetFiles = new LinkedList<>();
-        for (String val : values) {
-            datasetFiles.add(Paths.get(val));
-        }
-        cmdArgs.datasetFiles = datasetFiles;
+    public static ParseOptions getHelpOptions(String[] args) throws CmdParserException {
+        CmdOptions cmdOptions = CmdOptions.getInstance();
 
-        cmdArgs.dataType = DataTypes.getInstance().get(argsMap.get(CmdParams.DATA_TYPE));
-        cmdArgs.delimiter = Delimiters.getInstance().getDelimiter(argsMap.get(CmdParams.DELIMITER));
-        cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(argsMap.get(CmdParams.ALGORITHM));
-
-        if (argsMap.containsKey(CmdParams.TEST)) {
-            cmdArgs.testClass = TetradIndependenceTests.getInstance().getTestOfIndependenceClass(argsMap.get(CmdParams.TEST));
-        }
-        if (argsMap.containsKey(CmdParams.SCORE)) {
-            cmdArgs.scoreClass = TetradScores.getInstance().getScoreClass(argsMap.get(CmdParams.SCORE));
-        }
+        return getValidOptions(Args.removeLongOption(args, CmdParams.HELP), cmdOptions.toOptions(cmdOptions.getBaseOptions()));
     }
 
-    private static Map<String, String> parseToMap(String[] args) throws CmdParserException {
+    private static ParseOptions getValidOptions(String[] args, Options options) throws CmdParserException {
+        ParseOptions parseOptions = new ParseOptions(options);
+        Options opts = parseOptions.getOptions();
+        Options invalidOpts = parseOptions.getInvalidValueOptions();
+
         Map<String, String> argsMap = new HashMap<>();
-
-        Options options = getValidOptions(args);
-
-        // get input Tetrad parameters
         try {
-            Args.parseLongOptions(args, options, argsMap);
+            Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
         } catch (ParseException exception) {
-            HelpOptions helpOptions = new HelpOptions();
-            Options opts = helpOptions.getOptions();
-            Options invalidOpts = helpOptions.getInvalidValueOptions();
-
-            options.getOptions().forEach(e -> opts.addOption(e));
-            Args.toMapOptions(args).forEach((k, v) -> {
-                if (v == null && options.hasLongOption(k)) {
-                    invalidOpts.addOption(options.getOption(k));
-                }
-            });
-
-            throw new CmdParserException(helpOptions, exception);
-        }
-
-        return argsMap;
-    }
-
-    /**
-     * Gather all the required and valid optional options based on user's input.
-     *
-     * @param args command-line arguments
-     * @return valid required and optional options
-     * @throws CmdParserException when parameters and value are incorrect or
-     * missing
-     */
-    private static Options getValidOptions(String[] args) throws CmdParserException {
-        Options opts = CmdOptions.getInstance().getMainOptions();
-        Options invalidOpts = new Options();
-
-        Map<String, String> argsParseMap = new HashMap<>();
-        try {
-            Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsParseMap);
-        } catch (ParseException exception) {
-            throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
-        }
-
-        // ensure datasets exist
-        String dataset = argsParseMap.get(CmdParams.DATASET);
-        String[] dataFiles = dataset.split(",");
-        for (String file : dataFiles) {
-            try {
-                FileUtils.exists(Paths.get(file.trim()));
-            } catch (FileNotFoundException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.DATASET));
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
-            }
-        }
-
-        if (argsParseMap.containsKey(CmdParams.QUOTE_CHAR)) {
-            String quoteChar = argsParseMap.get(CmdParams.QUOTE_CHAR);
-            if (quoteChar.length() != 1) {
-                invalidOpts.addOption(opts.getOption(CmdParams.QUOTE_CHAR));
-                String errMsg = String.format("Parameter %s requires a single character.", CmdParams.QUOTE_CHAR);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-            }
-        }
-
-        if (argsParseMap.containsKey(CmdParams.TIMEOUT)) {
-            String timeout = argsParseMap.get(CmdParams.TIMEOUT).toLowerCase();
-            char unit = timeout.charAt(timeout.length() - 1);
-            if (unit >= 'a' && unit <= 'z') {
-                if (!(unit == 'd' || unit == 'h' || unit == 'm' || unit == 's')) {
-                    invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-                    String errMsg = String.format("Value '%s' does not a valid time unit.", timeout);
-                    throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-                }
-            } else {
-                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-                String errMsg = String.format("Value '%s' requires time unit.", timeout);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-            }
-            String time = timeout.substring(0, timeout.length() - 1);
-            if (time.isEmpty()) {
-                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-                String errMsg = String.format("Value '%s' requires time.", timeout);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-            } else {
-                try {
-                    Long.parseLong(time);
-                } catch (NumberFormatException exception) {
-                    invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-                    String errMsg = String.format("Value '%s' is either not a number or of a type long.", timeout);
-                    throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-                }
-            }
+            throw new CmdParserException(parseOptions, exception);
         }
 
         // ensure delimiter is valid
-        String delimiterName = argsParseMap.get(CmdParams.DELIMITER);
+        String delimiterName = argsMap.get(CmdParams.DELIMITER);
         if (!Delimiters.getInstance().exists(delimiterName)) {
             invalidOpts.addOption(opts.getOption(CmdParams.DELIMITER));
             String errMsg = String.format("No such delimiter '%s'.", delimiterName);
-            throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
 
         // get data type
-        String dataTypeCmd = argsParseMap.get(CmdParams.DATA_TYPE);
+        String dataTypeCmd = argsMap.get(CmdParams.DATA_TYPE);
         DataType dataType = DataTypes.getInstance().get(dataTypeCmd);
         if (dataType == null) {
             invalidOpts.addOption(opts.getOption(CmdParams.DATA_TYPE));
             String errMsg = String.format("No such data type '%s'.", dataTypeCmd);
-            throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
-
-        if (dataType == DataType.Covariance) {
-            if (Args.hasLongParam(args, CmdParams.MISSING_MARKER)) {
-                String errMsg = createRejectParamMsg(CmdParams.DATA_TYPE, dataType.name().toLowerCase(), CmdParams.MISSING_MARKER);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-            }
-            if (Args.hasLongParam(args, CmdParams.EXCLUDE_VARIABLE)) {
-                String errMsg = createRejectParamMsg(CmdParams.DATA_TYPE, dataType.name().toLowerCase(), CmdParams.EXCLUDE_VARIABLE);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-            }
-            if (Args.hasLongParam(args, CmdParams.NUM_CATEGORIES)) {
-                String errMsg = createRejectParamMsg(CmdParams.DATA_TYPE, dataType.name().toLowerCase(), CmdParams.NUM_CATEGORIES);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-            }
-        } else {
-            // set options for a particular data type
+        if (dataType != DataType.Covariance) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXCLUDE_VARIABLE));
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MISSING_MARKER));
             if (dataType == DataType.Mixed) {
                 opts.addOption(OptionFactory.createRequiredNumCategoryOpt());
-                try {
-                    Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsParseMap);
-                } catch (ParseException exception) {
-                    throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
-                }
-            } else {
-                if (Args.hasLongParam(args, CmdParams.NUM_CATEGORIES)) {
-                    String errMsg = createRejectParamMsg(CmdParams.DATA_TYPE, dataType.name().toLowerCase(), CmdParams.NUM_CATEGORIES);
-                    throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-                }
             }
         }
 
         // get algorithm
-        String algorithmCmd = argsParseMap.get(CmdParams.ALGORITHM);
+        String algorithmCmd = argsMap.get(CmdParams.ALGORITHM);
         Class algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(algorithmCmd);
         if (algorithmClass == null) {
             invalidOpts.addOption(opts.getOption(CmdParams.ALGORITHM));
             String errMsg = String.format("No such algorithm '%s'.", algorithmCmd);
-            throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-        }
-        if (!TetradAlgorithms.getInstance().acceptMultipleDataset(algorithmClass) && dataFiles.length > 1) {
-            String errMsg = String.format("Algorithm '%s' does not accept multiple datasets.", algorithmCmd);
-            throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
         if (TetradAlgorithms.getInstance().acceptKnowledge(algorithmClass)) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
-            try {
-                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsParseMap);
-            } catch (ParseException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.KNOWLEDGE));
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
-            }
-
-            String knowledge = argsParseMap.get(CmdParams.KNOWLEDGE);
-            if (knowledge != null) {
-                try {
-                    FileUtils.exists(Paths.get(knowledge.trim()));
-                } catch (FileNotFoundException exception) {
-                    throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
-                }
-            }
-        } else {
-            if (opts.hasLongOption(CmdParams.KNOWLEDGE)) {
-                String errMsg = String.format("Algorithm '%s' does not accept knowledge.", algorithmCmd);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
-            }
         }
 
         Class indTestClass = null;
         if (TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass)) {
             opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
             try {
-                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsParseMap);
+                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
             } catch (ParseException exception) {
                 invalidOpts.addOption(opts.getOption(CmdParams.TEST));
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
+                throw new CmdParserException(parseOptions, exception);
             }
 
-            String indTestCmd = argsParseMap.get(CmdParams.TEST);
+            String indTestCmd = argsMap.get(CmdParams.TEST);
             TetradIndependenceTests indTests = TetradIndependenceTests.getInstance();
             if (!indTests.hasCommand(indTestCmd)) {
                 invalidOpts.addOption(opts.getOption(CmdParams.TEST));
                 String errMsg = String.format("No such test '%s'.", indTestCmd);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
             if (!indTests.hasCommand(indTestCmd, dataType)) {
                 invalidOpts.addOption(opts.getOption(CmdParams.TEST));
-                String errMsg = String.format("Independence test '%s' is invalid for data-type '%s'.", indTestCmd, argsParseMap.get(CmdParams.DATA_TYPE));
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+                String errMsg = String.format("Independence test '%s' is invalid for data-type '%s'.", indTestCmd, argsMap.get(CmdParams.DATA_TYPE));
+                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
 
-            indTestClass = TetradIndependenceTests.getInstance().getTestOfIndependenceClass(indTestCmd);
+            indTestClass = TetradIndependenceTests.getInstance().getClass(indTestCmd);
         }
 
         Class scoreClass = null;
         if (TetradAlgorithms.getInstance().requireScore(algorithmClass)) {
             opts.addOption(OptionFactory.createRequiredScoreOpt(dataType));
             try {
-                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsParseMap);
+                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
             } catch (ParseException exception) {
                 invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
+                throw new CmdParserException(parseOptions, exception);
             }
 
-            String scoreCmd = argsParseMap.get(CmdParams.SCORE);
+            String scoreCmd = argsMap.get(CmdParams.SCORE);
             TetradScores scores = TetradScores.getInstance();
             if (!scores.hasCommand(scoreCmd)) {
                 invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
                 String errMsg = String.format("No such score '%s'.", scoreCmd);
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
             if (!scores.hasCommand(scoreCmd, dataType)) {
                 invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
-                String errMsg = String.format("Score '%s' is invalid for data-type '%s'.", scoreCmd, argsParseMap.get(CmdParams.DATA_TYPE));
-                throw new CmdParserException(new HelpOptions(opts, invalidOpts), new IllegalArgumentException(errMsg));
+                String errMsg = String.format("Score '%s' is invalid for data-type '%s'.", scoreCmd, argsMap.get(CmdParams.DATA_TYPE));
+                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
 
-            scoreClass = TetradScores.getInstance().getScoreClass(scoreCmd);
+            scoreClass = TetradScores.getInstance().getClass(scoreCmd);
         }
 
         List<String> params = new LinkedList<>();
         try {
             params.addAll(AlgorithmFactory.create(algorithmClass, indTestClass, scoreClass).getParameters());
         } catch (IllegalAccessException | InstantiationException exception) {
-            throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
+            throw new CmdParserException(parseOptions, exception);
         }
 
         // add Tetrad parameters
@@ -412,22 +244,36 @@ public class CmdParser {
             opts.addOption(CmdOptions.getInstance().getLongOption(param));
         });
 
-        // added required parameter for mixed dataset
-        if (dataType == DataType.Mixed) {
-            params.add(CmdParams.NUM_CATEGORIES);
-        }
-
         try {
-            Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsParseMap);
+            (new DefaultParser()).parse(parseOptions.getOptions(), args);
         } catch (ParseException exception) {
-            throw new CmdParserException(new HelpOptions(opts, invalidOpts), exception);
+            Args.toMapOptions(args).forEach((k, v) -> {
+                if (v == null && options.hasLongOption(k) && options.getOption(k).hasArg()) {
+                    invalidOpts.addOption(options.getOption(k));
+                }
+            });
+            throw new CmdParserException(parseOptions, exception);
+        }
+        return parseOptions;
+    }
+
+    private static Map<String, String> getValidParameters(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
+        Map<String, String> parameters = new HashMap<>();
+
+        List<String> params = new LinkedList<>();
+        try {
+            params.addAll(AlgorithmFactory.create(cmdArgs.algorithmClass, cmdArgs.testClass, cmdArgs.scoreClass).getParameters());
+        } catch (IllegalAccessException | InstantiationException exception) {
+            throw new CmdParserException(parseOptions, exception);
         }
 
+        Options opts = parseOptions.getOptions();
+        Options invalidOpts = parseOptions.getInvalidValueOptions();
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
         for (String param : params) {
-            if (argsParseMap.containsKey(param)) {
+            if (cmd.hasOption(param)) {
                 ParamDescription paramDesc = paramDescs.get(param);
-                String value = argsParseMap.get(param);
+                String value = cmd.getOptionValue(param);
                 Option opt = opts.getOption(param);
                 Object type = opt.getType();
                 if (type == Integer.class) {
@@ -437,21 +283,21 @@ public class CmdParser {
                     } catch (NumberFormatException exception) {
                         invalidOpts.addOption(opts.getOption(param));
                         String errMsg = String.format("The value '%s' for parameter %s is not a integer.", value, param);
-                        throw new CmdParserException(new HelpOptions(opts, invalidOpts), new NumberFormatException(errMsg));
+                        throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
                     }
 
                     int min = paramDesc.getLowerBoundInt();
                     if (val < min) {
                         invalidOpts.addOption(opts.getOption(param));
                         String errMsg = String.format("Value for parameter %s is %d but minimum is %d.", param, val, min);
-                        throw new CmdParserException(new HelpOptions(opts, invalidOpts), new NumberFormatException(errMsg));
+                        throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
                     }
 
                     int max = paramDesc.getUpperBoundInt();
                     if (val > max) {
                         invalidOpts.addOption(opts.getOption(param));
                         String errMsg = String.format("Value for parameter %s is %d but maximum is %d.", param, val, max);
-                        throw new CmdParserException(new HelpOptions(opts, invalidOpts), new NumberFormatException(errMsg));
+                        throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
                     }
                 } else if (type == Double.class) {
                     double val = Double.NaN;
@@ -460,155 +306,110 @@ public class CmdParser {
                     } catch (NumberFormatException exception) {
                         invalidOpts.addOption(opts.getOption(param));
                         String errMsg = String.format("The value '%s' for parameter %s is not a double.", value, param);
-                        throw new CmdParserException(new HelpOptions(opts, invalidOpts), new NumberFormatException(errMsg));
+                        throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
                     }
 
                     double min = paramDesc.getLowerBoundDouble();
                     if (val < min) {
                         invalidOpts.addOption(opts.getOption(param));
                         String errMsg = String.format("Value for parameter %s is %f but minimum is %f.", param, val, min);
-                        throw new CmdParserException(new HelpOptions(opts, invalidOpts), new NumberFormatException(errMsg));
+                        throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
                     }
 
                     double max = paramDesc.getUpperBoundDouble();
                     if (val > max) {
                         invalidOpts.addOption(opts.getOption(param));
                         String errMsg = String.format("Value for parameter %s is %f but maximum is %f.", param, val, max);
-                        throw new CmdParserException(new HelpOptions(opts, invalidOpts), new NumberFormatException(errMsg));
+                        throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
                     }
                 }
+                parameters.put(param, value);
             }
-        }
+        };
 
-        return opts;
+        return parameters;
     }
 
-    public static HelpOptions getHelpOptions(String[] args) {
-        HelpOptions helpOptions = new HelpOptions();
-        Options opts = helpOptions.getOptions();
-        Options invalidOpts = helpOptions.getInvalidValueOptions();
+    private static TimeUnit getValidTimeUnit(String time, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
+        Options opts = parseOptions.getOptions();
+        Options invalidOpts = parseOptions.getInvalidValueOptions();
 
-        CmdOptions.getInstance().getRequiredOptions()
-                .forEach(e -> opts.addOption(e));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.TIMEOUT));
-
-        Map<String, String> argsMap = Args.toMapOptions(args);
-        argsMap.forEach((k, v) -> {
-            if (v == null && opts.hasLongOption(k)) {
-                invalidOpts.addOption(opts.getOption(k));
-            }
-        });
-
-        DataType dataType = null;
-        String dataTypeCmd = argsMap.get(CmdParams.DATA_TYPE);
-        if (dataTypeCmd != null) {
-            if (DataTypes.getInstance().exists(dataTypeCmd)) {
-                dataType = DataTypes.getInstance().get(dataTypeCmd);
-                if (dataType != DataType.Covariance) {
-                    opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXCLUDE_VARIABLE));
-                    opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MISSING_MARKER));
-                    if (dataType == DataType.Mixed) {
-                        opts.addOption(OptionFactory.createRequiredNumCategoryOpt());
-                    }
+        char unit = time.charAt(time.length() - 1);
+        if (unit >= 'a' && unit <= 'z') {
+            if (unit == 'd' || unit == 'h' || unit == 'm' || unit == 's') {
+                switch (unit) {
+                    case 'd':
+                        return TimeUnit.DAYS;
+                    case 'h':
+                        return TimeUnit.HOURS;
+                    case 'm':
+                        return TimeUnit.MINUTES;
+                    default:
+                        return TimeUnit.SECONDS;
                 }
             } else {
-                invalidOpts.addOption(opts.getOption(CmdParams.DATA_TYPE));
-                System.err.println(createNoSuchValueMsg(CmdParams.DATA_TYPE, dataTypeCmd));
+                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+                String errMsg = String.format("Value '%s' does not a valid time unit.", time);
+                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
-
+        } else {
+            invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+            String errMsg = String.format("Value '%s' requires time unit.", time);
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
-
-        if (argsMap.containsKey(CmdParams.ALGORITHM) && argsMap.get(CmdParams.ALGORITHM) != null) {
-            String algoCmd = argsMap.get(CmdParams.ALGORITHM);
-            TetradAlgorithms algorithms = TetradAlgorithms.getInstance();
-            if (algorithms.hasCommand(algoCmd)) {
-                Class algoClass = algorithms.getAlgorithmClass(algoCmd);
-                if (algorithms.acceptKnowledge(algoClass)) {
-                    opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
-                }
-
-                if (dataType != null) {
-                    if (algorithms.requireIndependenceTest(algoClass)) {
-                        opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
-                    }
-                    if (algorithms.requireScore(algoClass)) {
-                        opts.addOption(OptionFactory.createRequiredScoreOpt(dataType));
-                    }
-
-                    Class testClass = null;
-                    if (argsMap.containsKey(CmdParams.TEST) && argsMap.get(CmdParams.TEST) != null) {
-                        String testCmd = argsMap.get(CmdParams.TEST);
-                        TetradIndependenceTests tests = TetradIndependenceTests.getInstance();
-                        if (tests.hasCommand(testCmd)) {
-                            if (tests.hasCommand(testCmd, dataType)) {
-                                testClass = tests.getTestOfIndependenceClass(testCmd);
-                            } else {
-                                invalidOpts.addOption(opts.getOption(CmdParams.TEST));
-
-                                String errMsg = String.format("Invalid test '%s' for data-type '%s'.", testCmd, dataTypeCmd);
-                                System.err.println(errMsg);
-                            }
-                        } else {
-                            invalidOpts.addOption(opts.getOption(CmdParams.TEST));
-                            System.err.println(createNoSuchValueMsg(CmdParams.TEST, testCmd));
-                        }
-                    }
-
-                    Class scoreClass = null;
-                    if (argsMap.containsKey(CmdParams.SCORE) && argsMap.get(CmdParams.SCORE) != null) {
-                        String scoreCmd = argsMap.get(CmdParams.SCORE);
-                        TetradScores scores = TetradScores.getInstance();
-                        if (scores.hasCommand(scoreCmd)) {
-                            if (scores.hasCommand(scoreCmd, dataType)) {
-                                scoreClass = scores.getScoreClass(scoreCmd);
-                            } else {
-                                invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
-
-                                String errMsg = String.format("Invalid score '%s' for data-type '%s'.", scoreCmd, dataTypeCmd);
-                                System.err.println(errMsg);
-                            }
-                        } else {
-                            invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
-                            System.err.println(createNoSuchValueMsg(CmdParams.SCORE, scoreCmd));
-                        }
-                    }
-
-                    List<String> params = new LinkedList<>();
-                    try {
-                        params.addAll(AlgorithmFactory.create(algoClass, testClass, scoreClass).getParameters());
-                    } catch (IllegalAccessException | InstantiationException | IllegalArgumentException exception) {
-                    }
-
-                    // add Tetrad parameters
-                    params.forEach(param -> {
-                        opts.addOption(CmdOptions.getInstance().getLongOption(param));
-                    });
-                }
-            } else {
-                invalidOpts.addOption(opts.getOption(CmdParams.ALGORITHM));
-                System.err.println(createNoSuchValueMsg(CmdParams.ALGORITHM, algoCmd));
-            }
-
-            if (argsMap.containsKey(CmdParams.DELIMITER) && argsMap.get(CmdParams.DELIMITER) != null) {
-                String delimiterName = argsMap.get(CmdParams.DELIMITER);
-                if (!Delimiters.getInstance().exists(delimiterName)) {
-                    invalidOpts.addOption(opts.getOption(CmdParams.DELIMITER));
-
-                    String errMsg = String.format("No such delimiter '%s'.", delimiterName);
-                    System.err.println(errMsg);
-                }
-            }
-        }
-
-        return helpOptions;
     }
 
-    private static String createNoSuchValueMsg(String param, String value) {
-        return String.format("Invalid value for parameter --%s: %s", param, value);
+    private static long getValidLong(String time, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
+        Options opts = parseOptions.getOptions();
+        Options invalidOpts = parseOptions.getInvalidValueOptions();
+
+        String digit = time.substring(0, time.length() - 1);
+        if (digit.isEmpty()) {
+            invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+            String errMsg = String.format("Value '%s' requires time.", time);
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
+        } else {
+            try {
+                return Long.parseLong(digit);
+            } catch (NumberFormatException exception) {
+                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+                String errMsg = String.format("Value '%s' is either not a number or of a type long.", time);
+                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
+            }
+        }
     }
 
-    private static String createRejectParamMsg(String param, String value, String rejectedParam) {
-        return String.format("Parameter --%s with value '%s' cannot be used with parameter --%s.", param, value, rejectedParam);
+    private static char getValidChar(String quoteChar, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
+        char c = 0;
+
+        if (quoteChar.length() == 1) {
+            c = quoteChar.charAt(0);
+        } else {
+            Options opts = parseOptions.getOptions();
+            Options invalidOpts = parseOptions.getInvalidValueOptions();
+
+            invalidOpts.addOption(opts.getOption(cmdParam));
+            String errMsg = String.format("Parameter %s requires a single character.", cmdParam);
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
+        }
+
+        return c;
+    }
+
+    private static Path getValidFile(String filePath, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
+        Path file = Paths.get(filePath);
+
+        try {
+            FileUtils.exists(file);
+        } catch (FileNotFoundException exception) {
+            Options opts = parseOptions.getOptions();
+            Options invalidOpts = parseOptions.getInvalidValueOptions();
+
+            invalidOpts.addOption(opts.getOption(cmdParam));
+            throw new CmdParserException(parseOptions, exception);
+        }
+
+        return file;
     }
 
 }

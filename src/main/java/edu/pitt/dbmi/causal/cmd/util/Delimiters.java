@@ -55,7 +55,7 @@ public class Delimiters {
         return Collections.unmodifiableList(list);
     }
 
-    public Delimiter getDelimiter(String delimiterName) {
+    public Delimiter get(String delimiterName) {
         return delimiters.get(delimiterName);
     }
 

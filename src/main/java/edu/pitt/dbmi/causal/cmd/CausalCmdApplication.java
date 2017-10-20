@@ -18,22 +18,8 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import edu.cmu.tetrad.data.DataType;
-import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.latest.LatestClient;
-import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithmRunner;
-import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
-import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
-import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
 import edu.pitt.dbmi.causal.cmd.util.Application;
 import edu.pitt.dbmi.causal.cmd.util.Args;
-import edu.pitt.dbmi.causal.cmd.util.DateTime;
-import edu.pitt.dbmi.causal.cmd.util.GraphIO;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,9 +41,14 @@ public class CausalCmdApplication {
     public static void main(String[] args) {
         args = Args.clean(args);
         if (Args.hasLongParam(args, CmdParams.HELP)) {
-            Application.showHelp(args, CmdParser.getHelpOptions(args), null);
+            try {
+                Application.showHelp(args, CmdParser.getHelpOptions(args), null);
+            } catch (CmdParserException exception) {
+                System.err.println(exception.getCause().getMessage());
+                Application.showHelp(args, exception.getParseOptions(), null);
+            }
         } else if (Args.hasLongParam(args, CmdParams.HELP_ALL)) {
-            Application.showHelp(CmdOptions.getInstance().getOptions(), FOOTER);
+            Application.showHelp(CmdOptions.getInstance().getOptions(), null);
         } else if (Args.hasLongParam(args, CmdParams.VERSION)) {
             System.out.println(Application.getVersion());
         } else {
@@ -66,106 +57,9 @@ public class CausalCmdApplication {
                 cmdArgs = CmdParser.parse(args);
             } catch (CmdParserException exception) {
                 System.err.println(exception.getCause().getMessage());
-                Application.showHelp(args, exception.getHelpOptions(), FOOTER);
-            }
-            if (cmdArgs == null) {
-                System.exit(-1);
-            }
-
-            if (!cmdArgs.isSkipLatest()) {
-                try {
-                    LatestClient latestClient = LatestClient.getInstance();
-                    String version = Application.jarVersion();
-                    if (version == null) {
-                        version = "DEVELOPMENT";
-                    }
-                    latestClient.checkLatest("causal-cmd", version);
-                    System.out.println(latestClient.getLatestResult());
-                } catch (Exception exception) {
-                    LOGGER.error("Unable to check for the latest version.", exception);
-                }
-            }
-
-            TetradAlgorithmRunner algorithmRunner = new TetradAlgorithmRunner();
-            try (PrintStream out = new PrintStream(Files.newOutputStream(getOutputFile(cmdArgs)), true)) {
-                algorithmRunner.setOut(out);
-                writeInputInfo(cmdArgs, out);
-                try {
-                    algorithmRunner.runAlgorithm(cmdArgs);
-                } catch (AlgorithmRunException exception) {
-                    out.println(exception.getMessage());
-                    LOGGER.error("Algorithm run failed.", exception);
-                    System.exit(-1);
-                }
-            } catch (IOException exception) {
-                LOGGER.error("Algorithm run failed.", exception);
-            }
-
-            Graph graph = algorithmRunner.getGraph();
-            if (graph != null) {
-                try {
-                    if (cmdArgs.json) {
-                        GraphIO.writeAsJSON(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.json"));
-                    } else {
-                        GraphIO.writeAsTXT(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + "_graph.txt"));
-                    }
-                } catch (IOException exception) {
-                    LOGGER.error("Unable to write out graph.", exception);
-                    System.exit(-1);
-                }
+                Application.showHelp(args, exception.getParseOptions(), FOOTER);
             }
         }
-    }
-
-    private static Path getOutputFile(CmdArgs cmdArgs) {
-        return Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.fileName + ".txt");
-    }
-
-    private static void writeInputInfo(CmdArgs cmdArgs, PrintStream out) throws IOException {
-        out.printf("%s (%s)%n", TetradAlgorithms.getInstance().getName(cmdArgs.algorithmClass), DateTime.printNow());
-        out.println("================================================================================");
-        out.println(TetradAlgorithms.getInstance().getDescription(cmdArgs.algorithmClass));
-
-        out.println();
-        out.println("Options:");
-        out.println("--------------------------------------------------------------------------------");
-        out.printf("Algorithm: %s%n", TetradAlgorithms.getInstance().getName(cmdArgs.algorithmClass));
-        out.printf("Test: %s%n", TetradIndependenceTests.getInstance().getName(cmdArgs.testClass));
-        out.printf("Score: %s%n", TetradScores.getInstance().getName(cmdArgs.scoreClass));
-        cmdArgs.datasetFiles.forEach(s -> out.printf("Dataset: %s%n", s.toAbsolutePath().toAbsolutePath()));
-        if (cmdArgs.knowledgeFile != null) {
-            out.printf("Knowledge: %s%n", cmdArgs.knowledgeFile.toAbsolutePath().toString());
-        }
-        if (cmdArgs.excludeVariableFile != null) {
-            out.printf("Exclude Variables: %s%n", cmdArgs.excludeVariableFile.toAbsolutePath().toString());
-        }
-        out.printf("Data Type: %s%n", cmdArgs.dataType.name().toLowerCase());
-        out.printf("Delimiter: %s%n", cmdArgs.delimiter.name().toLowerCase());
-        if (cmdArgs.dataType == DataType.Mixed) {
-            out.printf("Number of Categories: %s%n", cmdArgs.numCategories);
-        }
-        if (cmdArgs.quoteChar > 0) {
-            out.printf("Quote Character: %s%n", cmdArgs.quoteChar);
-        }
-        if (cmdArgs.missingValueMarker != null) {
-            out.printf("Missing Value Marker: %s%n", cmdArgs.missingValueMarker);
-        }
-        if (cmdArgs.commentMarker != null) {
-            out.printf("Comment Marker: %s%n", cmdArgs.commentMarker);
-        }
-        out.printf("Skip Validation: %s%n", cmdArgs.skipValidation);
-
-        if (cmdArgs.time > 0) {
-            out.printf("Time Out: %d %s%n", cmdArgs.time, cmdArgs.timeUnit.name().toLowerCase());
-        }
-
-        if (!cmdArgs.parameters.isEmpty()) {
-            out.println();
-            out.println("Algorithm Parameters:");
-            out.println("--------------------------------------------------------------------------------");
-            cmdArgs.parameters.forEach((k, v) -> out.printf("%s: %s%n", k, (v == null) ? "true" : v));
-        }
-        out.println();
     }
 
 }

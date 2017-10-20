@@ -115,7 +115,7 @@ public class TetradIndependenceTests {
         return Collections.unmodifiableList(list);
     }
 
-    public Class getTestOfIndependenceClass(String command) {
+    public Class getClass(String command) {
         if (command == null) {
             return null;
         }

@@ -40,6 +40,32 @@ public class Args {
     private Args() {
     }
 
+    public static String[] removeLongOption(String[] args, String option) {
+        CmdOptions cmdOptions = CmdOptions.getInstance();
+        List<String> argsToKeep = new LinkedList<>();
+        boolean skip = false;
+        for (String arg : args) {
+            if (arg.startsWith("--")) {
+                String value = arg.substring(2, arg.length());
+                if (value.equals(option)) {
+                    if (cmdOptions.hasLongParam(option) && cmdOptions.getLongOption(option).hasArg()) {
+                        skip = true;
+                    }
+                } else {
+                    argsToKeep.add(arg);
+                }
+            } else {
+                if (skip) {
+                    skip = false;
+                } else {
+                    argsToKeep.add(arg);
+                }
+            }
+        }
+
+        return argsToKeep.toArray(new String[argsToKeep.size()]);
+    }
+
     public static void parseLongOptions(String[] args, Options options, Map<String, String> argsMap) throws ParseException {
         CommandLine cmd = (new DefaultParser()).parse(options, args);
         options.getOptions().forEach(option -> {
@@ -189,7 +215,7 @@ public class Args {
 
     public static String[] clean(String[] args) {
         if (args == null) {
-            return null;
+            return new String[0];
         }
 
         List<String> argList = new LinkedList<>();

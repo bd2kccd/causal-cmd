@@ -26,16 +26,20 @@ import org.apache.commons.cli.Options;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class HelpOptions {
+public class ParseOptions {
 
     private final Options options;
     private final Options invalidValueOptions;
 
-    public HelpOptions() {
+    public ParseOptions() {
         this(new Options(), new Options());
     }
 
-    public HelpOptions(Options options, Options invalidValueOptions) {
+    public ParseOptions(Options options) {
+        this(options, new Options());
+    }
+
+    public ParseOptions(Options options, Options invalidValueOptions) {
         this.options = (options == null) ? new Options() : options;
         this.invalidValueOptions = (invalidValueOptions == null) ? new Options() : invalidValueOptions;
     }

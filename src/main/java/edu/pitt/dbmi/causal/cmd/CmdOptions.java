@@ -26,6 +26,7 @@ import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
 import edu.pitt.dbmi.causal.cmd.util.DataTypes;
 import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,31 +74,44 @@ public class CmdOptions {
     }
 
     public Options getMainOptions() {
+        List<Option> optList = getBaseOptions();
+        optList.add(options.get(CmdParams.HELP));
+        optList.add(options.get(CmdParams.HELP_ALL));
+        optList.add(options.get(CmdParams.VERSION));
+
+        return toOptions(optList);
+    }
+
+    public Options toOptions(List<Option> optionList) {
         Options opts = new Options();
 
-        // required options
-        getRequiredOptions().forEach(opt -> opts.addOption(opt));
+        if (optionList != null) {
+            optionList.forEach(e -> opts.addOption(e));
+        }
+
+        return opts;
+    }
+
+    public List<Option> getBaseOptions() {
+        List<Option> opts = new LinkedList<>();
+
+        getRequiredOptions().forEach(e -> opts.add(e));
 
         // dataset options
-        opts.addOption(options.get(CmdParams.QUOTE_CHAR));
-        opts.addOption(options.get(CmdParams.COMMENT_MARKER));
+        opts.add(options.get(CmdParams.QUOTE_CHAR));
+        opts.add(options.get(CmdParams.COMMENT_MARKER));
 
         // output options
-        opts.addOption(options.get(CmdParams.FILE_PREFIX));
-        opts.addOption(options.get(CmdParams.JSON));
-        opts.addOption(options.get(CmdParams.DIR_OUT));
+        opts.add(options.get(CmdParams.FILE_PREFIX));
+        opts.add(options.get(CmdParams.JSON));
+        opts.add(options.get(CmdParams.DIR_OUT));
 
         // data validation options
-        opts.addOption(options.get(CmdParams.SKIP_VALIDATION));
+        opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
-        opts.addOption(options.get(CmdParams.TIMEOUT));
+        opts.add(options.get(CmdParams.TIMEOUT));
 
-        opts.addOption(options.get(CmdParams.SKIP_LATEST));
-
-        // info options
-        opts.addOption(options.get(CmdParams.VERSION));
-        opts.addOption(options.get(CmdParams.HELP));
-        opts.addOption(options.get(CmdParams.HELP_ALL));
+        opts.add(options.get(CmdParams.SKIP_LATEST));
 
         return opts;
     }
