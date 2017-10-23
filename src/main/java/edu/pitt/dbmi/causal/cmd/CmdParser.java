@@ -278,6 +278,11 @@ public class CmdParser {
             throw new CmdParserException(parseOptions, exception);
         }
 
+        // add --numCategories to validate with other tetrad parameters
+        if (cmd.hasOption(CmdParams.NUM_CATEGORIES)) {
+            params.add(CmdParams.NUM_CATEGORIES);
+        }
+
         Options opts = parseOptions.getOptions();
         Options invalidOpts = parseOptions.getInvalidValueOptions();
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
@@ -337,6 +342,18 @@ public class CmdParser {
                 parameters.put(param, value);
             }
         };
+
+        // remove --numCategories parameter after validation
+        if (parameters.containsKey(CmdParams.NUM_CATEGORIES)) {
+            String value = parameters.remove(CmdParams.NUM_CATEGORIES);
+            try {
+                cmdArgs.numCategories = Integer.parseInt(value);
+            } catch (NumberFormatException exception) {
+                invalidOpts.addOption(opts.getOption(CmdParams.NUM_CATEGORIES));
+                String errMsg = String.format("The value '%s' for parameter %s is not a integer.", value, CmdParams.NUM_CATEGORIES);
+                throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
+            }
+        }
 
         return parameters;
     }
