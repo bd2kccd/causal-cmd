@@ -39,7 +39,6 @@ public class CmdArgs {
     protected Path outDirectory;
 
     protected String filePrefix;
-    protected String fileName;
 
     protected char quoteChar;
     protected String missingValueMarker;
@@ -84,10 +83,6 @@ public class CmdArgs {
 
     public String getFilePrefix() {
         return filePrefix;
-    }
-
-    public String getFileName() {
-        return fileName;
     }
 
     public char getQuoteChar() {

@@ -18,6 +18,7 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
+import edu.pitt.dbmi.causal.cmd.tetrad.TetradRunner;
 import edu.pitt.dbmi.causal.cmd.util.Application;
 import edu.pitt.dbmi.causal.cmd.util.Args;
 import org.slf4j.Logger;
@@ -59,6 +60,12 @@ public class CausalCmdApplication {
                 System.err.println(exception.getCause().getMessage());
                 Application.showHelp(args, exception.getParseOptions(), FOOTER);
             }
+
+            if (cmdArgs == null) {
+                System.exit(-1);
+            }
+
+            TetradRunner.runTetrad(cmdArgs);
         }
     }
 

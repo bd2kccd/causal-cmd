@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -90,9 +91,6 @@ public class CmdParser {
         cmdArgs.quoteChar = cmd.hasOption(CmdParams.QUOTE_CHAR)
                 ? getValidChar(cmd.getOptionValue(CmdParams.QUOTE_CHAR), parseOptions, CmdParams.QUOTE_CHAR)
                 : 0;
-        cmdArgs.filePrefix = cmd.hasOption(CmdParams.FILE_PREFIX)
-                ? cmd.getOptionValue(CmdParams.FILE_PREFIX)
-                : null;
         cmdArgs.testClass = cmd.hasOption(CmdParams.TEST)
                 ? TetradIndependenceTests.getInstance().getClass(cmd.getOptionValue(CmdParams.TEST))
                 : null;
@@ -100,11 +98,12 @@ public class CmdParser {
                 ? TetradScores.getInstance().getClass(cmd.getOptionValue(CmdParams.SCORE))
                 : null;
         cmdArgs.time = cmd.hasOption(CmdParams.TIMEOUT)
-                ? getValidLong(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions, CmdParams.TIMEOUT)
+                ? getValidLong(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions)
                 : -1;
         cmdArgs.timeUnit = cmd.hasOption(CmdParams.TIMEOUT)
-                ? getValidTimeUnit(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions, CmdParams.TIMEOUT)
+                ? getValidTimeUnit(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions)
                 : null;
+        cmdArgs.filePrefix = getValidPrefix(cmd, cmdArgs, parseOptions);
         cmdArgs.json = cmd.hasOption(CmdParams.JSON);
         cmdArgs.skipLatest = cmd.hasOption(CmdParams.SKIP_LATEST);
         cmdArgs.skipValidation = cmd.hasOption(CmdParams.SKIP_VALIDATION);
@@ -268,8 +267,23 @@ public class CmdParser {
         return parseOptions;
     }
 
+    private static String getValidPrefix(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) {
+        if (cmd.hasOption(CmdParams.FILE_PREFIX)) {
+            return cmd.getOptionValue(CmdParams.FILE_PREFIX);
+        } else {
+            return extractName(cmdArgs.getAlgorithmClass()) + "_" + System.currentTimeMillis();
+        }
+    }
+
+    private static String extractName(Class clazz) {
+        String name = clazz.getName();
+        String[] fields = name.toLowerCase().split("\\.");
+
+        return fields[fields.length - 1];
+    }
+
     private static Map<String, String> getValidParameters(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
-        Map<String, String> parameters = new HashMap<>();
+        Map<String, String> parameters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
         List<String> params = new LinkedList<>();
         try {
@@ -287,8 +301,8 @@ public class CmdParser {
         Options invalidOpts = parseOptions.getInvalidValueOptions();
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
         for (String param : params) {
+            ParamDescription paramDesc = paramDescs.get(param);
             if (cmd.hasOption(param)) {
-                ParamDescription paramDesc = paramDescs.get(param);
                 String value = cmd.getOptionValue(param);
                 Option opt = opts.getOption(param);
                 Object type = opt.getType();
@@ -340,6 +354,8 @@ public class CmdParser {
                     }
                 }
                 parameters.put(param, value);
+            } else {
+                parameters.put(param, paramDesc.getDefaultValue().toString());
             }
         };
 
@@ -358,27 +374,29 @@ public class CmdParser {
         return parameters;
     }
 
-    private static TimeUnit getValidTimeUnit(String time, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
+    private static TimeUnit getValidTimeUnit(String time, ParseOptions parseOptions) throws CmdParserException {
         Options opts = parseOptions.getOptions();
         Options invalidOpts = parseOptions.getInvalidValueOptions();
 
         char unit = time.charAt(time.length() - 1);
-        if (unit >= 'a' && unit <= 'z') {
-            if (unit == 'd' || unit == 'h' || unit == 'm' || unit == 's') {
-                switch (unit) {
-                    case 'd':
-                        return TimeUnit.DAYS;
-                    case 'h':
-                        return TimeUnit.HOURS;
-                    case 'm':
-                        return TimeUnit.MINUTES;
-                    default:
-                        return TimeUnit.SECONDS;
-                }
-            } else {
-                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-                String errMsg = String.format("Value '%s' does not a valid time unit.", time);
-                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
+        if ((unit >= 'a' && unit <= 'z') || (unit >= 'A' && unit <= 'Z')) {
+            switch (unit) {
+                case 'd':
+                case 'D':
+                    return TimeUnit.DAYS;
+                case 'h':
+                case 'H':
+                    return TimeUnit.HOURS;
+                case 'm':
+                case 'M':
+                    return TimeUnit.MINUTES;
+                case 's':
+                case 'S':
+                    return TimeUnit.SECONDS;
+                default:
+                    invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
+                    String errMsg = String.format("Value '%s' does not have a valid time unit.", time);
+                    throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
         } else {
             invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
@@ -387,7 +405,7 @@ public class CmdParser {
         }
     }
 
-    private static long getValidLong(String time, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
+    private static long getValidLong(String time, ParseOptions parseOptions) throws CmdParserException {
         Options opts = parseOptions.getOptions();
         Options invalidOpts = parseOptions.getInvalidValueOptions();
 
