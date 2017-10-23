@@ -113,6 +113,10 @@ public class CmdParser {
     }
 
     private static void parseRequiredOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
+        cmdArgs.dataType = DataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
+        cmdArgs.delimiter = Delimiters.getInstance().get(cmd.getOptionValue(CmdParams.DELIMITER));
+        cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(cmd.getOptionValue(CmdParams.ALGORITHM));
+
         String datasetCmd = cmd.getOptionValue(CmdParams.DATASET);
         String[] datasetFiles = datasetCmd.split(",");
         List<Path> dataset = new LinkedList<>();
@@ -121,9 +125,16 @@ public class CmdParser {
         }
         cmdArgs.datasetFiles = dataset;
 
-        cmdArgs.dataType = DataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
-        cmdArgs.delimiter = Delimiters.getInstance().get(cmd.getOptionValue(CmdParams.DELIMITER));
-        cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(cmd.getOptionValue(CmdParams.ALGORITHM));
+        // make sure algorithm can handle multiple dataset
+        if (dataset.size() > 1 && !TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.algorithmClass)) {
+            Options opts = parseOptions.getOptions();
+            Options invalidOpts = parseOptions.getInvalidValueOptions();
+
+            invalidOpts.addOption(opts.getOption(CmdParams.DATASET));
+            String algoName = TetradAlgorithms.getInstance().getName(cmdArgs.algorithmClass);
+            String errMsg = String.format("Algorithm '%s' cannot handle multiple dataset files.", algoName);
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
+        }
     }
 
     public static ParseOptions getHelpOptions(String[] args) throws CmdParserException {
