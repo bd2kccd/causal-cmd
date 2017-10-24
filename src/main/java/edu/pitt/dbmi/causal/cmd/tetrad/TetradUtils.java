@@ -323,7 +323,7 @@ public class TetradUtils {
             } else if (obj instanceof Double) {
                 parameters.set(k, Double.valueOf(v));
             } else if (obj instanceof Boolean) {
-                parameters.set(k, Boolean.TRUE);
+                parameters.set(k, (v == null) ? Boolean.TRUE : Boolean.valueOf(v));
             } else if (obj instanceof String) {
                 parameters.set(k, v);
             }

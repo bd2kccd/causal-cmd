@@ -352,6 +352,10 @@ public class CmdParser {
                         String errMsg = String.format("Value for parameter %s is %f but maximum is %f.", param, val, max);
                         throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
                     }
+                } else if (type == Boolean.class) {
+                    if (value == null) {
+                        value = "true";
+                    }
                 }
                 parameters.put(param, value);
             } else {
