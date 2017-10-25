@@ -120,6 +120,7 @@ public class CmdOptions {
         options.put(CmdParams.QUOTE_CHAR, Option.builder().longOpt(CmdParams.QUOTE_CHAR).desc("Single character denotes quote.").hasArg().argName("character").build());
         options.put(CmdParams.MISSING_MARKER, Option.builder().longOpt(CmdParams.MISSING_MARKER).desc("Denotes missing value.").hasArg().argName("string").build());
         options.put(CmdParams.COMMENT_MARKER, Option.builder().longOpt(CmdParams.COMMENT_MARKER).desc("Comment marker.").hasArg().argName("string").build());
+        options.put(CmdParams.NO_HEADER, Option.builder().longOpt(CmdParams.NO_HEADER).desc("Indicates tabular dataset has no header.").build());
 
         options.put(CmdParams.HELP, new Option(null, CmdParams.HELP, false, "Show help."));
         options.put(CmdParams.HELP_ALL, new Option(null, CmdParams.HELP_ALL, false, "Show all options and descriptions."));

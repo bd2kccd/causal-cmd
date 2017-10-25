@@ -33,6 +33,7 @@ public class TestFiles {
 
     private static final String DIR_NAME = "data";
     private static final String CONTINUOUS_DATA = "sim_data_continuous_20var_100case.txt";
+    private static final String CONTINUOUS_DATA_NO_HEADER = "sim_data_continuous_20var_100case_no_header.txt";
     private static final String DISCRETE_DATA = "sim_data_discrete_20var_100case.txt";
     private static final String MIXED_DATA = "sim_data_mixed_20var_100case.txt";
     private static final String COVARIANCE_DATA = "spartina.txt";
@@ -54,6 +55,10 @@ public class TestFiles {
 
     public Path getContinuousData() {
         return Paths.get(directory, CONTINUOUS_DATA);
+    }
+
+    public Path getContinuousDataWithoutHeader() {
+        return Paths.get(directory, CONTINUOUS_DATA_NO_HEADER);
     }
 
     public Path getDiscreteData() {

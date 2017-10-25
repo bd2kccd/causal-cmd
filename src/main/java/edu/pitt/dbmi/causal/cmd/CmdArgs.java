@@ -43,6 +43,7 @@ public class CmdArgs {
     protected char quoteChar;
     protected String missingValueMarker;
     protected String commentMarker;
+    protected boolean hasHeader;
 
     protected DataType dataType;
     protected Delimiter delimiter;
@@ -95,6 +96,10 @@ public class CmdArgs {
 
     public String getCommentMarker() {
         return commentMarker;
+    }
+
+    public boolean isHasHeader() {
+        return hasHeader;
     }
 
     public DataType getDataType() {

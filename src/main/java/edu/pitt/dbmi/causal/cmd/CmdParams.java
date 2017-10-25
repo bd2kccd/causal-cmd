@@ -49,6 +49,7 @@ public interface CmdParams {
     public static final String QUOTE_CHAR = "quote-char";
     public static final String MISSING_MARKER = "missing-marker";
     public static final String COMMENT_MARKER = "comment-marker";
+    public static final String NO_HEADER = "no-header";
 
     public static final String ALGORITHM = "algorithm";
     public static final String DATA_TYPE = "data-type";

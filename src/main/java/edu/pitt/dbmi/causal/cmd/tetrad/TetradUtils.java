@@ -266,6 +266,7 @@ public class TetradUtils {
                 dataReader.setCommentMarker(cmdArgs.getCommentMarker());
                 dataReader.setMissingValueMarker(cmdArgs.getMissingValueMarker());
                 dataReader.setQuoteCharacter(cmdArgs.getQuoteChar());
+                dataReader.setHasHeader(cmdArgs.isHasHeader());
 
                 logStartReading(dataFile, out);
                 Dataset dataset = dataReader.readInData(excludeVars);

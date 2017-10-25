@@ -107,6 +107,7 @@ public class CmdParser {
         cmdArgs.json = cmd.hasOption(CmdParams.JSON);
         cmdArgs.skipLatest = cmd.hasOption(CmdParams.SKIP_LATEST);
         cmdArgs.skipValidation = cmd.hasOption(CmdParams.SKIP_VALIDATION);
+        cmdArgs.hasHeader = !cmd.hasOption(CmdParams.NO_HEADER);
 
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
@@ -173,6 +174,7 @@ public class CmdParser {
         if (dataType != DataType.Covariance) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXCLUDE_VARIABLE));
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MISSING_MARKER));
+            opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.NO_HEADER));
             if (dataType == DataType.Mixed) {
                 opts.addOption(OptionFactory.createRequiredNumCategoryOpt());
             }

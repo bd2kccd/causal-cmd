@@ -115,6 +115,7 @@ public class TetradRunner {
         } else {
             out.printf("File: %s%n", dataset.get(0).toAbsolutePath());
         }
+        out.printf("Has Header: %s%n", cmdArgs.isHasHeader() ? "yes" : "no");
         if (cmdArgs.getQuoteChar() > 0) {
             out.printf("Quote Character: %s%n", cmdArgs.getQuoteChar());
         }
