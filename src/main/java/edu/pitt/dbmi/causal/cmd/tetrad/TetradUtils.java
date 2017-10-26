@@ -29,6 +29,7 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
 import edu.pitt.dbmi.causal.cmd.ValidationException;
+import edu.pitt.dbmi.causal.cmd.util.DateTime;
 import edu.pitt.dbmi.causal.cmd.util.FileIO;
 import edu.pitt.dbmi.data.Dataset;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceDataReader;
@@ -73,30 +74,26 @@ public class TetradUtils {
     }
 
     private static void logStartValidation(Path file, PrintStream out) {
-        String fileName = file.getFileName().toString();
-        String msg = "Start validating file: " + fileName;
-        out.println(msg);
+        String msg = String.format("Start validating file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
         LOGGER.info(msg);
     }
 
     private static void logFinishValidation(Path file, PrintStream out) {
-        String fileName = file.getFileName().toString();
-        String msg = "Finish validating file: " + fileName;
-        out.println(msg);
+        String msg = String.format("Finish validating file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
         LOGGER.info(msg);
     }
 
     private static void logStartReading(Path file, PrintStream out) {
-        String fileName = file.getFileName().toString();
-        String msg = "Start reading in file: " + fileName;
-        out.println(msg);
+        String msg = String.format("Start reading file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
         LOGGER.info(msg);
     }
 
     private static void logFinishReading(Path file, PrintStream out) {
-        String fileName = file.getFileName().toString();
-        String msg = "Finish reading in file: " + fileName;
-        out.println(msg);
+        String msg = String.format("Finish reading file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
         LOGGER.info(msg);
     }
 
