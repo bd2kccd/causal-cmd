@@ -18,6 +18,8 @@
  */
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
+import edu.cmu.tetrad.data.BoxDataSet;
+import edu.cmu.tetrad.data.CovarianceMatrix;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.data.IKnowledge;
@@ -94,6 +96,25 @@ public class TetradUtils {
     private static void logFinishReading(Path file, PrintStream out) {
         String fileName = file.getFileName().toString();
         String msg = "Finish reading in file: " + fileName;
+        out.println(msg);
+        LOGGER.info(msg);
+    }
+
+    private static void logDatasetInfo(Path file, DataModel dataModel, PrintStream out) {
+        int row = 0;
+        int col = 0;
+        if (dataModel instanceof BoxDataSet) {
+            BoxDataSet boxDataSet = (BoxDataSet) dataModel;
+            row = boxDataSet.getNumRows();
+            col = boxDataSet.getNumColumns();
+        } else if (dataModel instanceof CovarianceMatrix) {
+            CovarianceMatrix covMatrix = (CovarianceMatrix) dataModel;
+            row = covMatrix.getSampleSize();
+            col = covMatrix.getDimension();
+        }
+
+        String fileName = file.getFileName().toString();
+        String msg = String.format("File %s: %d case(s), %d variable(s).", fileName, row, col);
         out.println(msg);
         LOGGER.info(msg);
     }
@@ -248,7 +269,9 @@ public class TetradUtils {
             Dataset dataset = dataReader.readInData();
             logFinishReading(dataFile, out);
 
-            dataModels.add(DataConvertUtils.toDataModel(dataset));
+            DataModel dataModel = DataConvertUtils.toDataModel(dataset);
+            dataModels.add(dataModel);
+            logDatasetInfo(dataFile, dataModel, out);
         }
 
         return dataModels;
@@ -272,7 +295,9 @@ public class TetradUtils {
                 Dataset dataset = dataReader.readInData(excludeVars);
                 logFinishReading(dataFile, out);
 
-                dataModels.add(DataConvertUtils.toDataModel(dataset));
+                DataModel dataModel = DataConvertUtils.toDataModel(dataset);
+                dataModels.add(dataModel);
+                logDatasetInfo(dataFile, dataModel, out);
             }
         }
 
