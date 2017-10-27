@@ -38,7 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -97,12 +96,6 @@ public class CmdParser {
         cmdArgs.scoreClass = cmd.hasOption(CmdParams.SCORE)
                 ? TetradScores.getInstance().getClass(cmd.getOptionValue(CmdParams.SCORE))
                 : null;
-        cmdArgs.time = cmd.hasOption(CmdParams.TIMEOUT)
-                ? getValidLong(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions)
-                : -1;
-        cmdArgs.timeUnit = cmd.hasOption(CmdParams.TIMEOUT)
-                ? getValidTimeUnit(cmd.getOptionValue(CmdParams.TIMEOUT), parseOptions)
-                : null;
         cmdArgs.filePrefix = getValidPrefix(cmd, cmdArgs, parseOptions);
         cmdArgs.json = cmd.hasOption(CmdParams.JSON);
         cmdArgs.skipLatest = cmd.hasOption(CmdParams.SKIP_LATEST);
@@ -131,7 +124,7 @@ public class CmdParser {
             Options invalidOpts = parseOptions.getInvalidValueOptions();
 
             invalidOpts.addOption(opts.getOption(CmdParams.DATASET));
-            String algoName = TetradAlgorithms.getInstance().getName(cmdArgs.algorithmClass);
+            String algoName = TetradAlgorithms.getInstance().getName(cmdArgs.getAlgorithmClass());
             String errMsg = String.format("Algorithm '%s' cannot handle multiple dataset files.", algoName);
             throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
@@ -289,7 +282,7 @@ public class CmdParser {
 
         List<String> params = new LinkedList<>();
         try {
-            params.addAll(AlgorithmFactory.create(cmdArgs.algorithmClass, cmdArgs.testClass, cmdArgs.scoreClass).getParameters());
+            params.addAll(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass()).getParameters());
         } catch (IllegalAccessException | InstantiationException exception) {
             throw new CmdParserException(parseOptions, exception);
         }
@@ -378,57 +371,6 @@ public class CmdParser {
         }
 
         return parameters;
-    }
-
-    private static TimeUnit getValidTimeUnit(String time, ParseOptions parseOptions) throws CmdParserException {
-        Options opts = parseOptions.getOptions();
-        Options invalidOpts = parseOptions.getInvalidValueOptions();
-
-        char unit = time.charAt(time.length() - 1);
-        if ((unit >= 'a' && unit <= 'z') || (unit >= 'A' && unit <= 'Z')) {
-            switch (unit) {
-                case 'd':
-                case 'D':
-                    return TimeUnit.DAYS;
-                case 'h':
-                case 'H':
-                    return TimeUnit.HOURS;
-                case 'm':
-                case 'M':
-                    return TimeUnit.MINUTES;
-                case 's':
-                case 'S':
-                    return TimeUnit.SECONDS;
-                default:
-                    invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-                    String errMsg = String.format("Value '%s' does not have a valid time unit.", time);
-                    throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
-            }
-        } else {
-            invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-            String errMsg = String.format("Value '%s' requires time unit.", time);
-            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
-        }
-    }
-
-    private static long getValidLong(String time, ParseOptions parseOptions) throws CmdParserException {
-        Options opts = parseOptions.getOptions();
-        Options invalidOpts = parseOptions.getInvalidValueOptions();
-
-        String digit = time.substring(0, time.length() - 1);
-        if (digit.isEmpty()) {
-            invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-            String errMsg = String.format("Value '%s' requires time.", time);
-            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
-        } else {
-            try {
-                return Long.parseLong(digit);
-            } catch (NumberFormatException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.TIMEOUT));
-                String errMsg = String.format("Value '%s' is either not a number or of a type long.", time);
-                throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
-            }
-        }
     }
 
     private static char getValidChar(String quoteChar, ParseOptions parseOptions, String cmdParam) throws CmdParserException {

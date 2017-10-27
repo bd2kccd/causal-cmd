@@ -109,8 +109,6 @@ public class CmdOptions {
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
-        opts.add(options.get(CmdParams.TIMEOUT));
-
         opts.add(options.get(CmdParams.SKIP_LATEST));
 
         return opts;
@@ -137,8 +135,6 @@ public class CmdOptions {
 
         options.put(CmdParams.TEST, Option.builder().longOpt(CmdParams.TEST).desc(getIndependenceTestDesc()).hasArg().argName("string").build());
         options.put(CmdParams.SCORE, Option.builder().longOpt(CmdParams.SCORE).desc(getScoreDesc()).hasArg().argName("string").build());
-
-        options.put(CmdParams.TIMEOUT, Option.builder().longOpt(CmdParams.TIMEOUT).desc(getTimeoutDesc()).hasArg().argName("string").build());
 
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
