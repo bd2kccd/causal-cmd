@@ -23,7 +23,6 @@ import edu.pitt.dbmi.data.Delimiter;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -53,9 +52,6 @@ public class CmdArgs {
     protected Class testClass;
 
     protected int numCategories;
-
-    protected long time;
-    protected TimeUnit timeUnit;
 
     protected boolean skipValidation;
     protected boolean json;
@@ -124,14 +120,6 @@ public class CmdArgs {
 
     public int getNumCategories() {
         return numCategories;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
     }
 
     public boolean isSkipValidation() {

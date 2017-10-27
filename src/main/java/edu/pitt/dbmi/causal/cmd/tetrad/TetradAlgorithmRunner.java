@@ -34,12 +34,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,71 +96,16 @@ public class TetradAlgorithmRunner {
             out.println("--------------------------------------------------------------------------------");
         }
 
-        if (cmdArgs.getTime() > 0) {
-            ExecutorService pool = Executors.newSingleThreadExecutor();
-            Future<Graph> task = pool.submit(() -> {
-                return search(cmdArgs, algorithm, dataModels, parameters);
-            });
-            pool.shutdown(); // Disable new tasks from being submitted
-
-            try {
-                graph = task.get(cmdArgs.getTime(), cmdArgs.getTimeUnit());
-            } catch (ExecutionException exception) {
-                String errMsg = "Execution error.";
-                out.println(errMsg);
-                LOGGER.error(errMsg, exception);
-            } catch (InterruptedException exception) {
-                String errMsg = "Task has been interrupted.";
-                out.println(errMsg);
-                LOGGER.error(errMsg, exception);
-            } catch (TimeoutException exception) {
-                String errMsg = "Task has been timed out.";
-                out.println(errMsg);
-                LOGGER.error(errMsg, exception);
-            } finally {
-                if (!task.isDone()) {
-                    String msg = "Cancel task.";
-                    out.println(msg);
-                    LOGGER.info(msg);
-                    task.cancel(true);
-                }
-            }
-
-            shutdownAndAwaitTermination(pool);
+        if (TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.getAlgorithmClass())) {
+            graph = ((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters);
         } else {
-            graph = search(cmdArgs, algorithm, dataModels, parameters);
+            graph = algorithm.search(dataModels.get(0), parameters);
         }
 
         if (verbose) {
             out.println("--------------------------------------------------------------------------------");
         }
         out.printf("End search: %s%n", DateTime.printNow());
-    }
-
-    private Graph search(CmdArgs cmdArgs, Algorithm algorithm, List<DataModel> dataModels, Parameters parameters) {
-        if (TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.getAlgorithmClass())) {
-            return ((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters);
-        } else {
-            return algorithm.search(dataModels.get(0), parameters);
-        }
-    }
-
-    private void shutdownAndAwaitTermination(ExecutorService pool) {
-        try {
-            // Wait a while for existing tasks to terminate
-            if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
-                pool.shutdownNow(); // Cancel currently executing tasks
-                // Wait a while for tasks to respond to being cancelled
-                if (!pool.awaitTermination(1, TimeUnit.SECONDS)) {
-                    System.err.println("Pool did not terminate");
-                }
-            }
-        } catch (InterruptedException ie) {
-            // (Re-)Cancel if current thread also interrupted
-            pool.shutdownNow();
-            // Preserve interrupt status
-            Thread.currentThread().interrupt();
-        }
     }
 
     private Algorithm getAlgorithm(CmdArgs cmdArgs) throws AlgorithmRunException {

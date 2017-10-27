@@ -145,14 +145,10 @@ public class TetradRunner {
             }
         }
 
-        out.println();
         out.println("Miscellaneous");
         out.println("================================================================================");
         out.printf("Skip Validation: %s%n", cmdArgs.isSkipValidation() ? "yes" : "no");
         out.printf("JSON Output: %s%n", cmdArgs.isJson() ? "yes" : "no");
-        if (cmdArgs.getTimeUnit() != null) {
-            out.printf("Timeout: %d %s%n", cmdArgs.getTime(), cmdArgs.getTimeUnit().toString().toLowerCase());
-        }
         out.printf("Output Directory: %s%n", cmdArgs.getOutDirectory());
         out.println();
     }

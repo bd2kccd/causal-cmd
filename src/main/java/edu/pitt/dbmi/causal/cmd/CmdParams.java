@@ -58,6 +58,4 @@ public interface CmdParams {
 
     public static final String NUM_CATEGORIES = "numCategories";
 
-    public static final String TIMEOUT = "timeout";
-
 }
