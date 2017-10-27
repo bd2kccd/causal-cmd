@@ -18,8 +18,6 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import org.apache.commons.cli.Options;
-
 /**
  *
  * Sep 15, 2017 12:26:52 PM
@@ -30,34 +28,34 @@ public class CmdParserException extends Exception {
 
     private static final long serialVersionUID = 4277546481941173659L;
 
-    private final HelpOptions helpOptions;
+    private final ParseOptions parseOptions;
 
-    public CmdParserException(HelpOptions helpOptions) {
-        this.helpOptions = helpOptions;
+    public CmdParserException(ParseOptions parseOptions) {
+        this.parseOptions = parseOptions;
     }
 
-    public CmdParserException(HelpOptions helpOptions, String message) {
+    public CmdParserException(ParseOptions parseOptions, String message) {
         super(message);
-        this.helpOptions = helpOptions;
+        this.parseOptions = parseOptions;
     }
 
-    public CmdParserException(HelpOptions helpOptions, String message, Throwable cause) {
+    public CmdParserException(ParseOptions parseOptions, String message, Throwable cause) {
         super(message, cause);
-        this.helpOptions = helpOptions;
+        this.parseOptions = parseOptions;
     }
 
-    public CmdParserException(HelpOptions helpOptions, Throwable cause) {
+    public CmdParserException(ParseOptions parseOptions, Throwable cause) {
         super(cause);
-        this.helpOptions = helpOptions;
+        this.parseOptions = parseOptions;
     }
 
-    public CmdParserException(HelpOptions helpOptions, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public CmdParserException(ParseOptions parseOptions, String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
-        this.helpOptions = helpOptions;
+        this.parseOptions = parseOptions;
     }
 
-    public HelpOptions getHelpOptions() {
-        return helpOptions;
+    public ParseOptions getParseOptions() {
+        return parseOptions;
     }
 
 }

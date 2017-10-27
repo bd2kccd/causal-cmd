@@ -18,6 +18,8 @@
  */
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
+import edu.cmu.tetrad.data.BoxDataSet;
+import edu.cmu.tetrad.data.CovarianceMatrix;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.data.IKnowledge;
@@ -27,6 +29,7 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
 import edu.pitt.dbmi.causal.cmd.ValidationException;
+import edu.pitt.dbmi.causal.cmd.util.DateTime;
 import edu.pitt.dbmi.causal.cmd.util.FileIO;
 import edu.pitt.dbmi.data.Dataset;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceDataReader;
@@ -71,29 +74,44 @@ public class TetradUtils {
     }
 
     private static void logStartValidation(Path file, PrintStream out) {
-        String fileName = file.getFileName().toString();
-        String msg = "Start validating file: " + fileName;
-        out.println(msg);
+        String msg = String.format("Start validating file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
         LOGGER.info(msg);
     }
 
     private static void logFinishValidation(Path file, PrintStream out) {
-        String fileName = file.getFileName().toString();
-        String msg = "Finish validating file: " + fileName;
-        out.println(msg);
+        String msg = String.format("Finish validating file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
         LOGGER.info(msg);
     }
 
     private static void logStartReading(Path file, PrintStream out) {
-        String fileName = file.getFileName().toString();
-        String msg = "Start reading in file: " + fileName;
-        out.println(msg);
+        String msg = String.format("Start reading file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
         LOGGER.info(msg);
     }
 
     private static void logFinishReading(Path file, PrintStream out) {
+        String msg = String.format("Finish reading file %s.", file.getFileName().toString());
+        out.printf("%s: %s%n", msg, DateTime.printNow());
+        LOGGER.info(msg);
+    }
+
+    private static void logDatasetInfo(Path file, DataModel dataModel, PrintStream out) {
+        int row = 0;
+        int col = 0;
+        if (dataModel instanceof BoxDataSet) {
+            BoxDataSet boxDataSet = (BoxDataSet) dataModel;
+            row = boxDataSet.getNumRows();
+            col = boxDataSet.getNumColumns();
+        } else if (dataModel instanceof CovarianceMatrix) {
+            CovarianceMatrix covMatrix = (CovarianceMatrix) dataModel;
+            row = covMatrix.getSampleSize();
+            col = covMatrix.getDimension();
+        }
+
         String fileName = file.getFileName().toString();
-        String msg = "Finish reading in file: " + fileName;
+        String msg = String.format("File %s: %d case(s), %d variable(s).", fileName, row, col);
         out.println(msg);
         LOGGER.info(msg);
     }
@@ -248,7 +266,9 @@ public class TetradUtils {
             Dataset dataset = dataReader.readInData();
             logFinishReading(dataFile, out);
 
-            dataModels.add(DataConvertUtils.toDataModel(dataset));
+            DataModel dataModel = DataConvertUtils.toDataModel(dataset);
+            dataModels.add(dataModel);
+            logDatasetInfo(dataFile, dataModel, out);
         }
 
         return dataModels;
@@ -266,12 +286,15 @@ public class TetradUtils {
                 dataReader.setCommentMarker(cmdArgs.getCommentMarker());
                 dataReader.setMissingValueMarker(cmdArgs.getMissingValueMarker());
                 dataReader.setQuoteCharacter(cmdArgs.getQuoteChar());
+                dataReader.setHasHeader(cmdArgs.isHasHeader());
 
                 logStartReading(dataFile, out);
                 Dataset dataset = dataReader.readInData(excludeVars);
                 logFinishReading(dataFile, out);
 
-                dataModels.add(DataConvertUtils.toDataModel(dataset));
+                DataModel dataModel = DataConvertUtils.toDataModel(dataset);
+                dataModels.add(dataModel);
+                logDatasetInfo(dataFile, dataModel, out);
             }
         }
 
@@ -323,7 +346,7 @@ public class TetradUtils {
             } else if (obj instanceof Double) {
                 parameters.set(k, Double.valueOf(v));
             } else if (obj instanceof Boolean) {
-                parameters.set(k, Boolean.TRUE);
+                parameters.set(k, (v == null) ? Boolean.TRUE : Boolean.valueOf(v));
             } else if (obj instanceof String) {
                 parameters.set(k, v);
             }

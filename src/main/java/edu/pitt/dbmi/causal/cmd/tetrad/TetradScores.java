@@ -115,7 +115,7 @@ public class TetradScores {
         return Collections.unmodifiableList(list);
     }
 
-    public Class getScoreClass(String command) {
+    public Class getClass(String command) {
         AnnotatedClass<Score> annotatedClass = annotatedClasses.get(command);
 
         return (annotatedClass == null) ? null : annotatedClass.getClazz();

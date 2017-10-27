@@ -18,7 +18,7 @@
  */
 package edu.pitt.dbmi.causal.cmd.util;
 
-import edu.pitt.dbmi.causal.cmd.HelpOptions;
+import edu.pitt.dbmi.causal.cmd.ParseOptions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,11 +44,11 @@ public class Application {
     private Application() {
     }
 
-    public static void showHelp(String[] args, HelpOptions helpOptions, String footer) {
-        Options opts = helpOptions.getOptions();
-        Options invalidOpts = helpOptions.getInvalidValueOptions();
+    public static void showHelp(String[] args, ParseOptions parseOptions, String footer) {
+        Options opts = parseOptions.getOptions();
+        Options invalidOpts = parseOptions.getInvalidValueOptions();
 
-        Map<String, String> argsMap = new TreeMap<>(Args.toMapOptions(args));
+        Map<String, String> argsMap = new TreeMap<>(Args.toMapLongOptions(args));
 
         // remove all the options with invalid value
         invalidOpts.getOptions().forEach(e -> argsMap.remove(e.getLongOpt()));
@@ -58,7 +58,9 @@ public class Application {
             Option opt = opts.getOption(k);
             if (opt != null) {
                 optList.add(String.format("--%s", opt.getLongOpt()));
-                optList.add(v);
+                if (v != null) {
+                    optList.add(v);
+                }
             }
         });
         String header = optList.stream().collect(Collectors.joining(" "));

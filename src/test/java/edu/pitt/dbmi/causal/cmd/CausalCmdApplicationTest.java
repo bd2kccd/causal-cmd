@@ -38,13 +38,30 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testMainCovariance() throws IOException {
+        String covarData = TestFiles.getInstance().getCovarianceData().toString();
+        String dirOut = tmpFolder.newFolder("gfci_covar").toString();
+        String[] args = {
+            "--dataset", covarData,
+            "--delimiter", "space",
+            "--data-type", "covariance",
+            "--algorithm", "gfci",
+            "--test", "sem-bic",
+            "--score", "sem-bic",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
     public void testMainWithBootstrap() throws IOException {
         String contData = TestFiles.getInstance().getContinuousData().toString();
         String dirOut = tmpFolder.newFolder("gfci_bootstrap").toString();
         String[] args = {
-            "--bootstrapEnsemble", "0",
+            "--bootstrapEnsemble", "1",
             "--bootstrapSampleSize", "5",
-            "--bootstrapping",
             "--dataset", contData,
             "--delimiter", "tab",
             "--data-type", "continuous",
