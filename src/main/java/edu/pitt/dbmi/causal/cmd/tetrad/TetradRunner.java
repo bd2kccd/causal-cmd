@@ -145,7 +145,6 @@ public class TetradRunner {
             }
         }
 
-        out.println();
         out.println("Miscellaneous");
         out.println("================================================================================");
         out.printf("Skip Validation: %s%n", cmdArgs.isSkipValidation() ? "yes" : "no");
