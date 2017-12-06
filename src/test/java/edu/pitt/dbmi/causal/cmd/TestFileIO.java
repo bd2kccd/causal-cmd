@@ -16,41 +16,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd.util;
+package edu.pitt.dbmi.causal.cmd;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import edu.cmu.tetrad.graph.Graph;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
+import java.util.stream.Stream;
 
 /**
  *
- * Mar 15, 2017 2:56:11 PM
+ * Oct 2, 2017 4:12:39 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class GraphIO {
+public class TestFileIO {
 
-    private GraphIO() {
+    private TestFileIO() {
     }
 
-    public static void writeAsTXT(Graph graph, Path path) throws IOException {
-        Scanner scanner = new Scanner(graph.toString());
-        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
-            while (scanner.hasNextLine()) {
-                out.println(scanner.nextLine().trim());
+    public static void printFile(Path file, PrintStream out) throws IOException {
+        if (Files.exists(file)) {
+            try (Stream<String> stream = Files.lines(file)) {
+                stream.forEach(out::println);
             }
-        }
-    }
-
-    public static void writeAsJSON(Graph graph, Path path) throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
-            out.println(gson.toJson(graph));
         }
     }
 

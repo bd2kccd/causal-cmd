@@ -18,24 +18,12 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import edu.pitt.dbmi.causal.cmd.algo.AlgorithmType;
-import edu.pitt.dbmi.causal.cmd.algo.FGEScAlgorithmRunner;
-import edu.pitt.dbmi.causal.cmd.algo.FGESdAlgorithmRunner;
-import edu.pitt.dbmi.causal.cmd.algo.FGESmCGAlgorithmRunner;
-import edu.pitt.dbmi.causal.cmd.algo.GFCIcAlgorithmRunner;
-import edu.pitt.dbmi.causal.cmd.algo.GFCIdAlgorithmRunner;
-import edu.pitt.dbmi.causal.cmd.algo.GFCImCGAlgorithmRunner;
-import edu.pitt.dbmi.causal.cmd.sim.BayNetRandFwdDataSimulationRunner;
-import edu.pitt.dbmi.causal.cmd.sim.DataSimulationType;
-import edu.pitt.dbmi.causal.cmd.sim.LeeHastieDataSimulationRunner;
-import edu.pitt.dbmi.causal.cmd.sim.SemRandFwdDataSimulationRunner;
-import edu.pitt.dbmi.causal.cmd.util.AppUtils;
+import edu.cmu.tetrad.latest.LatestClient;
+import edu.pitt.dbmi.causal.cmd.tetrad.TetradRunner;
+import edu.pitt.dbmi.causal.cmd.util.Application;
 import edu.pitt.dbmi.causal.cmd.util.Args;
-import java.util.Map;
-import java.util.TreeMap;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionGroup;
-import org.apache.commons.cli.Options;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -45,133 +33,55 @@ import org.apache.commons.cli.Options;
  */
 public class CausalCmdApplication {
 
-    private static final Options MAIN_OPTIONS = new Options();
+    private static final Logger LOGGER = LoggerFactory.getLogger(CausalCmdApplication.class);
 
-    private static final String ALGO_OPT = "algorithm";
-    private static final String SIM_DATA_OPT = "simulate-data";
-    private static final String VERSION_OPT = "version";
-
-    private static final Map<String, AlgorithmType> ALGO_TYPES = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private static final Map<String, DataSimulationType> DATA_SIM_TYPES = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
-    static {
-        populateMainOptions();
-        populateCmdTypes();
-    }
+    public static final String FOOTER = "Use --help for guidance list of options.  Use --help-all to show all options.";
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        if (Args.hasLongOption(args, VERSION_OPT)) {
-            System.out.println(AppUtils.jarTitle() + " version " + AppUtils.jarVersion());
-        } else {
-            boolean algoOpt = Args.hasLongOption(args, ALGO_OPT);
-            boolean simDataOpt = Args.hasLongOption(args, SIM_DATA_OPT);
-            if (algoOpt ^ simDataOpt) {
-                if (algoOpt) {
-                    String algorithm = Args.getOptionValue(args, ALGO_OPT);
-                    if (algorithm == null) {
-                        algorithm = "";
-                    }
-                    AlgorithmType algorithmType = ALGO_TYPES.get(algorithm);
-                    if (algorithmType == null) {
-                        showHelp();
-                    } else {
-                        args = Args.removeOption(args, ALGO_OPT);
-                        switch (algorithmType) {
-                            case FGESC:
-                                new FGEScAlgorithmRunner().runAlgorithm(args);
-                                break;
-                            case FGESD:
-                                new FGESdAlgorithmRunner().runAlgorithm(args);
-                                break;
-                            case FGESM_CG:
-                                new FGESmCGAlgorithmRunner().runAlgorithm(args);
-                                break;
-                            case GFCIC:
-                                new GFCIcAlgorithmRunner().runAlgorithm(args);
-                                break;
-                            case GFCID:
-                                new GFCIdAlgorithmRunner().runAlgorithm(args);
-                                break;
-                            case GFCIM_CG:
-                                new GFCImCGAlgorithmRunner().runAlgorithm(args);
-                        }
-                    }
-                } else {
-                    String simulation = Args.getOptionValue(args, SIM_DATA_OPT);
-                    DataSimulationType dataSimulationType = DATA_SIM_TYPES.get(simulation);
-                    if (dataSimulationType == null) {
-                        showHelp();
-                    } else {
-                        args = Args.removeOption(args, SIM_DATA_OPT);
-                        switch (dataSimulationType) {
-                            case BAYES_NET_RAND_FWD:
-                                new BayNetRandFwdDataSimulationRunner().runDataSimulation(args);
-                                break;
-                            case SEM_RAND_FWD:
-                                new SemRandFwdDataSimulationRunner().runDataSimulation(args);
-                                break;
-                            case LEE_HASTIE:
-                                new LeeHastieDataSimulationRunner().runDataSimulation(args);
-                                break;
-                        }
-                    }
-                }
-            } else {
-                showHelp();
+        args = Args.clean(args);
+        if (Args.hasLongParam(args, CmdParams.HELP)) {
+            try {
+                Application.showHelp(args, CmdParser.getHelpOptions(args), null);
+            } catch (CmdParserException exception) {
+                System.err.println(exception.getCause().getMessage());
+                Application.showHelp(args, exception.getParseOptions(), null);
             }
+        } else if (Args.hasLongParam(args, CmdParams.HELP_ALL)) {
+            Application.showHelp(CmdOptions.getInstance().getOptions(), null);
+        } else if (Args.hasLongParam(args, CmdParams.VERSION)) {
+            System.out.println(Application.getVersion());
+        } else {
+            CmdArgs cmdArgs = null;
+            try {
+                cmdArgs = CmdParser.parse(args);
+            } catch (CmdParserException exception) {
+                System.err.println(exception.getCause().getMessage());
+                Application.showHelp(args, exception.getParseOptions(), FOOTER);
+            }
+
+            if (cmdArgs == null) {
+                System.exit(-1);
+            }
+
+            if (!cmdArgs.isSkipLatest()) {
+                try {
+                    LatestClient latestClient = LatestClient.getInstance();
+                    String version = Application.jarVersion();
+                    if (version == null) {
+                        version = "DEVELOPMENT";
+                    }
+                    latestClient.checkLatest("causal-cmd", version);
+                    System.out.println(latestClient.getLatestResult());
+                } catch (Exception exception) {
+                    LOGGER.error("Unable to check for the latest version.", exception);
+                }
+            }
+
+            TetradRunner.runTetrad(cmdArgs);
         }
-    }
-
-    private static void showHelp() {
-        AppUtils.showHelp(MAIN_OPTIONS, "Additional parameters are available when using --algorithm <arg> or --simulate-data <arg>.");
-    }
-
-    private static void populateCmdTypes() {
-        for (AlgorithmType type : AlgorithmType.values()) {
-            ALGO_TYPES.put(type.getCmd(), type);
-        }
-        for (DataSimulationType type : DataSimulationType.values()) {
-            DATA_SIM_TYPES.put(type.getCmd(), type);
-        }
-    }
-
-    private static void populateMainOptions() {
-        OptionGroup optGrp = new OptionGroup();
-        optGrp.addOption(new Option(null, ALGO_OPT, true, algorithmCmd()));
-        optGrp.addOption(new Option(null, SIM_DATA_OPT, true, simulationCmd()));
-        optGrp.setRequired(true);
-        MAIN_OPTIONS.addOptionGroup(optGrp);
-
-        MAIN_OPTIONS.addOption(null, VERSION_OPT, false, "Show software version.");
-    }
-
-    private static String algorithmCmd() {
-        StringBuilder algoOpt = new StringBuilder();
-        AlgorithmType[] types = AlgorithmType.values();
-        int lastIndex = types.length - 1;
-        for (int i = 0; i < lastIndex; i++) {
-            algoOpt.append(types[i].getCmd());
-            algoOpt.append(", ");
-        }
-        algoOpt.append(types[lastIndex].getCmd());
-
-        return algoOpt.toString();
-    }
-
-    private static String simulationCmd() {
-        StringBuilder algoOpt = new StringBuilder();
-        DataSimulationType[] types = DataSimulationType.values();
-        int lastIndex = types.length - 1;
-        for (int i = 0; i < lastIndex; i++) {
-            algoOpt.append(types[i].getCmd());
-            algoOpt.append(", ");
-        }
-        algoOpt.append(types[lastIndex].getCmd());
-
-        return algoOpt.toString();
     }
 
 }
