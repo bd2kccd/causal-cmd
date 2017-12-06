@@ -1,0 +1,10 @@
+/knowledge
+addtemporal
+1 X14 X8 X9 
+2* X17 X7 
+3 
+
+forbiddirect
+
+requiredirect
+X6 X20

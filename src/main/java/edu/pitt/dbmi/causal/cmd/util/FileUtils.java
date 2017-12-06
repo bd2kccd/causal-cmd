@@ -18,39 +18,27 @@
  */
 package edu.pitt.dbmi.causal.cmd.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import edu.cmu.tetrad.graph.Graph;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
 
 /**
  *
- * Mar 15, 2017 2:56:11 PM
+ * Sep 15, 2017 4:03:38 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class GraphIO {
+public class FileUtils {
 
-    private GraphIO() {
+    private FileUtils() {
     }
 
-    public static void writeAsTXT(Graph graph, Path path) throws IOException {
-        Scanner scanner = new Scanner(graph.toString());
-        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
-            while (scanner.hasNextLine()) {
-                out.println(scanner.nextLine().trim());
-            }
+    public static void exists(Path file) throws FileNotFoundException {
+        if (Files.notExists(file)) {
+            throw new FileNotFoundException(String.format("File '%s' does not exist.", file.toString()));
         }
-    }
-
-    public static void writeAsJSON(Graph graph, Path path) throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
-            out.println(gson.toJson(graph));
+        if (!Files.isRegularFile(file)) {
+            throw new FileNotFoundException(String.format("'%s' is not a file.", file.toString()));
         }
     }
 

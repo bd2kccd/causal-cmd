@@ -18,22 +18,16 @@
  */
 package edu.pitt.dbmi.causal.cmd.util;
 
-import edu.pitt.dbmi.data.Delimiter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.HashSet;
+import edu.pitt.dbmi.causal.cmd.CmdOptions;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import org.apache.commons.cli.HelpFormatter;
+import java.util.Map;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  *
@@ -46,266 +40,167 @@ public class Args {
     private Args() {
     }
 
-    public static double getDouble(String value) {
-        try {
-            return Double.parseDouble(value);
-        } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException(String.format("'%s' is not a double.", value));
-        }
-    }
-
-    public static double getDoubleMin(String value, double minValue) {
-        double doubleValue = getDouble(value);
-        if (minValue > doubleValue) {
-            throw new IllegalArgumentException(
-                    String.format("Parameter value (%f) must be greater than or equal to %f.", doubleValue, minValue));
-        }
-
-        return doubleValue;
-    }
-
-    public static double getDoubleMinMax(String value, double minValue, double maxValue) {
-        double doubleValue = getDouble(value);
-        if (minValue <= doubleValue && doubleValue <= maxValue) {
-            return doubleValue;
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("Parameter value (%f) must be between %f and %f.", doubleValue, minValue, maxValue));
-        }
-    }
-
-    public static int getInteger(String value) {
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException(String.format("'%s' is not an integer.", value));
-        }
-    }
-
-    public static int getIntegerMin(String value, int minValue) {
-        int intValue = getInteger(value);
-        if (minValue > intValue) {
-            throw new IllegalArgumentException(
-                    String.format("Parameter value (%d) must be greater than or equal to %d.", intValue, minValue));
-        }
-
-        return intValue;
-    }
-
-    public static int getIntegerMinMax(String value, int minValue, int maxValue) {
-        int intValue = getInteger(value);
-        if (minValue <= intValue && intValue <= maxValue) {
-            return intValue;
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("Parameter value (%d) must be between %d and %d.", intValue, minValue, maxValue));
-        }
-    }
-
-    public static String getDelimiterName(char delimiter) {
-        switch (delimiter) {
-            case ',':
-                return "comma";
-            case ';':
-                return "semicolon";
-            case ' ':
-                return "space";
-            case ':':
-                return "colon";
-            case '\t':
-                return "tab";
-            case '|':
-                return "pipe";
-            default:
-                return "unknown";
-        }
-    }
-
-    public static Delimiter getDelimiterForName(String delimiter) {
-        delimiter = (delimiter == null) ? "" : delimiter.toLowerCase();
-        switch (delimiter) {
-            case "comma":
-            case ",":
-                return Delimiter.COMMA;
-            case "colon":
-            case ":":
-                return Delimiter.COLON;
-            case "semicolon":
-            case ";":
-                return Delimiter.SEMICOLON;
-            case "pipe":
-            case "|":
-                return Delimiter.PIPE;
-            case "space":
-                return Delimiter.SPACE;
-            case "whitespace":
-                return Delimiter.WHITESPACE;
-            case "tab":
-            case "\t":
-            default:
-                return Delimiter.TAB;
-        }
-    }
-
-    public static List<Path> getFiles(String... files) throws FileNotFoundException {
-        List<Path> fileList = new LinkedList<>();
-
-        for (String file : files) {
-            fileList.add(getPathFile(file, true));
-        }
-
-        return fileList;
-    }
-
-    public static char getCharacter(String character) {
-        if (character.length() == 1) {
-            return character.charAt(0);
-        } else {
-            throw new IllegalArgumentException(String.format("'%s' must be a single character.", character));
-        }
-    }
-
-    public static Path getPathDir(String dir, boolean required) throws FileNotFoundException {
-        Path path = Paths.get(dir);
-
-        if (Files.exists(path)) {
-            if (!Files.isDirectory(path)) {
-                throw new FileNotFoundException(String.format("'%s' is not a directory.\n", dir));
-            }
-        } else if (required) {
-            throw new FileNotFoundException(String.format("Directory '%s' does not exist.\n", dir));
-        }
-
-        return path;
-    }
-
-    public static Path getPathFile(String file, boolean requireNotNull) throws FileNotFoundException {
-        if (file == null) {
-            if (requireNotNull) {
-                throw new IllegalArgumentException("File argument is null.");
-            } else {
-                return null;
-            }
-        }
-
-        Path path = Paths.get(file);
-
-        if (Files.exists(path)) {
-            if (!Files.isRegularFile(path)) {
-                throw new FileNotFoundException(String.format("'%s' is not a file.\n", file));
-            }
-        } else {
-            throw new FileNotFoundException(String.format("File '%s' does not exist.\n", file));
-        }
-
-        return path;
-    }
-
-    public static String[] removeOption(String[] args, String option) {
-        String[] arguments = new String[args.length - 2];
-
-        int index = 0;
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("--")) {
-                arg = arg.substring(2, arg.length());
-                if (arg.equals(option)) {
-                    i++;
-                    continue;
-                }
-            } else if (arg.startsWith("-")) {
-                arg = arg.substring(1, arg.length());
-                if (arg.equals(option)) {
-                    i++;
-                    continue;
-                }
-            }
-            arguments[index++] = args[i];
-        }
-
-        return arguments;
-    }
-
-    public static String[] removeFlags(String[] args, String... flags) {
-        String[] arguments = new String[args.length - 2];
-
-        Set<String> options = new HashSet<>();
-        Collections.addAll(options, flags);
-
-        int index = 0;
+    public static String[] removeLongOption(String[] args, String option) {
+        CmdOptions cmdOptions = CmdOptions.getInstance();
+        List<String> argsToKeep = new LinkedList<>();
+        boolean skip = false;
         for (String arg : args) {
             if (arg.startsWith("--")) {
-                arg = arg.substring(2, arg.length());
-                if (options.contains(arg)) {
-                    continue;
-                }
-            } else if (arg.startsWith("-")) {
-                arg = arg.substring(1, arg.length());
-                if (options.contains(arg)) {
-                    continue;
-                }
-            }
-
-            arguments[index++] = arg;
-        }
-
-        return arguments;
-    }
-
-    public static String getOptionValue(String[] args, String option) {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            boolean isOption = arg.startsWith("--") || arg.startsWith("-");
-            if (isOption) {
-                if (arg.startsWith("--")) {
-                    arg = arg.substring(2, arg.length());
-                } else if (arg.startsWith("-")) {
-                    arg = arg.substring(1, arg.length());
-                }
-
-                if (arg.equals(option)) {
-                    i++;
-                    if (i < args.length) {
-                        return args[i];
+                String value = arg.substring(2, arg.length());
+                if (value.equals(option)) {
+                    if (cmdOptions.hasLongParam(option) && cmdOptions.getLongOption(option).hasArg()) {
+                        skip = true;
                     }
+                } else {
+                    argsToKeep.add(arg);
+                }
+            } else {
+                if (skip) {
+                    skip = false;
+                } else {
+                    argsToKeep.add(arg);
                 }
             }
         }
 
-        return null;
+        return argsToKeep.toArray(new String[argsToKeep.size()]);
     }
 
-    public static boolean hasLongOption(String[] args, String option) {
-        if (args == null || args.length == 0 || option == null) {
-            return false;
-        }
+    public static void parseLongOptions(String[] args, Options options, Map<String, String> argsMap) throws ParseException {
+        CommandLine cmd = (new DefaultParser()).parse(options, args);
+        options.getOptions().forEach(option -> {
+            String opt = option.getLongOpt();
+            if (opt != null && cmd.hasOption(opt)) {
+                argsMap.put(opt, cmd.getOptionValue(opt));
+            }
+        });
+    }
 
-        for (String arg : args) {
-            if (arg.startsWith("--")) {
-                arg = arg.substring(2, arg.length());
-                if (arg.equals(option)) {
-                    return true;
+    public static void parse(String[] args, Options options, Map<String, String> argsMap) throws ParseException {
+        CommandLine cmd = (new DefaultParser()).parse(options, args);
+        options.getOptions().forEach(option -> {
+            String opt = option.getOpt();
+            if (opt != null && cmd.hasOption(opt)) {
+                argsMap.put(opt, cmd.getOptionValue(opt));
+            }
+
+            opt = option.getLongOpt();
+            if (opt != null && cmd.hasOption(opt)) {
+                argsMap.put(opt, cmd.getOptionValue(opt));
+            }
+        });
+    }
+
+    public static String[] extractLongOptions(String[] args, Options options) {
+        List<String> argsList = new LinkedList<>();
+
+        Map<String, String> argsMap = toMapLongOptions(args);
+        options.getOptions().forEach(opt -> {
+            String param = opt.getLongOpt();
+            if (param != null && argsMap.containsKey(param)) {
+                argsList.add("--" + param);
+
+                String value = argsMap.get(param);
+                if (value != null) {
+                    argsList.add(value);
                 }
             }
-        }
+        });
 
-        return false;
+        return argsList.toArray(new String[argsList.size()]);
     }
 
-    public static boolean hasOption(String[] args, String option) {
-        if (args == null || args.length == 0 || option == null) {
-            return false;
+    public static String[] extractOptions(String[] args, Options options) {
+        List<String> argsList = new LinkedList<>();
+
+        Map<String, String> argsMap = toMapOptions(args);
+        options.getOptions().forEach(opt -> {
+            String param = opt.getOpt();
+            if (param != null && argsMap.containsKey(param)) {
+                argsList.add("-" + param);
+
+                String value = argsMap.get(param);
+                if (value != null) {
+                    argsList.add(value);
+                }
+            }
+            param = opt.getLongOpt();
+            if (param != null && argsMap.containsKey(param)) {
+                argsList.add("--" + param);
+
+                String value = argsMap.get(param);
+                if (value != null) {
+                    argsList.add(value);
+                }
+            }
+        });
+
+        return argsList.toArray(new String[argsList.size()]);
+    }
+
+    public static Map<String, String> toMapLongOptions(String[] args) {
+        Map<String, String> map = new HashMap<>();
+
+        String key = null;
+        for (String arg : args) {
+            if (key != null) {
+                if (arg.startsWith("--")) {
+                    map.put(key, null);
+                } else {
+                    map.put(key, arg);
+                }
+                key = null;
+            }
+
+            if (arg.startsWith("--")) {
+                key = arg.substring(2, arg.length());
+            }
+        }
+        if (key != null) {
+            map.put(key, null);
         }
 
+        return map;
+    }
+
+    public static Map<String, String> toMapOptions(String[] args) {
+        Map<String, String> map = new HashMap<>();
+
+        String key = null;
         for (String arg : args) {
-            if (arg.startsWith("--")) {
-                arg = arg.substring(2, arg.length());
-                if (arg.equals(option)) {
-                    return true;
+            if (key != null) {
+                if (arg.startsWith("--") || arg.startsWith("-")) {
+                    map.put(key, null);
+                } else {
+                    map.put(key, arg);
                 }
+                key = null;
+            }
+
+            if (arg.startsWith("--")) {
+                key = arg.substring(2, arg.length());
             } else if (arg.startsWith("-")) {
-                arg = arg.substring(1, arg.length());
-                if (arg.equals(option)) {
+                key = arg.substring(1, arg.length());
+            }
+        }
+        if (key != null) {
+            map.put(key, null);
+        }
+
+        return map;
+    }
+
+    public static boolean hasLongParam(String[] args, String option) {
+        if (isEmpty(args) || !CmdOptions.getInstance().hasLongParam(option)) {
+            return false;
+        }
+
+        CmdOptions cmdOptions = CmdOptions.getInstance();
+        Option longOpt = cmdOptions.getLongOption(option);
+        for (String arg : args) {
+            if (arg.startsWith("--")) {
+                String opt = arg.substring(2, arg.length());
+                if (longOpt == cmdOptions.getLongOption(opt)) {
                     return true;
                 }
             }
@@ -314,38 +209,26 @@ public class Args {
         return false;
     }
 
-    public static void showHelp(String algorithmName, Options options) {
-        StringBuilder sb = new StringBuilder("java -jar");
-        try {
-            JarFile jarFile = new JarFile(Args.class.getProtectionDomain().getCodeSource().getLocation().getPath(), true);
-            Manifest manifest = jarFile.getManifest();
-            Attributes attributes = manifest.getMainAttributes();
-            String artifactId = attributes.getValue("Implementation-Title");
-            String version = attributes.getValue("Implementation-Version");
-            sb.append(String.format(" %s-%s.jar", artifactId, version));
-        } catch (IOException exception) {
-            sb.append(" causal-cmd.jar");
-        }
-        sb.append(" --algorithm ");
-        sb.append(algorithmName);
-
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.setWidth(-1);
-        formatter.printHelp(sb.toString(), options, true);
+    public static boolean isEmpty(String[] args) {
+        return (args == null || args.length == 0);
     }
 
-    public static String toString(String[] args, char delimiter) {
-        StringBuilder sb = new StringBuilder();
+    public static String[] clean(String[] args) {
+        if (args == null) {
+            return new String[0];
+        }
 
-        int lastIndex = args.length - 1;
-        for (int i = 0; i < args.length; i++) {
-            sb.append(args[i]);
-            if (i < lastIndex) {
-                sb.append(delimiter);
+        List<String> argList = new LinkedList<>();
+        for (String arg : args) {
+            if (arg != null) {
+                arg = arg.trim();
+                if (!arg.isEmpty()) {
+                    argList.add(arg);
+                }
             }
         }
 
-        return sb.toString();
+        return argList.toArray(new String[argList.size()]);
     }
 
 }
