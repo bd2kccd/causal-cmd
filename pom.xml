@@ -11,6 +11,17 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>ccd-releases</id>
+            <url>https://cloud.ccd.pitt.edu/nexus/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>ccd-snapshots</id>
+            <url>https://cloud.ccd.pitt.edu/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
