@@ -21,7 +21,6 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 import edu.cmu.tetrad.annotation.Algorithm;
 import edu.cmu.tetrad.annotation.AlgorithmAnnotations;
 import edu.cmu.tetrad.annotation.AnnotatedClass;
-import edu.cmu.tetrad.annotation.TetradAlgorithmAnnotations;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -76,15 +75,15 @@ public class TetradAlgorithms {
     }
 
     public boolean requireScore(Class clazz) {
-        return TetradAlgorithmAnnotations.getInstance().requireScore(clazz);
+        return AlgorithmAnnotations.getInstance().requireScore(clazz);
     }
 
     public boolean acceptMultipleDataset(Class clazz) {
-        return TetradAlgorithmAnnotations.getInstance().acceptMultipleDataset(clazz);
+        return AlgorithmAnnotations.getInstance().acceptMultipleDataset(clazz);
     }
 
     public boolean acceptKnowledge(Class clazz) {
-        return TetradAlgorithmAnnotations.getInstance().acceptKnowledge(clazz);
+        return AlgorithmAnnotations.getInstance().acceptKnowledge(clazz);
     }
 
     public String getName(Class clazz) {
