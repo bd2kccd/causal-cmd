@@ -22,6 +22,17 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+        <repository>
+            <id>ccd-releases</id>
+            <url>https://cloud.ccd.pitt.edu/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ccd-snapshots</id>
+            <url>https://cloud.ccd.pitt.edu/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
