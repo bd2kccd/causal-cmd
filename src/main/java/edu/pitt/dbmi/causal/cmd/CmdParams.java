@@ -44,7 +44,7 @@ public interface CmdParams {
     public static final String KNOWLEDGE = "knowledge";
     public static final String EXCLUDE_VARIABLE = "exclude-var";
 
-    // options for files
+    // options for dataset files
     public static final String DELIMITER = "delimiter";
     public static final String QUOTE_CHAR = "quote-char";
     public static final String MISSING_MARKER = "missing-marker";
@@ -57,5 +57,7 @@ public interface CmdParams {
     public static final String SCORE = "score";
 
     public static final String NUM_CATEGORIES = "numCategories";
+
+    public static final String THREAD = "thread";
 
 }

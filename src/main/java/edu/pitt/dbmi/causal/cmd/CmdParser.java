@@ -101,6 +101,9 @@ public class CmdParser {
         cmdArgs.skipLatest = cmd.hasOption(CmdParams.SKIP_LATEST);
         cmdArgs.skipValidation = cmd.hasOption(CmdParams.SKIP_VALIDATION);
         cmdArgs.hasHeader = !cmd.hasOption(CmdParams.NO_HEADER);
+        cmdArgs.numOfThreads = cmd.hasOption(CmdParams.THREAD)
+                ? getValidThreadNumber(cmd.getOptionValue(CmdParams.THREAD), parseOptions, CmdParams.THREAD)
+                : Runtime.getRuntime().availableProcessors() - 1;
 
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
@@ -371,6 +374,29 @@ public class CmdParser {
         }
 
         return parameters;
+    }
+
+    private static int getValidThreadNumber(String value, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
+        int numOfThreads = 0;
+
+        Options opts = parseOptions.getOptions();
+        Options invalidOpts = parseOptions.getInvalidValueOptions();
+
+        try {
+            numOfThreads = Integer.parseInt(value);
+        } catch (NumberFormatException exception) {
+            invalidOpts.addOption(opts.getOption(cmdParam));
+            String errMsg = String.format("The value '%s' for parameter %s is not a integer.", value, cmdParam);
+            throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
+        }
+
+        if (numOfThreads < 1) {
+            invalidOpts.addOption(opts.getOption(cmdParam));
+            String errMsg = String.format("Parameter %s requires value greater than or equal to 1.", cmdParam);
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
+        }
+
+        return numOfThreads;
     }
 
     private static char getValidChar(String quoteChar, ParseOptions parseOptions, String cmdParam) throws CmdParserException {

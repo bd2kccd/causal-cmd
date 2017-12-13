@@ -57,6 +57,8 @@ public class CmdArgs {
     protected boolean json;
     protected boolean skipLatest;
 
+    protected int numOfThreads;
+
     protected Map<String, String> parameters;
 
     public CmdArgs() {
@@ -132,6 +134,10 @@ public class CmdArgs {
 
     public boolean isSkipLatest() {
         return skipLatest;
+    }
+
+    public int getNumOfThreads() {
+        return numOfThreads;
     }
 
     public Map<String, String> getParameters() {

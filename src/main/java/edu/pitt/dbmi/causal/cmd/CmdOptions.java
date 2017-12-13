@@ -106,6 +106,8 @@ public class CmdOptions {
         opts.add(options.get(CmdParams.JSON));
         opts.add(options.get(CmdParams.DIR_OUT));
 
+        opts.add(options.get(CmdParams.THREAD));
+
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
@@ -132,6 +134,8 @@ public class CmdOptions {
 
         options.put(CmdParams.SKIP_VALIDATION, new Option(null, CmdParams.SKIP_VALIDATION, false, "Skip validation."));
         options.put(CmdParams.SKIP_LATEST, new Option(null, CmdParams.SKIP_LATEST, false, "Skip checking for latest software version."));
+
+        options.put(CmdParams.THREAD, Option.builder().longOpt(CmdParams.THREAD).desc("Number threads.").hasArg().argName("string").build());
 
         options.put(CmdParams.TEST, Option.builder().longOpt(CmdParams.TEST).desc(getIndependenceTestDesc()).hasArg().argName("string").build());
         options.put(CmdParams.SCORE, Option.builder().longOpt(CmdParams.SCORE).desc(getScoreDesc()).hasArg().argName("string").build());
