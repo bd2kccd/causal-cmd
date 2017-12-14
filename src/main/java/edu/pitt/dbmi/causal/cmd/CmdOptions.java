@@ -103,7 +103,7 @@ public class CmdOptions {
 
         // output options
         opts.add(options.get(CmdParams.FILE_PREFIX));
-        opts.add(options.get(CmdParams.JSON));
+        opts.add(options.get(CmdParams.JSON_GRAPH));
         opts.add(options.get(CmdParams.DIR_OUT));
 
         opts.add(options.get(CmdParams.THREAD));
@@ -126,7 +126,7 @@ public class CmdOptions {
         options.put(CmdParams.HELP_ALL, new Option(null, CmdParams.HELP_ALL, false, "Show all options and descriptions."));
         options.put(CmdParams.VERSION, new Option(null, CmdParams.VERSION, false, "Show version."));
         options.put(CmdParams.FILE_PREFIX, Option.builder().longOpt(CmdParams.FILE_PREFIX).desc("Output file name prefix.").hasArg().argName("string").build());
-        options.put(CmdParams.JSON, new Option(null, CmdParams.JSON, false, "Write out graph as json."));
+        options.put(CmdParams.JSON_GRAPH, new Option(null, CmdParams.JSON_GRAPH, false, "Write out graph as json."));
         options.put(CmdParams.DIR_OUT, Option.builder().longOpt(CmdParams.DIR_OUT).desc("Output directory").hasArg().argName("directory").build());
 
         options.put(CmdParams.KNOWLEDGE, Option.builder().longOpt(CmdParams.KNOWLEDGE).desc("Prior knowledge file.").hasArg().argName("file").build());

@@ -97,7 +97,7 @@ public class CmdParser {
                 ? TetradScores.getInstance().getClass(cmd.getOptionValue(CmdParams.SCORE))
                 : null;
         cmdArgs.filePrefix = getValidPrefix(cmd, cmdArgs, parseOptions);
-        cmdArgs.json = cmd.hasOption(CmdParams.JSON);
+        cmdArgs.jsonGraph = cmd.hasOption(CmdParams.JSON_GRAPH);
         cmdArgs.skipLatest = cmd.hasOption(CmdParams.SKIP_LATEST);
         cmdArgs.skipValidation = cmd.hasOption(CmdParams.SKIP_VALIDATION);
         cmdArgs.hasHeader = !cmd.hasOption(CmdParams.NO_HEADER);
