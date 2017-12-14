@@ -90,9 +90,18 @@ public class TetradRunner {
     }
 
     private static void writeOutParameters(CmdArgs cmdArgs, PrintStream out) {
+        Class algoClass = cmdArgs.getAlgorithmClass();
+        Class indTestClass = cmdArgs.getTestClass();
+        Class scoreClass = cmdArgs.getScoreClass();
+
+        String algoName = (algoClass == null) ? null : TetradAlgorithms.getInstance().getName(algoClass);
+        String testName = (indTestClass == null) ? null : TetradIndependenceTests.getInstance().getName(indTestClass);
+        String scoreName = (scoreClass == null) ? null : TetradScores.getInstance().getName(scoreClass);
+
         out.println("================================================================================");
-        out.printf("%s (%s)%n", TetradAlgorithms.getInstance().getName(cmdArgs.getAlgorithmClass()), DateTime.printNow());
+        out.printf("%s (%s)%n", algoName, DateTime.printNow());
         out.println("================================================================================");
+
         out.println();
         out.println("Runtime Parameters:");
         out.printf("number of threads = %s%n", cmdArgs.getNumOfThreads());
@@ -113,6 +122,18 @@ public class TetradRunner {
         out.printf("quote char = %s%n", (quoteChar <= 0) ? "none" : String.valueOf(quoteChar));
         out.printf("missing marker = %s%n", (missing == null || missing.isEmpty()) ? "none" : missing);
         out.printf("comment marker = %s%n", (comment == null || comment.isEmpty()) ? "none" : comment);
+
+        out.println();
+        out.println("Algorithm Run:");
+        if (algoName != null) {
+            out.printf("algorithm = %s%n", algoName);
+        }
+        if (testName != null) {
+            out.printf("test of independence = %s%n", testName);
+        }
+        if (scoreName != null) {
+            out.printf("score = %s%n", scoreName);
+        }
 
         out.println();
         out.println("Algorithm Parameters:");
