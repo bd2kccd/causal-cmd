@@ -148,6 +148,7 @@ public class TetradUtils {
         switch (dataType) {
             case Covariance:
                 validateCovariance(cmdArgs, out);
+                break;
             case Continuous:
             case Discrete:
             case Mixed:
