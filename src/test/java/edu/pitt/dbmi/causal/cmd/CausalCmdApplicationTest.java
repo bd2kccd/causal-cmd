@@ -83,7 +83,6 @@ public class CausalCmdApplicationTest {
     @Test
     public void testMain() throws IOException {
         String contData = TestFiles.getInstance().getContinuousData().toString();
-        String excludeVar = TestFiles.getInstance().getExcludeVars().toString();
         String knowledge = TestFiles.getInstance().getKnowledge().toString();
         String dirOut = tmpFolder.newFolder("gfci").toString();
         String[] args = {
@@ -96,7 +95,6 @@ public class CausalCmdApplicationTest {
             "--verbose",
             "--maxDegree", "3",
             "--skip-latest",
-            "--exclude-var", excludeVar,
             "--knowledge", knowledge,
             "--out", dirOut
         };
