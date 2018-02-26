@@ -164,7 +164,7 @@ public class TetradUtils {
             knowledge = null;
         } else {
             logStartReading(file, out);
-            knowledge = new edu.cmu.tetrad.data.DataReader().parseKnowledge(file.toFile());
+            knowledge = (new edu.cmu.tetrad.data.DataReader()).parseKnowledge(file.toFile());
             logFinishReading(file, out);
         }
 
