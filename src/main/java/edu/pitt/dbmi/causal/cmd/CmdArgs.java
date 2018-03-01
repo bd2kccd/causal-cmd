@@ -54,8 +54,10 @@ public class CmdArgs {
     protected int numCategories;
 
     protected boolean skipValidation;
-    protected boolean json;
+    protected boolean jsonGraph;
     protected boolean skipLatest;
+
+    protected int numOfThreads;
 
     protected Map<String, String> parameters;
 
@@ -126,12 +128,16 @@ public class CmdArgs {
         return skipValidation;
     }
 
-    public boolean isJson() {
-        return json;
+    public boolean isJsonGraph() {
+        return jsonGraph;
     }
 
     public boolean isSkipLatest() {
         return skipLatest;
+    }
+
+    public int getNumOfThreads() {
+        return numOfThreads;
     }
 
     public Map<String, String> getParameters() {

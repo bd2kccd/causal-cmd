@@ -18,19 +18,25 @@
  */
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
-import edu.cmu.tetrad.data.DataType;
+import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
+import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.graph.Graph;
+import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
 import edu.pitt.dbmi.causal.cmd.util.DateTime;
 import edu.pitt.dbmi.causal.cmd.util.GraphIO;
+import edu.pitt.dbmi.data.Delimiter;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,11 +55,13 @@ public class TetradRunner {
             throw new IllegalArgumentException("CmdArgs cannot be null.");
         }
 
+        Graph graph = null;
         Path fileOut = Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.getFilePrefix() + ".txt");
-        TetradAlgorithmRunner algorithmRunner = new TetradAlgorithmRunner();
-        try (PrintStream out = new PrintStream(Files.newOutputStream(fileOut), true)) {
-            printRunInfo(cmdArgs, out);
+        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(fileOut, StandardOpenOption.CREATE)), true)) {
+            writeOutParameters(cmdArgs, out);
+            out.println();
 
+            TetradAlgorithmRunner algorithmRunner = new TetradAlgorithmRunner();
             algorithmRunner.setOut(out);
             try {
                 algorithmRunner.runAlgorithm(cmdArgs);
@@ -62,95 +70,98 @@ public class TetradRunner {
                 LOGGER.error("Algorithm run failed.", exception);
                 System.exit(-1);
             }
+
+            graph = algorithmRunner.getGraph();
+            if (graph != null) {
+                out.println();
+                out.println(graph.toString());
+            }
         } catch (IOException exception) {
-            LOGGER.error("Algorithm run failed.", exception);
+            LOGGER.error("Unable to write to file.", exception);
         }
 
-        Graph graph = algorithmRunner.getGraph();
-        if (graph != null) {
+        if (graph != null && cmdArgs.isJsonGraph()) {
             try {
-                if (cmdArgs.isJson()) {
-                    GraphIO.writeAsJSON(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.getFilePrefix() + "_graph.json"));
-                } else {
-                    GraphIO.writeAsTXT(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.getFilePrefix() + "_graph.txt"));
-                }
+                GraphIO.writeAsJSON(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.getFilePrefix() + "_graph.json"));
             } catch (IOException exception) {
-                LOGGER.error("Unable to write out graph.", exception);
-                System.exit(-1);
+                LOGGER.error("Unable to write json graph to file.", exception);
             }
         }
     }
 
-    private static void printRunInfo(CmdArgs cmdArgs, PrintStream out) {
+    private static void writeOutParameters(CmdArgs cmdArgs, PrintStream out) {
         Class algoClass = cmdArgs.getAlgorithmClass();
-        Class testClass = cmdArgs.getTestClass();
+        Class indTestClass = cmdArgs.getTestClass();
         Class scoreClass = cmdArgs.getScoreClass();
-        List<Path> dataset = cmdArgs.getDatasetFiles();
-        Map<String, String> parameters = cmdArgs.getParameters();
 
-        out.printf("Tetrad: %s (%s)%n", TetradAlgorithms.getInstance().getName(algoClass), DateTime.printNow());
+        String algoName = (algoClass == null) ? null : TetradAlgorithms.getInstance().getName(algoClass);
+        String testName = (indTestClass == null) ? null : TetradIndependenceTests.getInstance().getName(indTestClass);
+        String scoreName = (scoreClass == null) ? null : TetradScores.getInstance().getName(scoreClass);
+
         out.println("================================================================================");
-        out.println(TetradAlgorithms.getInstance().getDescription(algoClass));
-        out.println("--------------------------------------------------------------------------------");
-        out.printf("Algorithm: %s%n", TetradAlgorithms.getInstance().getName(algoClass));
-        if (testClass != null) {
-            out.printf("Test: %s%n", TetradIndependenceTests.getInstance().getName(testClass));
-        }
-        if (scoreClass != null) {
-            out.printf("Score: %s%n", TetradScores.getInstance().getName(scoreClass));
-        }
-        out.println();
-
-        out.println("Tetrad Parameters");
+        out.printf("%s (%s)%n", algoName, DateTime.printNow());
         out.println("================================================================================");
-        parameters.forEach((k, v) -> out.printf("%s: %s%n", k, (v == null) ? "true" : v));
-        out.println();
 
-        out.println("Dataset");
-        out.println("================================================================================");
-        if (dataset.size() > 1) {
-            StringBuilder sb = new StringBuilder();
-            dataset.forEach(e -> sb.append(String.format("       %s%n", e.toAbsolutePath())));
-            out.printf("Files: %s%n", sb.toString().trim());
-        } else {
-            out.printf("File: %s%n", dataset.get(0).toAbsolutePath());
-        }
-        out.printf("Has Header: %s%n", cmdArgs.isHasHeader() ? "yes" : "no");
-        if (cmdArgs.getQuoteChar() > 0) {
-            out.printf("Quote Character: %s%n", cmdArgs.getQuoteChar());
-        }
-        if (cmdArgs.getMissingValueMarker() != null) {
-            out.printf("Missing Value Marker: %s%n", cmdArgs.getMissingValueMarker());
-        }
-        if (cmdArgs.getCommentMarker() != null) {
-            out.printf("Comment Marker: %s%n", cmdArgs.getCommentMarker());
-        }
-        out.printf("Delimiter: %s%n", cmdArgs.getDelimiter().name().toLowerCase());
-        out.printf("Data Type: %s%n", cmdArgs.getDataType().name().toLowerCase());
-        if (cmdArgs.getDataType() == DataType.Mixed) {
-            out.printf("Number of Categories: %s%n", cmdArgs.getNumCategories());
-        }
         out.println();
+        out.println("Runtime Parameters:");
+        out.printf("number of threads = %s%n", cmdArgs.getNumOfThreads());
 
-        Path knowledgeFile = cmdArgs.getKnowledgeFile();
-        Path excludeVariableFile = cmdArgs.getExcludeVariableFile();
-        if (!(knowledgeFile == null && excludeVariableFile == null)) {
-            out.println("Other Input Files");
-            out.println("================================================================================");
-            if (knowledgeFile != null) {
-                out.printf("Knowledge: %s%n", knowledgeFile.toAbsolutePath());
-            }
-            if (excludeVariableFile != null) {
-                out.printf("Exclude Variables: %s%n", excludeVariableFile.toAbsolutePath());
-            }
+        String files = cmdArgs.getDatasetFiles().stream()
+                .map(e -> e.getFileName().toString())
+                .collect(Collectors.joining(","));
+        Delimiter delimiter = cmdArgs.getDelimiter();
+        char quoteChar = cmdArgs.getQuoteChar();
+        String missing = cmdArgs.getMissingValueMarker();
+        String comment = cmdArgs.getCommentMarker();
+        boolean hasHeader = cmdArgs.isHasHeader();
+        out.println();
+        out.println("Dataset:");
+        out.printf("file = %s%n", files);
+        out.printf("header = %s%n", hasHeader ? "yes" : "no");
+        out.printf("delimiter = %s%n", delimiter.name().toLowerCase());
+        out.printf("quote char = %s%n", (quoteChar <= 0) ? "none" : String.valueOf(quoteChar));
+        out.printf("missing marker = %s%n", (missing == null || missing.isEmpty()) ? "none" : missing);
+        out.printf("comment marker = %s%n", (comment == null || comment.isEmpty()) ? "none" : comment);
+
+        out.println();
+        out.println("Algorithm Run:");
+        if (algoName != null) {
+            out.printf("algorithm = %s%n", algoName);
+        }
+        if (testName != null) {
+            out.printf("test of independence = %s%n", testName);
+        }
+        if (scoreName != null) {
+            out.printf("score = %s%n", scoreName);
         }
 
-        out.println("Miscellaneous");
-        out.println("================================================================================");
-        out.printf("Skip Validation: %s%n", cmdArgs.isSkipValidation() ? "yes" : "no");
-        out.printf("JSON Output: %s%n", cmdArgs.isJson() ? "yes" : "no");
-        out.printf("Output Directory: %s%n", cmdArgs.getOutDirectory());
         out.println();
+        out.println("Algorithm Parameters:");
+        getParameterValues(cmdArgs).forEach((k, v) -> out.printf("%s = %s%n", k, v));
+    }
+
+    private static Map<String, String> getParameterValues(CmdArgs cmdArgs) {
+        Map<String, String> params = new TreeMap<>();
+
+        Class algoClass = cmdArgs.getAlgorithmClass();
+        Class indTestClass = cmdArgs.getTestClass();
+        Class scoreClass = cmdArgs.getScoreClass();
+
+        Algorithm algorithm;
+        try {
+            algorithm = AlgorithmFactory.create(algoClass, indTestClass, scoreClass);
+        } catch (IllegalAccessException | InstantiationException exception) {
+            algorithm = null;
+            LOGGER.error("Unable to construct algorithm object.", exception);
+        }
+
+        if (algorithm != null) {
+            ParamDescriptions paramDesc = ParamDescriptions.getInstance();
+            algorithm.getParameters().forEach(e -> params.put(e, String.valueOf(paramDesc.get(e).getDefaultValue())));
+        }
+        cmdArgs.getParameters().forEach((k, v) -> params.put(k, v));
+
+        return params;
     }
 
 }

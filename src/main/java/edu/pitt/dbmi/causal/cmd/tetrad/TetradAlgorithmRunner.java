@@ -82,7 +82,7 @@ public class TetradAlgorithmRunner {
         if (TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass())) {
             IKnowledge knowledge = null;
             try {
-                TetradUtils.readInKnowledge(cmdArgs, out);
+                knowledge = TetradUtils.readInKnowledge(cmdArgs, out);
             } catch (IOException exception) {
                 throw new AlgorithmRunException(exception);
             }

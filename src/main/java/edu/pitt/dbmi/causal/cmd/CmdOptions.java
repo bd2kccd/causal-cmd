@@ -103,8 +103,10 @@ public class CmdOptions {
 
         // output options
         opts.add(options.get(CmdParams.FILE_PREFIX));
-        opts.add(options.get(CmdParams.JSON));
+        opts.add(options.get(CmdParams.JSON_GRAPH));
         opts.add(options.get(CmdParams.DIR_OUT));
+
+        opts.add(options.get(CmdParams.THREAD));
 
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
@@ -124,7 +126,7 @@ public class CmdOptions {
         options.put(CmdParams.HELP_ALL, new Option(null, CmdParams.HELP_ALL, false, "Show all options and descriptions."));
         options.put(CmdParams.VERSION, new Option(null, CmdParams.VERSION, false, "Show version."));
         options.put(CmdParams.FILE_PREFIX, Option.builder().longOpt(CmdParams.FILE_PREFIX).desc("Output file name prefix.").hasArg().argName("string").build());
-        options.put(CmdParams.JSON, new Option(null, CmdParams.JSON, false, "Write out graph as json."));
+        options.put(CmdParams.JSON_GRAPH, new Option(null, CmdParams.JSON_GRAPH, false, "Write out graph as json."));
         options.put(CmdParams.DIR_OUT, Option.builder().longOpt(CmdParams.DIR_OUT).desc("Output directory").hasArg().argName("directory").build());
 
         options.put(CmdParams.KNOWLEDGE, Option.builder().longOpt(CmdParams.KNOWLEDGE).desc("Prior knowledge file.").hasArg().argName("file").build());
@@ -132,6 +134,8 @@ public class CmdOptions {
 
         options.put(CmdParams.SKIP_VALIDATION, new Option(null, CmdParams.SKIP_VALIDATION, false, "Skip validation."));
         options.put(CmdParams.SKIP_LATEST, new Option(null, CmdParams.SKIP_LATEST, false, "Skip checking for latest software version."));
+
+        options.put(CmdParams.THREAD, Option.builder().longOpt(CmdParams.THREAD).desc("Number threads.").hasArg().argName("string").build());
 
         options.put(CmdParams.TEST, Option.builder().longOpt(CmdParams.TEST).desc(getIndependenceTestDesc()).hasArg().argName("string").build());
         options.put(CmdParams.SCORE, Option.builder().longOpt(CmdParams.SCORE).desc(getScoreDesc()).hasArg().argName("string").build());

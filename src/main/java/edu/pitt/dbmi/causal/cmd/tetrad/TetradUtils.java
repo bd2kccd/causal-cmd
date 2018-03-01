@@ -148,6 +148,7 @@ public class TetradUtils {
         switch (dataType) {
             case Covariance:
                 validateCovariance(cmdArgs, out);
+                break;
             case Continuous:
             case Discrete:
             case Mixed:
@@ -163,7 +164,7 @@ public class TetradUtils {
             knowledge = null;
         } else {
             logStartReading(file, out);
-            knowledge = new edu.cmu.tetrad.data.DataReader().parseKnowledge(file.toFile());
+            knowledge = (new edu.cmu.tetrad.data.DataReader()).parseKnowledge(file.toFile());
             logFinishReading(file, out);
         }
 
