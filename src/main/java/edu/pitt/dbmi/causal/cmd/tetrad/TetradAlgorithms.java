@@ -92,10 +92,11 @@ public class TetradAlgorithms {
                 : "";
     }
 
-    public String getDescription(Class clazz) {
-        return (clazz != null && clazz.isAnnotationPresent(Algorithm.class))
-                ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).description()
-                : "";
-    }
+    // not used so commenting out as this is more tetrad gui
+//    public String getDescription(Class clazz) {
+//        return (clazz != null && clazz.isAnnotationPresent(Algorithm.class))
+//                ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).description()
+//                : "";
+//    }
 
 }
