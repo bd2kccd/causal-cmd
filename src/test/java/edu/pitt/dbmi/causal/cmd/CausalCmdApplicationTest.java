@@ -60,8 +60,9 @@ public class CausalCmdApplicationTest {
         String contData = TestFiles.getInstance().getContinuousData().toString();
         String dirOut = tmpFolder.newFolder("gfci_bootstrap").toString();
         String[] args = {
-            "--bootstrapEnsemble", "1",
-            "--bootstrapSampleSize", "5",
+            "--resamplingEnsemble", "1",
+            "--numberResampling", "5",
+            "--resampleSize","100",
             "--dataset", contData,
             "--delimiter", "tab",
             "--data-type", "continuous",
