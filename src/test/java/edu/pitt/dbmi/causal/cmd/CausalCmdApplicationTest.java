@@ -38,6 +38,24 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testMainFgesMb() throws IOException {
+        String contData = TestFiles.getInstance().getContinuousData().toString();
+        String dirOut = tmpFolder.newFolder("fges_mb").toString();
+        String[] args = {
+            "--dataset", contData,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "fges-mb",
+            "--score", "sem-bic",
+            "--targetName", "X1",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
     public void testMainCovariance() throws IOException {
         String covarData = TestFiles.getInstance().getCovarianceData().toString();
         String dirOut = tmpFolder.newFolder("gfci_covar").toString();
@@ -62,7 +80,7 @@ public class CausalCmdApplicationTest {
         String[] args = {
             "--resamplingEnsemble", "1",
             "--numberResampling", "5",
-            "--resampleSize","100",
+            "--resampleSize", "100",
             "--dataset", contData,
             "--delimiter", "tab",
             "--data-type", "continuous",
