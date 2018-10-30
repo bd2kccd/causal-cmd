@@ -250,7 +250,12 @@ public class CmdParser {
 
         // add Tetrad parameters
         params.forEach(param -> {
-            opts.addOption(CmdOptions.getInstance().getLongOption(param));
+            if (param.equals(CmdParams.TARGET_NAME)) {
+                // add required Tetrad parameters
+                opts.addOption(Option.builder().longOpt(CmdParams.TARGET_NAME).desc("Target variable.").hasArg().argName("string").required().build());
+            } else {
+                opts.addOption(CmdOptions.getInstance().getLongOption(param));
+            }
         });
 
         try {

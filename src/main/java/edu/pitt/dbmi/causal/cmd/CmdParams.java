@@ -57,6 +57,7 @@ public interface CmdParams {
     public static final String SCORE = "score";
 
     public static final String NUM_CATEGORIES = "numCategories";
+    public static final String TARGET_NAME = "targetName";
 
     public static final String THREAD = "thread";
 
