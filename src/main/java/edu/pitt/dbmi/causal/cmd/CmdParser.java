@@ -31,6 +31,7 @@ import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import edu.pitt.dbmi.causal.cmd.util.FileUtils;
 import edu.pitt.dbmi.causal.cmd.util.OptionFactory;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -249,7 +250,12 @@ public class CmdParser {
 
         // add Tetrad parameters
         params.forEach(param -> {
-            opts.addOption(CmdOptions.getInstance().getLongOption(param));
+            if (param.equals(CmdParams.TARGET_NAME)) {
+                // add required Tetrad parameters
+                opts.addOption(Option.builder().longOpt(CmdParams.TARGET_NAME).desc("Target variable.").hasArg().argName("string").required().build());
+            } else {
+                opts.addOption(CmdOptions.getInstance().getLongOption(param));
+            }
         });
 
         try {
@@ -357,7 +363,11 @@ public class CmdParser {
                 }
                 parameters.put(param, value);
             } else {
-                parameters.put(param, paramDesc.getDefaultValue().toString());
+                Serializable defaultValue = paramDesc.getDefaultValue();
+                String value = (defaultValue instanceof Boolean)
+                        ? Boolean.FALSE.toString()
+                        : defaultValue.toString();
+                parameters.put(param, value);
             }
         };
 

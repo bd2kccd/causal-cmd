@@ -30,7 +30,6 @@ import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
 import edu.pitt.dbmi.causal.cmd.ValidationException;
 import edu.pitt.dbmi.causal.cmd.util.DateTime;
-import edu.pitt.dbmi.causal.cmd.util.FileIO;
 import edu.pitt.dbmi.data.Dataset;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceDataReader;
 import edu.pitt.dbmi.data.reader.covariance.LowerCovarianceDataReader;
@@ -49,6 +48,7 @@ import edu.pitt.dbmi.data.validation.tabular.VerticalDiscreteTabularDataFileVali
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,18 +173,24 @@ public class TetradUtils {
     }
 
     private static Set<String> getExcludeVariables(CmdArgs cmdArgs, PrintStream out) throws IOException {
-        Set<String> excludeVars;
-
         Path file = cmdArgs.getExcludeVariableFile();
         if (file == null) {
-            excludeVars = new HashSet<>();
+            return Collections.EMPTY_SET;
         } else {
-            logStartReading(file, out);
-            excludeVars = FileIO.extractUniqueLine(cmdArgs.getExcludeVariableFile());
-            logFinishReading(file, out);
-        }
+            Set<String> set = new HashSet<>();
 
-        return excludeVars;
+            logStartReading(file, out);
+            try (Stream<String> stream = Files.lines(file)) {
+                stream
+                        .map(e -> e.trim())
+                        .filter(e -> !e.isEmpty())
+                        .distinct()
+                        .collect(Collectors.toCollection(() -> set));
+            }
+            logFinishReading(file, out);
+
+            return set;
+        }
     }
 
     public static List<DataModel> getDataModels(CmdArgs cmdArgs, PrintStream out) throws IOException {
