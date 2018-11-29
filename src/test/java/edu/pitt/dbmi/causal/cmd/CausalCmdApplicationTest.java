@@ -80,7 +80,7 @@ public class CausalCmdApplicationTest {
         String[] args = {
             "--resamplingEnsemble", "1",
             "--numberResampling", "5",
-            "--resampleSize", "100",
+            "--percentResampleSize", "100",
             "--dataset", contData,
             "--delimiter", "tab",
             "--data-type", "continuous",
