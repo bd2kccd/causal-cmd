@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,11 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd.util;
+package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.data.DataType;
-import edu.pitt.dbmi.causal.cmd.CmdOptions;
-import edu.pitt.dbmi.causal.cmd.CmdParams;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
 import java.util.List;
@@ -33,7 +31,7 @@ import org.apache.commons.cli.Option;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class OptionFactory {
+public final class OptionFactory {
 
     private OptionFactory() {
     }

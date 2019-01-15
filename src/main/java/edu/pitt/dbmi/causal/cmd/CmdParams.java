@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ package edu.pitt.dbmi.causal.cmd;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public interface CmdParams {
+public final class CmdParams {
 
     // user guide
     public static final String HELP = "help";
@@ -60,5 +60,8 @@ public interface CmdParams {
     public static final String TARGET_NAME = "targetName";
 
     public static final String THREAD = "thread";
+
+    private CmdParams() {
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,6 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
-import edu.pitt.dbmi.causal.cmd.util.DataTypes;
-import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +39,7 @@ import org.apache.commons.cli.Options;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class CmdOptions {
+public final class CmdOptions {
 
     private static final CmdOptions INSTANCE = new CmdOptions();
 
@@ -167,15 +165,6 @@ public class CmdOptions {
                 .filter(e -> e.getValue().isRequired())
                 .map(e -> e.getValue())
                 .collect(Collectors.toList());
-    }
-
-    private String getTimeoutDesc() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Set the time limit for graph searching. ");
-        sb.append("Units: s=second, m=minute, h=hour, d=day. ");
-        sb.append("For an example, 12m = 12 minutes");
-
-        return sb.toString();
     }
 
     private String getDataTypeDesc() {

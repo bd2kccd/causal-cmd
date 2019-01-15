@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,30 +16,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd;
-
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.Stream;
+package edu.pitt.dbmi.causal.cmd.util;
 
 /**
  *
- * Oct 2, 2017 4:12:39 PM
+ * Jan 9, 2019 11:30:13 AM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class TestFileIO {
+public final class WordUtil {
 
-    private TestFileIO() {
+    private WordUtil() {
     }
 
-    public static void printFile(Path file, PrintStream out) throws IOException {
-        if (Files.exists(file)) {
-            try (Stream<String> stream = Files.lines(file)) {
-                stream.forEach(out::println);
-            }
+    public static final String toYesOrNo(String value) {
+        switch (value) {
+            case "true":
+                return "yes";
+            case "false":
+                return "no";
+            default:
+                return value;
         }
     }
 

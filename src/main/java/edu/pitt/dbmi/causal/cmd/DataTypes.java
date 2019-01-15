@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd.util;
+package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.data.DataType;
 import java.util.Collections;
@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 
 /**
  *
- * Sep 11, 2017 2:20:20 PM
+ * Jan 8, 2019 11:28:17 AM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class DataTypes {
+public final class DataTypes {
 
     private static final DataTypes INSTANCE = new DataTypes();
 

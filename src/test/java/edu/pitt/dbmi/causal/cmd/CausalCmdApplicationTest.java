@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,8 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -32,14 +34,24 @@ import org.junit.rules.TemporaryFolder;
 public class CausalCmdApplicationTest {
 
     @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    public final TemporaryFolder tmpFolder = new TemporaryFolder();
+
+    private final Path continuousDataFile = Paths.get(getClass().getResource("/data/sim_data_continuous_20var_100case.txt").getFile());
+    private final Path discreteDataFile = Paths.get(getClass().getResource("/data/sim_data_discrete_20var_100case.txt").getFile());
+    private final Path mixedDataFile = Paths.get(getClass().getResource("/data/sim_data_mixed_20var_100case.txt").getFile());
+
+    private final Path noHeaderContinuousDataFile = Paths.get(getClass().getResource("/data/sim_data_continuous_20var_100case_no_header.txt").getFile());
+
+    private final Path covarianceFile = Paths.get(getClass().getResource("/data/spartina.txt").getFile());
+
+    private final Path knowledgeFile = Paths.get(getClass().getResource("/data/knowledge_sim_data_continuous_20var_100case.txt").getFile());
 
     public CausalCmdApplicationTest() {
     }
 
     @Test
     public void testMainFgesMb() throws IOException {
-        String contData = TestFiles.getInstance().getContinuousData().toString();
+        String contData = continuousDataFile.toString();
         String dirOut = tmpFolder.newFolder("fges_mb").toString();
         String[] args = {
             "--dataset", contData,
@@ -57,7 +69,7 @@ public class CausalCmdApplicationTest {
 
     @Test
     public void testMainCovariance() throws IOException {
-        String covarData = TestFiles.getInstance().getCovarianceData().toString();
+        String covarData = covarianceFile.toString();
         String dirOut = tmpFolder.newFolder("gfci_covar").toString();
         String[] args = {
             "--dataset", covarData,
@@ -75,7 +87,7 @@ public class CausalCmdApplicationTest {
 
     @Test
     public void testMainWithBootstrap() throws IOException {
-        String contData = TestFiles.getInstance().getContinuousData().toString();
+        String contData = continuousDataFile.toString();
         String dirOut = tmpFolder.newFolder("gfci_bootstrap").toString();
         String[] args = {
             "--resamplingEnsemble", "1",
@@ -101,8 +113,8 @@ public class CausalCmdApplicationTest {
      */
     @Test
     public void testMain() throws IOException {
-        String contData = TestFiles.getInstance().getContinuousData().toString();
-        String knowledge = TestFiles.getInstance().getKnowledge().toString();
+        String contData = continuousDataFile.toString();
+        String knowledge = knowledgeFile.toString();
         String dirOut = tmpFolder.newFolder("gfci").toString();
         String[] args = {
             "--dataset", contData,

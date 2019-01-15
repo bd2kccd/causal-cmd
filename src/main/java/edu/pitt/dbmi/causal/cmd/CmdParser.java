@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,7 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
-import edu.pitt.dbmi.causal.cmd.util.Args;
-import edu.pitt.dbmi.causal.cmd.util.DataTypes;
-import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import edu.pitt.dbmi.causal.cmd.util.FileUtils;
-import edu.pitt.dbmi.causal.cmd.util.OptionFactory;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -51,9 +47,9 @@ import org.apache.commons.cli.ParseException;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class CmdParser {
+public final class CmdParser {
 
-    private CmdParser() {
+    public CmdParser() {
     }
 
     public static CmdArgs parse(String[] args) throws CmdParserException {
@@ -189,16 +185,24 @@ public class CmdParser {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
         }
 
-        Class indTestClass = null;
-        if (TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass)) {
+        boolean testParamReq = TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass);
+        boolean scoreParamReq = TetradAlgorithms.getInstance().requireScore(algorithmClass);
+        if (testParamReq) {
             opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
-            try {
-                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
-            } catch (ParseException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.TEST));
-                throw new CmdParserException(parseOptions, exception);
-            }
+        }
+        if (scoreParamReq) {
+            opts.addOption(OptionFactory.createRequiredScoreOpt(dataType));
+        }
 
+        try {
+            Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
+        } catch (ParseException exception) {
+            invalidOpts.addOption(opts.getOption(CmdParams.TEST));
+            throw new CmdParserException(parseOptions, exception);
+        }
+
+        Class indTestClass = null;
+        if (testParamReq) {
             String indTestCmd = argsMap.get(CmdParams.TEST);
             TetradIndependenceTests indTests = TetradIndependenceTests.getInstance();
             if (!indTests.hasCommand(indTestCmd)) {
@@ -216,15 +220,7 @@ public class CmdParser {
         }
 
         Class scoreClass = null;
-        if (TetradAlgorithms.getInstance().requireScore(algorithmClass)) {
-            opts.addOption(OptionFactory.createRequiredScoreOpt(dataType));
-            try {
-                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
-            } catch (ParseException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
-                throw new CmdParserException(parseOptions, exception);
-            }
-
+        if (scoreParamReq) {
             String scoreCmd = argsMap.get(CmdParams.SCORE);
             TetradScores scores = TetradScores.getInstance();
             if (!scores.hasCommand(scoreCmd)) {

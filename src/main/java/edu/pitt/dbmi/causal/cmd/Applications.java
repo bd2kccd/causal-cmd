@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd.util;
+package edu.pitt.dbmi.causal.cmd;
 
-import edu.pitt.dbmi.causal.cmd.ParseOptions;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,15 +32,15 @@ import org.apache.commons.cli.Options;
 
 /**
  *
- * Mar 10, 2017 1:26:52 PM
+ * Jan 8, 2019 12:04:29 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class Application {
+public final class Applications {
 
     private static final DateFormat DF = new SimpleDateFormat("EEE, MMMM dd, yyyy hh:mm:ss a");
 
-    private Application() {
+    private Applications() {
     }
 
     public static void showHelp(String[] args, ParseOptions parseOptions, String footer) {
@@ -108,11 +107,11 @@ public class Application {
     }
 
     public static String jarTitle() {
-        return Application.class.getPackage().getImplementationTitle();
+        return Applications.class.getPackage().getImplementationTitle();
     }
 
     public static String jarVersion() {
-        String version = Application.class.getPackage().getImplementationVersion();
+        String version = Applications.class.getPackage().getImplementationVersion();
 
         return (version == null) ? "unknown" : version;
     }

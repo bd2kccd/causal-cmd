@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd.util;
+package edu.pitt.dbmi.causal.cmd;
 
-import edu.pitt.dbmi.causal.cmd.CmdOptions;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -35,7 +36,7 @@ import org.apache.commons.cli.ParseException;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class Args {
+public final class Args {
 
     private Args() {
     }
@@ -138,6 +139,13 @@ public class Args {
         return argsList.toArray(new String[argsList.size()]);
     }
 
+    /**
+     * Parse the long parameters from the command inputs to map where the
+     * parameters are map keys and parameter values are map values.
+     *
+     * @param args
+     * @return
+     */
     public static Map<String, String> toMapLongOptions(String[] args) {
         Map<String, String> map = new HashMap<>();
 
@@ -163,6 +171,13 @@ public class Args {
         return map;
     }
 
+    /**
+     * Parse the command inputs to map where the parameters are map keys and
+     * parameter values are map values.
+     *
+     * @param args
+     * @return
+     */
     public static Map<String, String> toMapOptions(String[] args) {
         Map<String, String> map = new HashMap<>();
 
@@ -214,21 +229,13 @@ public class Args {
     }
 
     public static String[] clean(String[] args) {
-        if (args == null) {
-            return new String[0];
-        }
-
-        List<String> argList = new LinkedList<>();
-        for (String arg : args) {
-            if (arg != null) {
-                arg = arg.trim();
-                if (!arg.isEmpty()) {
-                    argList.add(arg);
-                }
-            }
-        }
-
-        return argList.toArray(new String[argList.size()]);
+        return (args == null)
+                ? new String[0]
+                : Arrays.stream(args)
+                        .filter(Objects::nonNull)
+                        .map(String::trim)
+                        .filter(e -> !e.isEmpty())
+                        .toArray(String[]::new);
     }
 
 }
