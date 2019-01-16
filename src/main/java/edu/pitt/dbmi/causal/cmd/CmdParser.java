@@ -197,7 +197,12 @@ public final class CmdParser {
         try {
             Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
         } catch (ParseException exception) {
-            invalidOpts.addOption(opts.getOption(CmdParams.TEST));
+            if (testParamReq) {
+                invalidOpts.addOption(opts.getOption(CmdParams.TEST));
+            }
+            if (scoreParamReq) {
+                invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
+            }
             throw new CmdParserException(parseOptions, exception);
         }
 
