@@ -106,7 +106,9 @@ public final class DataFiles {
             columnReader.setQuoteCharacter(quoteCharacter);
 
             boolean isDiscrete = (cmdArgs.getDataType() == DataType.Discrete);
-            DataColumn[] dataColumns = columnReader.readInDataColumns(varsToExclude, isDiscrete);
+            DataColumn[] dataColumns = hasHeader
+                    ? columnReader.readInDataColumns(varsToExclude, isDiscrete)
+                    : columnReader.generateColumns(new int[0], isDiscrete);
 
             // handle mixed data
             if (cmdArgs.getDataType() == DataType.Mixed) {
