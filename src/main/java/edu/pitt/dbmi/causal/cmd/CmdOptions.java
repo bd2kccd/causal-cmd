@@ -95,6 +95,11 @@ public final class CmdOptions {
 
         getRequiredOptions().forEach(e -> opts.add(e));
 
+        // optional files
+        opts.add(options.get(CmdParams.METADATA));
+
+        opts.add(options.get(CmdParams.NO_HEADER));
+
         // dataset options
         opts.add(options.get(CmdParams.QUOTE_CHAR));
         opts.add(options.get(CmdParams.COMMENT_MARKER));
@@ -129,6 +134,7 @@ public final class CmdOptions {
 
         options.put(CmdParams.KNOWLEDGE, Option.builder().longOpt(CmdParams.KNOWLEDGE).desc("Prior knowledge file.").hasArg().argName("file").build());
         options.put(CmdParams.EXCLUDE_VARIABLE, Option.builder().longOpt(CmdParams.EXCLUDE_VARIABLE).desc("Variables to be excluded from run.").hasArg().argName("file").build());
+        options.put(CmdParams.METADATA, Option.builder().longOpt(CmdParams.METADATA).desc("Metadata file.  Cannot apply to dataset without header.").hasArg().argName("file").build());
 
         options.put(CmdParams.SKIP_VALIDATION, new Option(null, CmdParams.SKIP_VALIDATION, false, "Skip validation."));
         options.put(CmdParams.SKIP_LATEST, new Option(null, CmdParams.SKIP_LATEST, false, "Skip checking for latest software version."));

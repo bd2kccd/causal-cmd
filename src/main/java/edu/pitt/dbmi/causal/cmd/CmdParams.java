@@ -43,6 +43,7 @@ public final class CmdParams {
     public static final String DATASET = "dataset";
     public static final String KNOWLEDGE = "knowledge";
     public static final String EXCLUDE_VARIABLE = "exclude-var";
+    public static final String METADATA = "metadata";
 
     // options for dataset files
     public static final String DELIMITER = "delimiter";

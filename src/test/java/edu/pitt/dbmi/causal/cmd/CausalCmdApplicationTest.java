@@ -21,6 +21,7 @@ package edu.pitt.dbmi.causal.cmd;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -31,6 +32,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
+@Ignore
 public class CausalCmdApplicationTest {
 
     @Rule

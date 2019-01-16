@@ -75,6 +75,9 @@ public final class CmdParser {
         cmdArgs.excludeVariableFile = cmd.hasOption(CmdParams.EXCLUDE_VARIABLE)
                 ? getValidFile(cmd.getOptionValue(CmdParams.EXCLUDE_VARIABLE), parseOptions, CmdParams.EXCLUDE_VARIABLE)
                 : null;
+        cmdArgs.metadataFile = cmd.hasOption(CmdParams.METADATA)
+                ? getValidFile(cmd.getOptionValue(CmdParams.METADATA), parseOptions, CmdParams.METADATA)
+                : null;
         cmdArgs.outDirectory = cmd.hasOption(CmdParams.DIR_OUT)
                 ? Paths.get(cmd.getOptionValue(CmdParams.DIR_OUT))
                 : Paths.get(".");
@@ -146,6 +149,16 @@ public final class CmdParser {
             Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
         } catch (ParseException exception) {
             throw new CmdParserException(parseOptions, exception);
+        }
+
+        // ensure metadata is not given with dataset without header
+        boolean hasNoHeader = argsMap.containsKey(CmdParams.NO_HEADER);
+        boolean hasMetadata = argsMap.containsKey(CmdParams.METADATA);
+        if (hasNoHeader && hasMetadata) {
+            invalidOpts.addOption(opts.getOption(CmdParams.NO_HEADER));
+            invalidOpts.addOption(opts.getOption(CmdParams.METADATA));
+            String errMsg = "Metadata cannot apply to dataset without header.";
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
 
         // ensure delimiter is valid

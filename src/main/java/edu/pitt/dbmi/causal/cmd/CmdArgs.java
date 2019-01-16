@@ -35,6 +35,7 @@ public class CmdArgs {
     protected List<Path> datasetFiles;
     protected Path knowledgeFile;
     protected Path excludeVariableFile;
+    protected Path metadataFile;
     protected Path outDirectory;
 
     protected String filePrefix;
@@ -74,6 +75,10 @@ public class CmdArgs {
 
     public Path getExcludeVariableFile() {
         return excludeVariableFile;
+    }
+
+    public Path getMetadataFile() {
+        return metadataFile;
     }
 
     public Path getOutDirectory() {

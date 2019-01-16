@@ -26,10 +26,13 @@ import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
 import edu.pitt.dbmi.causal.cmd.util.LogMessages;
 import edu.pitt.dbmi.data.reader.DataColumn;
+import edu.pitt.dbmi.data.reader.DataColumns;
 import edu.pitt.dbmi.data.reader.Delimiter;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceData;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceDataReader;
 import edu.pitt.dbmi.data.reader.covariance.LowerCovarianceDataFileReader;
+import edu.pitt.dbmi.data.reader.metadata.Metadata;
+import edu.pitt.dbmi.data.reader.metadata.MetadataFileReader;
 import edu.pitt.dbmi.data.reader.tabular.TabularColumnFileReader;
 import edu.pitt.dbmi.data.reader.tabular.TabularColumnReader;
 import edu.pitt.dbmi.data.reader.tabular.TabularDataFileReader;
@@ -58,6 +61,21 @@ public final class DataFiles {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataFiles.class);
 
     private DataFiles() {
+    }
+
+    public static Metadata readInMetadata(CmdArgs cmdArgs, PrintStream out) throws IOException {
+        Metadata metadata;
+
+        Path file = cmdArgs.getMetadataFile();
+        if (file == null) {
+            metadata = null;
+        } else {
+            LogMessages.readingFileStart(file, LOGGER, out);
+            metadata = (new MetadataFileReader(file)).read();
+            LogMessages.readingFileStart(file, LOGGER, out);
+        }
+
+        return metadata;
     }
 
     public static IKnowledge readInKnowledge(CmdArgs cmdArgs, PrintStream out) throws IOException {
@@ -93,6 +111,8 @@ public final class DataFiles {
     private static List<DataModel> readInTabularData(CmdArgs cmdArgs, PrintStream out) throws IOException {
         List<DataModel> dataModels = new LinkedList<>();
 
+        final Metadata metadata = readInMetadata(cmdArgs, out);
+
         Set<String> varsToExclude = DataFiles.readInVariablesToExclude(cmdArgs, out);
         for (Path dataFile : cmdArgs.getDatasetFiles()) {
             Delimiter delimiter = cmdArgs.getDelimiter();
@@ -106,9 +126,16 @@ public final class DataFiles {
             columnReader.setQuoteCharacter(quoteCharacter);
 
             boolean isDiscrete = (cmdArgs.getDataType() == DataType.Discrete);
-            DataColumn[] dataColumns = hasHeader
-                    ? columnReader.readInDataColumns(varsToExclude, isDiscrete)
-                    : columnReader.generateColumns(new int[0], isDiscrete);
+            DataColumn[] dataColumns;
+            if (hasHeader) {
+                dataColumns = columnReader.readInDataColumns(varsToExclude, isDiscrete);
+
+                if (metadata != null) {
+                    dataColumns = DataColumns.update(dataColumns, metadata);
+                }
+            } else {
+                dataColumns = columnReader.generateColumns(new int[0], isDiscrete);
+            }
 
             // handle mixed data
             if (cmdArgs.getDataType() == DataType.Mixed) {
@@ -127,7 +154,7 @@ public final class DataFiles {
             dataReader.setMissingDataMarker(missingValueMarker);
 
             LogMessages.readingFileStart(dataFile, LOGGER, out);
-            DataModel dataModel = DataConvertUtils.toDataModel(dataReader.read(dataColumns, hasHeader));
+            DataModel dataModel = DataConvertUtils.toDataModel(dataReader.read(dataColumns, hasHeader, metadata));
             LogMessages.readingFileEnd(dataFile, LOGGER, out);
 
             LogMessages.dataInfo(dataFile, dataModel, LOGGER, out);
