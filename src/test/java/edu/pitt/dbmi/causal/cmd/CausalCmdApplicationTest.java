@@ -45,21 +45,24 @@ public class CausalCmdApplicationTest {
     private final Path covarianceFile = Paths.get(getClass().getResource("/data/spartina.txt").getFile());
 
     private final Path knowledgeFile = Paths.get(getClass().getResource("/data/knowledge_sim_data_continuous_20var_100case.txt").getFile());
+    private final Path excludedVariableFile = Paths.get(getClass().getResource("/data/exclude_vars.txt").getFile());
 
     public CausalCmdApplicationTest() {
     }
 
     @Test
-    public void testMainFgesMb() throws IOException {
-        String contData = continuousDataFile.toString();
-        String dirOut = tmpFolder.newFolder("fges_mb").toString();
+    public void testGFCIWithContinuousDataAndVariablesToExclude() throws IOException {
+        String dataset = continuousDataFile.toString();
+        String excludeVar = excludedVariableFile.toString();
+        String dirOut = tmpFolder.newFolder("gfci").toString();
         String[] args = {
-            "--dataset", contData,
+            "--dataset", dataset,
+            "--exclude-var", excludeVar,
             "--delimiter", "tab",
             "--data-type", "continuous",
-            "--algorithm", "fges-mb",
-            "--score", "sem-bic",
-            "--targetName", "X1",
+            "--algorithm", "gfci",
+            "--test", "sem-bic",
+            "--score", "fisher-z",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -68,11 +71,11 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testMainCovariance() throws IOException {
-        String covarData = covarianceFile.toString();
+    public void testCovariance() throws IOException {
+        String dataset = covarianceFile.toString();
         String dirOut = tmpFolder.newFolder("gfci_covar").toString();
         String[] args = {
-            "--dataset", covarData,
+            "--dataset", dataset,
             "--delimiter", "space",
             "--data-type", "covariance",
             "--algorithm", "gfci",
@@ -86,14 +89,31 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testMainWithBootstrap() throws IOException {
-        String contData = continuousDataFile.toString();
-        String dirOut = tmpFolder.newFolder("gfci_bootstrap").toString();
+    public void testFGESWithContinuousDataAndKnowledge() throws IOException {
+        String dataset = continuousDataFile.toString();
+        String knowledge = knowledgeFile.toString();
+        String dirOut = tmpFolder.newFolder("fges").toString();
         String[] args = {
-            "--resamplingEnsemble", "1",
-            "--numberResampling", "5",
-            "--percentResampleSize", "100",
-            "--dataset", contData,
+            "--dataset", dataset,
+            "--knowledge", knowledge,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "fges",
+            "--score", "sem-bic",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
+    public void testGFCIWithNoHeaderContinuousData() throws IOException {
+        String dataset = noHeaderContinuousDataFile.toString();
+        String dirOut = tmpFolder.newFolder("gfci").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--no-header",
             "--delimiter", "tab",
             "--data-type", "continuous",
             "--algorithm", "gfci",
@@ -106,27 +126,56 @@ public class CausalCmdApplicationTest {
         CausalCmdApplication.main(args);
     }
 
-    /**
-     * Test of main method, of class CausalCmdApplication.
-     *
-     * @throws IOException
-     */
     @Test
-    public void testMain() throws IOException {
-        String contData = continuousDataFile.toString();
-        String knowledge = knowledgeFile.toString();
+    public void testGFCIWithMixedData() throws IOException {
+        String dataset = mixedDataFile.toString();
         String dirOut = tmpFolder.newFolder("gfci").toString();
         String[] args = {
-            "--dataset", contData,
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "mixed",
+            "--numCategories", "4",
+            "--algorithm", "gfci",
+            "--test", "cond-gauss-lrt",
+            "--score", "cond-gauss-bic",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
+    public void testGFCIWithDiscreteData() throws IOException {
+        String dataset = discreteDataFile.toString();
+        String dirOut = tmpFolder.newFolder("gfci").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "discrete",
+            "--algorithm", "gfci",
+            "--test", "bdeu",
+            "--score", "bdeu",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
+    public void testGFCIWithContinuousData() throws IOException {
+        String dataset = continuousDataFile.toString();
+        String dirOut = tmpFolder.newFolder("gfci").toString();
+        String[] args = {
+            "--dataset", dataset,
             "--delimiter", "tab",
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "sem-bic",
             "--score", "fisher-z",
             "--verbose",
-            "--maxDegree", "3",
             "--skip-latest",
-            "--knowledge", knowledge,
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
