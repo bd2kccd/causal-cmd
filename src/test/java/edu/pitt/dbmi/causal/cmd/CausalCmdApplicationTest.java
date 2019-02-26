@@ -94,6 +94,25 @@ public class CausalCmdApplicationTest {
         CausalCmdApplication.main(args);
     }
 
+    @Test
+    public void testMainWithChooseDagInPattern() throws IOException {
+        String contData = TestFiles.getInstance().getContinuousData().toString();
+        String dirOut = tmpFolder.newFolder("gfci_choose_dag_in_pattern").toString();
+        String[] args = {
+            "--dataset", contData,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "gfci",
+            "--test", "sem-bic",
+            "--score", "fisher-z",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut,
+            "--choose-dag-in-pattern"
+        };
+        CausalCmdApplication.main(args);
+    }
+    
     /**
      * Test of main method, of class CausalCmdApplication.
      *

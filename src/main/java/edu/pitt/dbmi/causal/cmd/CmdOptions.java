@@ -140,6 +140,18 @@ public class CmdOptions {
         options.put(CmdParams.TEST, Option.builder().longOpt(CmdParams.TEST).desc(getIndependenceTestDesc()).hasArg().argName("string").build());
         options.put(CmdParams.SCORE, Option.builder().longOpt(CmdParams.SCORE).desc(getScoreDesc()).hasArg().argName("string").build());
 
+        // graph manipulations
+        options.put(CmdParams.CHOOSE_DAG_IN_PATTERN, new Option(null, CmdParams.CHOOSE_DAG_IN_PATTERN, false, "Choose DAG in Pattern graph."));
+        options.put(CmdParams.CHOOSE_MAG_IN_PAG, new Option(null, CmdParams.CHOOSE_MAG_IN_PAG, false, "Choose MAG in PAG."));
+        options.put(CmdParams.GENERATE_PATTERN_FROM_DAG, new Option(null, CmdParams.GENERATE_PATTERN_FROM_DAG, false, "Generate pattern graph from PAG."));
+        options.put(CmdParams.GENERATE_PAG_FROM_DAG, new Option(null, CmdParams.GENERATE_PAG_FROM_DAG, false, "Generate PAG from DAG."));
+        options.put(CmdParams.GENERATE_PAG_FROM_TSDAG, new Option(null, CmdParams.GENERATE_PAG_FROM_TSDAG, false, "Generate PAG from TsDAG."));
+        options.put(CmdParams.MAKE_BIDIRECTED_UNDIRECTED, new Option(null, CmdParams.MAKE_BIDIRECTED_UNDIRECTED, false, "Make bidirected edges undirected."));
+        options.put(CmdParams.MAKE_UNDIRECTED_BIDIRECTED, new Option(null, CmdParams.MAKE_UNDIRECTED_BIDIRECTED, false, "Make undirected edges bidirected."));
+        options.put(CmdParams.MAKE_ALL_EDGES_UNDIRECTED, new Option(null, CmdParams.MAKE_ALL_EDGES_UNDIRECTED, false, "Make all edges undirected."));
+        options.put(CmdParams.GENEREATE_COMPLETE_GRAPH, new Option(null, CmdParams.GENEREATE_COMPLETE_GRAPH, false, "Generate complete graph."));
+        options.put(CmdParams.EXTRACT_STRUCT_MODEL, new Option(null, CmdParams.EXTRACT_STRUCT_MODEL, false, "Extract sturct model."));
+        
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
         Set<String> params = paramDescs.getNames();

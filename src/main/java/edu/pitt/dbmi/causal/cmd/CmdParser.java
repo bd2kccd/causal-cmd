@@ -106,6 +106,18 @@ public class CmdParser {
                 ? getValidThreadNumber(cmd.getOptionValue(CmdParams.THREAD), parseOptions, CmdParams.THREAD)
                 : Runtime.getRuntime().availableProcessors() - 1;
 
+        // graph manipulations
+        cmdArgs.chooseDagInPattern = cmd.hasOption(CmdParams.CHOOSE_DAG_IN_PATTERN);
+        cmdArgs.chooseMagInPag = cmd.hasOption(CmdParams.CHOOSE_MAG_IN_PAG);
+        cmdArgs.generatePatternFromDag = cmd.hasOption(CmdParams.GENERATE_PATTERN_FROM_DAG);
+        cmdArgs.generatePagFromDag = cmd.hasOption(CmdParams.GENERATE_PAG_FROM_DAG);
+        cmdArgs.generatePagFromTsDag = cmd.hasOption(CmdParams.GENERATE_PAG_FROM_TSDAG);
+        cmdArgs.makeBidirectedUndirected = cmd.hasOption(CmdParams.MAKE_BIDIRECTED_UNDIRECTED);
+        cmdArgs.makeUndirectedBidirected = cmd.hasOption(CmdParams.MAKE_UNDIRECTED_BIDIRECTED);
+        cmdArgs.makeAllEdgesUndirected = cmd.hasOption(CmdParams.MAKE_ALL_EDGES_UNDIRECTED);
+        cmdArgs.generateCompleteGraph = cmd.hasOption(CmdParams.GENEREATE_COMPLETE_GRAPH);
+        cmdArgs.extractStructModel = cmd.hasOption(CmdParams.EXTRACT_STRUCT_MODEL);
+                
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
 
