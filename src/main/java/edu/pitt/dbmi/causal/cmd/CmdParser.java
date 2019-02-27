@@ -204,18 +204,6 @@ public final class CmdParser {
 
         addGraphManipulationOptions(opts);
 
-        // graph manipulations
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.CHOOSE_DAG_IN_PATTERN));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.CHOOSE_MAG_IN_PAG));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENERATE_PATTERN_FROM_DAG));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENERATE_PAG_FROM_DAG));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENERATE_PAG_FROM_TSDAG));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MAKE_BIDIRECTED_UNDIRECTED));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MAKE_UNDIRECTED_BIDIRECTED));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MAKE_ALL_EDGES_UNDIRECTED));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENEREATE_COMPLETE_GRAPH));
-        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXTRACT_STRUCT_MODEL));
-
         Class indTestClass = null;
         if (TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass)) {
             opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
