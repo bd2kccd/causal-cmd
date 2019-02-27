@@ -41,7 +41,7 @@ import org.apache.commons.cli.Options;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class CmdOptions {
+public final class CmdOptions {
 
     private static final CmdOptions INSTANCE = new CmdOptions();
 
@@ -112,18 +112,6 @@ public class CmdOptions {
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
         opts.add(options.get(CmdParams.SKIP_LATEST));
-
-        // graph manipulations
-        opts.add(options.get(CmdParams.CHOOSE_DAG_IN_PATTERN));
-        opts.add(options.get(CmdParams.CHOOSE_MAG_IN_PAG));
-        opts.add(options.get(CmdParams.GENERATE_PATTERN_FROM_DAG));
-        opts.add(options.get(CmdParams.GENERATE_PAG_FROM_DAG));
-        opts.add(options.get(CmdParams.GENERATE_PAG_FROM_TSDAG));
-        opts.add(options.get(CmdParams.MAKE_BIDIRECTED_UNDIRECTED));
-        opts.add(options.get(CmdParams.MAKE_UNDIRECTED_BIDIRECTED));
-        opts.add(options.get(CmdParams.MAKE_ALL_EDGES_UNDIRECTED));
-        opts.add(options.get(CmdParams.GENEREATE_COMPLETE_GRAPH));
-        opts.add(options.get(CmdParams.EXTRACT_STRUCT_MODEL));
 
         return opts;
     }
