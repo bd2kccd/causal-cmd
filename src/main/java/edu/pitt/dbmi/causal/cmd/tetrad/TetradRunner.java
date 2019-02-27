@@ -20,7 +20,14 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 
 import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
+import edu.cmu.tetrad.graph.Dag;
 import edu.cmu.tetrad.graph.Graph;
+import edu.cmu.tetrad.graph.GraphUtils;
+import edu.cmu.tetrad.graph.Node;
+import edu.cmu.tetrad.graph.NodeType;
+import edu.cmu.tetrad.search.DagToPag2;
+import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.TsDagToPag;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
@@ -34,6 +41,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.rmi.MarshalledObject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -73,6 +83,115 @@ public class TetradRunner {
 
             graph = algorithmRunner.getGraph();
             if (graph != null) {
+                // graph manipulations
+                if (cmdArgs.isChooseDagInPattern()) {
+                    try {
+                        graph = SearchGraphUtils.chooseDagInPattern(graph);
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to choose DAG in pattern graph.", exception);
+                    }
+                }
+
+                if (cmdArgs.isChooseMagInPag()) {
+                    try {
+                        graph = SearchGraphUtils.pagToMag(graph);
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to choose MAG in PAG.", exception);
+                    }
+                }
+
+                if (cmdArgs.isGeneratePatternFromDag()) {
+                    try {
+                        graph = SearchGraphUtils.patternFromDag(graph);
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to generate pattern graph from DAG.", exception);
+                    }
+                }
+
+                if (cmdArgs.isGeneratePagFromDag()) {
+                    try {
+                        // make sure the given graph is a dag.
+                        try {
+                            new Dag(graph);
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException("The source graph is not a DAG.");
+                        }
+
+                        DagToPag2 p = new DagToPag2(graph);
+                        graph = p.convert();
+
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to generate PAG from DAG.", exception);
+                    }
+                }
+
+                if (cmdArgs.isGeneratePagFromTsDag()) {
+                    try {
+                        // make sure the given graph is a dag.
+                        try {
+                            new Dag(graph);
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException("The source graph is not a DAG.");
+                        }
+
+                        TsDagToPag p = new TsDagToPag(graph);
+                        graph = p.convert();
+
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to generate PAG from DAG.", exception);
+                    }
+                }
+
+                if (cmdArgs.isMakeBidirectedUndirected()) {
+                    try {
+                        graph = GraphUtils.bidirectedToUndirected(graph);
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to make bidirected edges undirected.", exception);
+                    }
+                }
+
+                if (cmdArgs.isMakeUndirectedBidirected()) {
+                    try {
+                        graph = GraphUtils.undirectedToBidirected(graph);
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to make undirected edges bidirected.", exception);
+                    }
+                }
+
+                if (cmdArgs.isMakeAllEdgesUndirected()) {
+                    try {
+                        graph = GraphUtils.undirectedGraph(graph);
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to make all edges undirected.", exception);
+                    }
+                }
+
+                if (cmdArgs.isGenerateCompleteGraph()) {
+                    try {
+                        graph = GraphUtils.completeGraph(graph);
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to generate complete graph.", exception);
+                    }
+                }
+
+                if (cmdArgs.isExtractStructModel()) {
+                    try {
+                        List<Node> latents = new ArrayList<>();
+
+                        for (Node node : graph.getNodes()) {
+                            if (node.getNodeType() == NodeType.LATENT) {
+                                latents.add(node);
+                            }
+                        }
+
+                        Graph graph2 = graph.subgraph(latents);
+
+                        graph = (Graph) new MarshalledObject(graph2).get();
+                    } catch (Exception exception) {
+                        LOGGER.error("Unable to extract structure model.", exception);
+                    }
+                }
+
                 out.println();
                 out.println(graph.toString());
             }

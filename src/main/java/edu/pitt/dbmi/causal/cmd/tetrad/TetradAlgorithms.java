@@ -98,5 +98,4 @@ public class TetradAlgorithms {
 //                ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).description()
 //                : "";
 //    }
-
 }
