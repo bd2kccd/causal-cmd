@@ -112,7 +112,7 @@ public class CausalCmdApplicationTest {
         };
         CausalCmdApplication.main(args);
     }
-    
+
     /**
      * Test of main method, of class CausalCmdApplication.
      *

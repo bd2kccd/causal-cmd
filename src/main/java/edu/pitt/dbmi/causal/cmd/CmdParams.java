@@ -72,5 +72,5 @@ public interface CmdParams {
     public static final String MAKE_ALL_EDGES_UNDIRECTED = "make-all-edges-undirected";
     public static final String GENEREATE_COMPLETE_GRAPH = "generate-complete-graph";
     public static final String EXTRACT_STRUCT_MODEL = "extract-struct-model";
-    
+
 }

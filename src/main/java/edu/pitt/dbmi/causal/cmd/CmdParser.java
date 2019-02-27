@@ -117,7 +117,7 @@ public class CmdParser {
         cmdArgs.makeAllEdgesUndirected = cmd.hasOption(CmdParams.MAKE_ALL_EDGES_UNDIRECTED);
         cmdArgs.generateCompleteGraph = cmd.hasOption(CmdParams.GENEREATE_COMPLETE_GRAPH);
         cmdArgs.extractStructModel = cmd.hasOption(CmdParams.EXTRACT_STRUCT_MODEL);
-                
+
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
 

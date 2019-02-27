@@ -70,7 +70,7 @@ public class CmdArgs {
     protected boolean makeAllEdgesUndirected;
     protected boolean generateCompleteGraph;
     protected boolean extractStructModel;
-    
+
     protected Map<String, String> parameters;
 
     public CmdArgs() {
@@ -153,46 +153,46 @@ public class CmdArgs {
     }
 
     public boolean isChooseDagInPattern() {
-		return chooseDagInPattern;
-	}
+        return chooseDagInPattern;
+    }
 
-	public boolean isChooseMagInPag() {
-		return chooseMagInPag;
-	}
+    public boolean isChooseMagInPag() {
+        return chooseMagInPag;
+    }
 
-	public boolean isGeneratePatternFromDag() {
-		return generatePatternFromDag;
-	}
+    public boolean isGeneratePatternFromDag() {
+        return generatePatternFromDag;
+    }
 
-	public boolean isGeneratePagFromDag() {
-		return generatePagFromDag;
-	}
+    public boolean isGeneratePagFromDag() {
+        return generatePagFromDag;
+    }
 
-	public boolean isGeneratePagFromTsDag() {
-		return generatePagFromTsDag;
-	}
+    public boolean isGeneratePagFromTsDag() {
+        return generatePagFromTsDag;
+    }
 
-	public boolean isMakeBidirectedUndirected() {
-		return makeBidirectedUndirected;
-	}
+    public boolean isMakeBidirectedUndirected() {
+        return makeBidirectedUndirected;
+    }
 
-	public boolean isMakeUndirectedBidirected() {
-		return makeUndirectedBidirected;
-	}
+    public boolean isMakeUndirectedBidirected() {
+        return makeUndirectedBidirected;
+    }
 
-	public boolean isMakeAllEdgesUndirected() {
-		return makeAllEdgesUndirected;
-	}
+    public boolean isMakeAllEdgesUndirected() {
+        return makeAllEdgesUndirected;
+    }
 
-	public boolean isGenerateCompleteGraph() {
-		return generateCompleteGraph;
-	}
+    public boolean isGenerateCompleteGraph() {
+        return generateCompleteGraph;
+    }
 
-	public boolean isExtractStructModel() {
-		return extractStructModel;
-	}
+    public boolean isExtractStructModel() {
+        return extractStructModel;
+    }
 
-	public Map<String, String> getParameters() {
+    public Map<String, String> getParameters() {
         return parameters;
     }
 
