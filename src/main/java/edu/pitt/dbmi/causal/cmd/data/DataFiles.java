@@ -72,7 +72,7 @@ public final class DataFiles {
         } else {
             LogMessages.readingFileStart(file, LOGGER, out);
             metadata = (new MetadataFileReader(file)).read();
-            LogMessages.readingFileStart(file, LOGGER, out);
+            LogMessages.readingFileEnd(file, LOGGER, out);
         }
 
         return metadata;
