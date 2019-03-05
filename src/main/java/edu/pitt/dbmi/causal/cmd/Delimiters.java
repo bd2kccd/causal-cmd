@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package edu.pitt.dbmi.causal.cmd.util;
+package edu.pitt.dbmi.causal.cmd;
 
-import edu.pitt.dbmi.data.Delimiter;
+import edu.pitt.dbmi.data.reader.Delimiter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 
 /**
  *
- * Sep 12, 2017 3:18:14 PM
+ * Jan 8, 2019 11:29:32 AM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class Delimiters {
+public final class Delimiters {
 
     private static final Delimiters INSTANCE = new Delimiters();
 

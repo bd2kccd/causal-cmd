@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,23 +20,29 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 
 import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
+import edu.cmu.tetrad.algcomparison.algorithm.MultiDataSetAlgorithm;
+import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
+import edu.cmu.tetrad.data.DataModel;
+import edu.cmu.tetrad.data.IKnowledge;
+import edu.cmu.tetrad.graph.Dag;
 import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.util.ParamDescriptions;
+import edu.cmu.tetrad.graph.GraphUtils;
+import edu.cmu.tetrad.graph.Node;
+import edu.cmu.tetrad.graph.NodeType;
+import edu.cmu.tetrad.search.DagToPag2;
+import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.TsDagToPag;
+import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
+import edu.pitt.dbmi.causal.cmd.data.DataFiles;
 import edu.pitt.dbmi.causal.cmd.util.DateTime;
-import edu.pitt.dbmi.causal.cmd.util.GraphIO;
-import edu.pitt.dbmi.data.Delimiter;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+import java.rmi.MarshalledObject;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,118 +56,184 @@ public class TetradRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TetradRunner.class);
 
-    public static void runTetrad(CmdArgs cmdArgs) {
-        if (cmdArgs == null) {
-            throw new IllegalArgumentException("CmdArgs cannot be null.");
-        }
+    private final CmdArgs cmdArgs;
 
-        Graph graph = null;
-        Path fileOut = Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.getFilePrefix() + ".txt");
-        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(fileOut, StandardOpenOption.CREATE)), true)) {
-            writeOutParameters(cmdArgs, out);
-            out.println();
+    private final List<Graph> graphs;
 
-            TetradAlgorithmRunner algorithmRunner = new TetradAlgorithmRunner();
-            algorithmRunner.setOut(out);
-            try {
-                algorithmRunner.runAlgorithm(cmdArgs);
-            } catch (AlgorithmRunException exception) {
-                System.out.println(exception.getMessage());
-                LOGGER.error("Algorithm run failed.", exception);
-                System.exit(-1);
-            }
-
-            graph = algorithmRunner.getGraph();
-            if (graph != null) {
-                out.println();
-                out.println(graph.toString());
-            }
-        } catch (IOException exception) {
-            LOGGER.error("Unable to write to file.", exception);
-        }
-
-        if (graph != null && cmdArgs.isJsonGraph()) {
-            try {
-                GraphIO.writeAsJSON(graph, Paths.get(cmdArgs.getOutDirectory().toString(), cmdArgs.getFilePrefix() + "_graph.json"));
-            } catch (IOException exception) {
-                LOGGER.error("Unable to write json graph to file.", exception);
-            }
-        }
+    public TetradRunner(CmdArgs cmdArgs) {
+        this.cmdArgs = cmdArgs;
+        this.graphs = new LinkedList<>();
     }
 
-    private static void writeOutParameters(CmdArgs cmdArgs, PrintStream out) {
-        Class algoClass = cmdArgs.getAlgorithmClass();
-        Class indTestClass = cmdArgs.getTestClass();
-        Class scoreClass = cmdArgs.getScoreClass();
+    public void runAlgorithm(PrintStream out) throws AlgorithmRunException, IOException {
+        final List<DataModel> dataModels = DataFiles.readInDatasets(cmdArgs, out);
 
-        String algoName = (algoClass == null) ? null : TetradAlgorithms.getInstance().getName(algoClass);
-        String testName = (indTestClass == null) ? null : TetradIndependenceTests.getInstance().getName(indTestClass);
-        String scoreName = (scoreClass == null) ? null : TetradScores.getInstance().getName(scoreClass);
+        final Algorithm algorithm = getAlgorithm(cmdArgs);
 
-        out.println("================================================================================");
-        out.printf("%s (%s)%n", algoName, DateTime.printNow());
-        out.println("================================================================================");
-
-        out.println();
-        out.println("Runtime Parameters:");
-        out.printf("number of threads = %s%n", cmdArgs.getNumOfThreads());
-
-        String files = cmdArgs.getDatasetFiles().stream()
-                .map(e -> e.getFileName().toString())
-                .collect(Collectors.joining(","));
-        Delimiter delimiter = cmdArgs.getDelimiter();
-        char quoteChar = cmdArgs.getQuoteChar();
-        String missing = cmdArgs.getMissingValueMarker();
-        String comment = cmdArgs.getCommentMarker();
-        boolean hasHeader = cmdArgs.isHasHeader();
-        out.println();
-        out.println("Dataset:");
-        out.printf("file = %s%n", files);
-        out.printf("header = %s%n", hasHeader ? "yes" : "no");
-        out.printf("delimiter = %s%n", delimiter.name().toLowerCase());
-        out.printf("quote char = %s%n", (quoteChar <= 0) ? "none" : String.valueOf(quoteChar));
-        out.printf("missing marker = %s%n", (missing == null || missing.isEmpty()) ? "none" : missing);
-        out.printf("comment marker = %s%n", (comment == null || comment.isEmpty()) ? "none" : comment);
-
-        out.println();
-        out.println("Algorithm Run:");
-        if (algoName != null) {
-            out.printf("algorithm = %s%n", algoName);
-        }
-        if (testName != null) {
-            out.printf("test of independence = %s%n", testName);
-        }
-        if (scoreName != null) {
-            out.printf("score = %s%n", scoreName);
+        // add knowledge, if any
+        if (TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass())) {
+            IKnowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);
+            if (knowledge != null) {
+                ((HasKnowledge) algorithm).setKnowledge(knowledge);
+            }
         }
 
-        out.println();
-        out.println("Algorithm Parameters:");
-        getParameterValues(cmdArgs).forEach((k, v) -> out.printf("%s = %s%n", k, v));
+        final Parameters parameters = Tetrad.getParameters(cmdArgs);
+        parameters.set("printStream", out);
+
+        boolean verbose = parameters.getBoolean("verbose", false);
+
+        out.printf("%nStart search: %s%n", DateTime.printNow());
+        if (verbose) {
+            out.println("--------------------------------------------------------------------------------");
+        }
+
+        Graph graph;
+        if (TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.getAlgorithmClass())) {
+            graph = ((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters);
+        } else {
+            graph = algorithm.search(dataModels.get(0), parameters);
+        }
+
+        if (graph != null) {
+            graphs.add(manipulateGraph(graph));
+        }
+
+        if (verbose) {
+            out.println("--------------------------------------------------------------------------------");
+        }
+        out.printf("End search: %s%n", DateTime.printNow());
     }
 
-    private static Map<String, String> getParameterValues(CmdArgs cmdArgs) {
-        Map<String, String> params = new TreeMap<>();
+    /**
+     * Manipulating graphs.
+     *
+     * @param graphs
+     * @author: Chirayu Wongchokprasitti, PhD
+     */
+    private Graph manipulateGraph(Graph graph) {
+        // graph manipulations
+        if (cmdArgs.isChooseDagInPattern()) {
+            try {
 
-        Class algoClass = cmdArgs.getAlgorithmClass();
-        Class indTestClass = cmdArgs.getTestClass();
-        Class scoreClass = cmdArgs.getScoreClass();
+            } catch (Exception exception) {
+                LOGGER.error("Unable to choose DAG in pattern graph.", exception);
+            }
+        }
 
-        Algorithm algorithm;
+        if (cmdArgs.isChooseMagInPag()) {
+            try {
+                graph = SearchGraphUtils.pagToMag(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to choose MAG in PAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isGeneratePatternFromDag()) {
+            try {
+                graph = SearchGraphUtils.patternFromDag(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate pattern graph from DAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isGeneratePagFromDag()) {
+            try {
+                // make sure the given graph is a dag.
+                try {
+                    new Dag(graph);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("The source graph is not a DAG.");
+                }
+
+                DagToPag2 p = new DagToPag2(graph);
+                graph = p.convert();
+
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate PAG from DAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isGeneratePagFromTsDag()) {
+            try {
+                // make sure the given graph is a dag.
+                try {
+                    new Dag(graph);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("The source graph is not a DAG.");
+                }
+
+                TsDagToPag p = new TsDagToPag(graph);
+                graph = p.convert();
+
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate PAG from DAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isMakeBidirectedUndirected()) {
+            try {
+                graph = GraphUtils.bidirectedToUndirected(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to make bidirected edges undirected.", exception);
+            }
+        }
+
+        if (cmdArgs.isMakeUndirectedBidirected()) {
+            try {
+                graph = GraphUtils.undirectedToBidirected(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to make undirected edges bidirected.", exception);
+            }
+        }
+
+        if (cmdArgs.isMakeAllEdgesUndirected()) {
+            try {
+                graph = GraphUtils.undirectedGraph(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to make all edges undirected.", exception);
+            }
+        }
+
+        if (cmdArgs.isGenerateCompleteGraph()) {
+            try {
+                graph = GraphUtils.completeGraph(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate complete graph.", exception);
+            }
+        }
+
+        if (cmdArgs.isExtractStructModel()) {
+            try {
+                List<Node> latents = new ArrayList<>();
+
+                for (Node node : graph.getNodes()) {
+                    if (node.getNodeType() == NodeType.LATENT) {
+                        latents.add(node);
+                    }
+                }
+
+                Graph graph2 = graph.subgraph(latents);
+
+                graph = (Graph) new MarshalledObject(graph2).get();
+            } catch (Exception exception) {
+                LOGGER.error("Unable to extract structure model.", exception);
+            }
+        }
+
+        return graph;
+    }
+
+    private Algorithm getAlgorithm(CmdArgs cmdArgs) throws AlgorithmRunException {
         try {
-            algorithm = AlgorithmFactory.create(algoClass, indTestClass, scoreClass);
+            return AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass());
         } catch (IllegalAccessException | InstantiationException exception) {
-            algorithm = null;
-            LOGGER.error("Unable to construct algorithm object.", exception);
+            throw new AlgorithmRunException(exception);
         }
+    }
 
-        if (algorithm != null) {
-            ParamDescriptions paramDesc = ParamDescriptions.getInstance();
-            algorithm.getParameters().forEach(e -> params.put(e, String.valueOf(paramDesc.get(e).getDefaultValue())));
-        }
-        cmdArgs.getParameters().forEach((k, v) -> params.put(k, v));
-
-        return params;
+    public List<Graph> getGraphs() {
+        return graphs;
     }
 
 }

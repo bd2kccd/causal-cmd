@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class TetradAlgorithms {
+public final class TetradAlgorithms {
 
     private static final TetradAlgorithms INSTANCE = new TetradAlgorithms();
 
@@ -91,12 +91,5 @@ public class TetradAlgorithms {
                 ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).name()
                 : "";
     }
-
-    // not used so commenting out as this is more tetrad gui
-//    public String getDescription(Class clazz) {
-//        return (clazz != null && clazz.isAnnotationPresent(Algorithm.class))
-//                ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).description()
-//                : "";
-//    }
 
 }

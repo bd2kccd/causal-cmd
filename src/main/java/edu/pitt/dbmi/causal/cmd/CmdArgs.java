@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.data.DataType;
-import edu.pitt.dbmi.data.Delimiter;
+import edu.pitt.dbmi.data.reader.Delimiter;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +35,7 @@ public class CmdArgs {
     protected List<Path> datasetFiles;
     protected Path knowledgeFile;
     protected Path excludeVariableFile;
+    protected Path metadataFile;
     protected Path outDirectory;
 
     protected String filePrefix;
@@ -59,6 +60,18 @@ public class CmdArgs {
 
     protected int numOfThreads;
 
+    // graph manipulations
+    protected boolean chooseDagInPattern;
+    protected boolean chooseMagInPag;
+    protected boolean generatePatternFromDag;
+    protected boolean generatePagFromDag;
+    protected boolean generatePagFromTsDag;
+    protected boolean makeBidirectedUndirected;
+    protected boolean makeUndirectedBidirected;
+    protected boolean makeAllEdgesUndirected;
+    protected boolean generateCompleteGraph;
+    protected boolean extractStructModel;
+
     protected Map<String, String> parameters;
 
     public CmdArgs() {
@@ -74,6 +87,10 @@ public class CmdArgs {
 
     public Path getExcludeVariableFile() {
         return excludeVariableFile;
+    }
+
+    public Path getMetadataFile() {
+        return metadataFile;
     }
 
     public Path getOutDirectory() {
@@ -138,6 +155,46 @@ public class CmdArgs {
 
     public int getNumOfThreads() {
         return numOfThreads;
+    }
+
+    public boolean isChooseDagInPattern() {
+        return chooseDagInPattern;
+    }
+
+    public boolean isChooseMagInPag() {
+        return chooseMagInPag;
+    }
+
+    public boolean isGeneratePatternFromDag() {
+        return generatePatternFromDag;
+    }
+
+    public boolean isGeneratePagFromDag() {
+        return generatePagFromDag;
+    }
+
+    public boolean isGeneratePagFromTsDag() {
+        return generatePagFromTsDag;
+    }
+
+    public boolean isMakeBidirectedUndirected() {
+        return makeBidirectedUndirected;
+    }
+
+    public boolean isMakeUndirectedBidirected() {
+        return makeUndirectedBidirected;
+    }
+
+    public boolean isMakeAllEdgesUndirected() {
+        return makeAllEdgesUndirected;
+    }
+
+    public boolean isGenerateCompleteGraph() {
+        return generateCompleteGraph;
+    }
+
+    public boolean isExtractStructModel() {
+        return extractStructModel;
     }
 
     public Map<String, String> getParameters() {

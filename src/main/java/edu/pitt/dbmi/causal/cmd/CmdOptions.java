@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,6 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
-import edu.pitt.dbmi.causal.cmd.util.DataTypes;
-import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +39,7 @@ import org.apache.commons.cli.Options;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class CmdOptions {
+public final class CmdOptions {
 
     private static final CmdOptions INSTANCE = new CmdOptions();
 
@@ -97,6 +95,11 @@ public class CmdOptions {
 
         getRequiredOptions().forEach(e -> opts.add(e));
 
+        // optional files
+        opts.add(options.get(CmdParams.METADATA));
+
+        opts.add(options.get(CmdParams.NO_HEADER));
+
         // dataset options
         opts.add(options.get(CmdParams.QUOTE_CHAR));
         opts.add(options.get(CmdParams.COMMENT_MARKER));
@@ -131,6 +134,7 @@ public class CmdOptions {
 
         options.put(CmdParams.KNOWLEDGE, Option.builder().longOpt(CmdParams.KNOWLEDGE).desc("Prior knowledge file.").hasArg().argName("file").build());
         options.put(CmdParams.EXCLUDE_VARIABLE, Option.builder().longOpt(CmdParams.EXCLUDE_VARIABLE).desc("Variables to be excluded from run.").hasArg().argName("file").build());
+        options.put(CmdParams.METADATA, Option.builder().longOpt(CmdParams.METADATA).desc("Metadata file.  Cannot apply to dataset without header.").hasArg().argName("file").build());
 
         options.put(CmdParams.SKIP_VALIDATION, new Option(null, CmdParams.SKIP_VALIDATION, false, "Skip validation."));
         options.put(CmdParams.SKIP_LATEST, new Option(null, CmdParams.SKIP_LATEST, false, "Skip checking for latest software version."));
@@ -139,6 +143,18 @@ public class CmdOptions {
 
         options.put(CmdParams.TEST, Option.builder().longOpt(CmdParams.TEST).desc(getIndependenceTestDesc()).hasArg().argName("string").build());
         options.put(CmdParams.SCORE, Option.builder().longOpt(CmdParams.SCORE).desc(getScoreDesc()).hasArg().argName("string").build());
+
+        // graph manipulations
+        options.put(CmdParams.CHOOSE_DAG_IN_PATTERN, new Option(null, CmdParams.CHOOSE_DAG_IN_PATTERN, false, "Choose DAG in Pattern graph."));
+        options.put(CmdParams.CHOOSE_MAG_IN_PAG, new Option(null, CmdParams.CHOOSE_MAG_IN_PAG, false, "Choose MAG in PAG."));
+        options.put(CmdParams.GENERATE_PATTERN_FROM_DAG, new Option(null, CmdParams.GENERATE_PATTERN_FROM_DAG, false, "Generate pattern graph from PAG."));
+        options.put(CmdParams.GENERATE_PAG_FROM_DAG, new Option(null, CmdParams.GENERATE_PAG_FROM_DAG, false, "Generate PAG from DAG."));
+        options.put(CmdParams.GENERATE_PAG_FROM_TSDAG, new Option(null, CmdParams.GENERATE_PAG_FROM_TSDAG, false, "Generate PAG from TsDAG."));
+        options.put(CmdParams.MAKE_BIDIRECTED_UNDIRECTED, new Option(null, CmdParams.MAKE_BIDIRECTED_UNDIRECTED, false, "Make bidirected edges undirected."));
+        options.put(CmdParams.MAKE_UNDIRECTED_BIDIRECTED, new Option(null, CmdParams.MAKE_UNDIRECTED_BIDIRECTED, false, "Make undirected edges bidirected."));
+        options.put(CmdParams.MAKE_ALL_EDGES_UNDIRECTED, new Option(null, CmdParams.MAKE_ALL_EDGES_UNDIRECTED, false, "Make all edges undirected."));
+        options.put(CmdParams.GENEREATE_COMPLETE_GRAPH, new Option(null, CmdParams.GENEREATE_COMPLETE_GRAPH, false, "Generate complete graph."));
+        options.put(CmdParams.EXTRACT_STRUCT_MODEL, new Option(null, CmdParams.EXTRACT_STRUCT_MODEL, false, "Extract sturct model."));
 
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
@@ -167,15 +183,6 @@ public class CmdOptions {
                 .filter(e -> e.getValue().isRequired())
                 .map(e -> e.getValue())
                 .collect(Collectors.toList());
-    }
-
-    private String getTimeoutDesc() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Set the time limit for graph searching. ");
-        sb.append("Units: s=second, m=minute, h=hour, d=day. ");
-        sb.append("For an example, 12m = 12 minutes");
-
-        return sb.toString();
     }
 
     private String getDataTypeDesc() {

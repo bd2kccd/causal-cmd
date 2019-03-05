@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,12 +38,13 @@ import java.util.stream.Stream;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class TetradScores {
+public final class TetradScores {
 
     private static final TetradScores INSTANCE = new TetradScores();
 
     private final Map<String, AnnotatedClass<Score>> annotatedClasses;
-    protected final Map<DataType, List<String>> groupByDataType = new EnumMap<>(DataType.class);
+
+    private final Map<DataType, List<String>> groupByDataType = new EnumMap<>(DataType.class);
 
     private TetradScores() {
         this.annotatedClasses = ScoreAnnotations.getInstance().getAnnotatedClasses().stream()

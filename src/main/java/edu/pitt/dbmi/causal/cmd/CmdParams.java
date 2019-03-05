@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ package edu.pitt.dbmi.causal.cmd;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public interface CmdParams {
+public final class CmdParams {
 
     // user guide
     public static final String HELP = "help";
@@ -43,6 +43,7 @@ public interface CmdParams {
     public static final String DATASET = "dataset";
     public static final String KNOWLEDGE = "knowledge";
     public static final String EXCLUDE_VARIABLE = "exclude-var";
+    public static final String METADATA = "metadata";
 
     // options for dataset files
     public static final String DELIMITER = "delimiter";
@@ -60,5 +61,20 @@ public interface CmdParams {
     public static final String TARGET_NAME = "targetName";
 
     public static final String THREAD = "thread";
+
+    // graph manipulations
+    public static final String CHOOSE_DAG_IN_PATTERN = "choose-dag-in-pattern";
+    public static final String CHOOSE_MAG_IN_PAG = "choose-mag-in-pag";
+    public static final String GENERATE_PATTERN_FROM_DAG = "genereate-pattern-from-dag";
+    public static final String GENERATE_PAG_FROM_DAG = "genereate-pag-from-dag";
+    public static final String GENERATE_PAG_FROM_TSDAG = "genereate-pag-from-tsdag";
+    public static final String MAKE_BIDIRECTED_UNDIRECTED = "make-bidirected-undirected";
+    public static final String MAKE_UNDIRECTED_BIDIRECTED = "make-undirected-bidirected";
+    public static final String MAKE_ALL_EDGES_UNDIRECTED = "make-all-edges-undirected";
+    public static final String GENEREATE_COMPLETE_GRAPH = "generate-complete-graph";
+    public static final String EXTRACT_STRUCT_MODEL = "extract-struct-model";
+
+    private CmdParams() {
+    }
 
 }
