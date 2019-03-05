@@ -121,7 +121,7 @@
         <dependency>
             <groupId>edu.cmu</groupId>
             <artifactId>tetrad-lib</artifactId>
-            <version>6.6.0-SNAPSHOT</version>
+            <version>6.6.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>log4j</groupId>
