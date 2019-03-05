@@ -21,7 +21,6 @@ package edu.pitt.dbmi.causal.cmd;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -32,7 +31,6 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-@Ignore
 public class CausalCmdApplicationTest {
 
     @Rule
@@ -179,6 +177,25 @@ public class CausalCmdApplicationTest {
             "--verbose",
             "--skip-latest",
             "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
+    public void testMainWithChooseDagInPattern() throws IOException {
+        String dataset = continuousDataFile.toString();
+        String dirOut = tmpFolder.newFolder("gfci_choose_dag_in_pattern").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "gfci",
+            "--test", "sem-bic",
+            "--score", "fisher-z",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut,
+            "--choose-dag-in-pattern"
         };
         CausalCmdApplication.main(args);
     }

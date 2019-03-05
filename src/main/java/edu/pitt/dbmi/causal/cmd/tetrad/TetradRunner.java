@@ -24,7 +24,14 @@ import edu.cmu.tetrad.algcomparison.algorithm.MultiDataSetAlgorithm;
 import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.IKnowledge;
+import edu.cmu.tetrad.graph.Dag;
 import edu.cmu.tetrad.graph.Graph;
+import edu.cmu.tetrad.graph.GraphUtils;
+import edu.cmu.tetrad.graph.Node;
+import edu.cmu.tetrad.graph.NodeType;
+import edu.cmu.tetrad.search.DagToPag2;
+import edu.cmu.tetrad.search.SearchGraphUtils;
+import edu.cmu.tetrad.search.TsDagToPag;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
@@ -32,8 +39,12 @@ import edu.pitt.dbmi.causal.cmd.data.DataFiles;
 import edu.pitt.dbmi.causal.cmd.util.DateTime;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.rmi.MarshalledObject;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -42,6 +53,8 @@ import java.util.List;
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
 public class TetradRunner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TetradRunner.class);
 
     private final CmdArgs cmdArgs;
 
@@ -75,16 +88,140 @@ public class TetradRunner {
             out.println("--------------------------------------------------------------------------------");
         }
 
+        Graph graph;
         if (TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.getAlgorithmClass())) {
-            graphs.add(((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters));
+            graph = ((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters);
         } else {
-            graphs.add(algorithm.search(dataModels.get(0), parameters));
+            graph = algorithm.search(dataModels.get(0), parameters);
+        }
+
+        if (graph != null) {
+            graphs.add(manipulateGraph(graph));
         }
 
         if (verbose) {
             out.println("--------------------------------------------------------------------------------");
         }
         out.printf("End search: %s%n", DateTime.printNow());
+    }
+
+    /**
+     * Manipulating graphs.
+     *
+     * @param graphs
+     * @author: Chirayu Wongchokprasitti, PhD
+     */
+    private Graph manipulateGraph(Graph graph) {
+        // graph manipulations
+        if (cmdArgs.isChooseDagInPattern()) {
+            try {
+
+            } catch (Exception exception) {
+                LOGGER.error("Unable to choose DAG in pattern graph.", exception);
+            }
+        }
+
+        if (cmdArgs.isChooseMagInPag()) {
+            try {
+                graph = SearchGraphUtils.pagToMag(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to choose MAG in PAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isGeneratePatternFromDag()) {
+            try {
+                graph = SearchGraphUtils.patternFromDag(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate pattern graph from DAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isGeneratePagFromDag()) {
+            try {
+                // make sure the given graph is a dag.
+                try {
+                    new Dag(graph);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("The source graph is not a DAG.");
+                }
+
+                DagToPag2 p = new DagToPag2(graph);
+                graph = p.convert();
+
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate PAG from DAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isGeneratePagFromTsDag()) {
+            try {
+                // make sure the given graph is a dag.
+                try {
+                    new Dag(graph);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("The source graph is not a DAG.");
+                }
+
+                TsDagToPag p = new TsDagToPag(graph);
+                graph = p.convert();
+
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate PAG from DAG.", exception);
+            }
+        }
+
+        if (cmdArgs.isMakeBidirectedUndirected()) {
+            try {
+                graph = GraphUtils.bidirectedToUndirected(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to make bidirected edges undirected.", exception);
+            }
+        }
+
+        if (cmdArgs.isMakeUndirectedBidirected()) {
+            try {
+                graph = GraphUtils.undirectedToBidirected(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to make undirected edges bidirected.", exception);
+            }
+        }
+
+        if (cmdArgs.isMakeAllEdgesUndirected()) {
+            try {
+                graph = GraphUtils.undirectedGraph(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to make all edges undirected.", exception);
+            }
+        }
+
+        if (cmdArgs.isGenerateCompleteGraph()) {
+            try {
+                graph = GraphUtils.completeGraph(graph);
+            } catch (Exception exception) {
+                LOGGER.error("Unable to generate complete graph.", exception);
+            }
+        }
+
+        if (cmdArgs.isExtractStructModel()) {
+            try {
+                List<Node> latents = new ArrayList<>();
+
+                for (Node node : graph.getNodes()) {
+                    if (node.getNodeType() == NodeType.LATENT) {
+                        latents.add(node);
+                    }
+                }
+
+                Graph graph2 = graph.subgraph(latents);
+
+                graph = (Graph) new MarshalledObject(graph2).get();
+            } catch (Exception exception) {
+                LOGGER.error("Unable to extract structure model.", exception);
+            }
+        }
+
+        return graph;
     }
 
     private Algorithm getAlgorithm(CmdArgs cmdArgs) throws AlgorithmRunException {

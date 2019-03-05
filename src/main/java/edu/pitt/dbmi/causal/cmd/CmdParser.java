@@ -105,6 +105,18 @@ public final class CmdParser {
                 ? getValidThreadNumber(cmd.getOptionValue(CmdParams.THREAD), parseOptions, CmdParams.THREAD)
                 : Runtime.getRuntime().availableProcessors() - 1;
 
+        // graph manipulations
+        cmdArgs.chooseDagInPattern = cmd.hasOption(CmdParams.CHOOSE_DAG_IN_PATTERN);
+        cmdArgs.chooseMagInPag = cmd.hasOption(CmdParams.CHOOSE_MAG_IN_PAG);
+        cmdArgs.generatePatternFromDag = cmd.hasOption(CmdParams.GENERATE_PATTERN_FROM_DAG);
+        cmdArgs.generatePagFromDag = cmd.hasOption(CmdParams.GENERATE_PAG_FROM_DAG);
+        cmdArgs.generatePagFromTsDag = cmd.hasOption(CmdParams.GENERATE_PAG_FROM_TSDAG);
+        cmdArgs.makeBidirectedUndirected = cmd.hasOption(CmdParams.MAKE_BIDIRECTED_UNDIRECTED);
+        cmdArgs.makeUndirectedBidirected = cmd.hasOption(CmdParams.MAKE_UNDIRECTED_BIDIRECTED);
+        cmdArgs.makeAllEdgesUndirected = cmd.hasOption(CmdParams.MAKE_ALL_EDGES_UNDIRECTED);
+        cmdArgs.generateCompleteGraph = cmd.hasOption(CmdParams.GENEREATE_COMPLETE_GRAPH);
+        cmdArgs.extractStructModel = cmd.hasOption(CmdParams.EXTRACT_STRUCT_MODEL);
+
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
 
@@ -198,6 +210,8 @@ public final class CmdParser {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
         }
 
+        addGraphManipulationOptions(opts);
+
         boolean testParamReq = TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass);
         boolean scoreParamReq = TetradAlgorithms.getInstance().requireScore(algorithmClass);
         if (testParamReq) {
@@ -283,6 +297,19 @@ public final class CmdParser {
             throw new CmdParserException(parseOptions, exception);
         }
         return parseOptions;
+    }
+
+    private static void addGraphManipulationOptions(Options opts) {
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.CHOOSE_DAG_IN_PATTERN));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.CHOOSE_MAG_IN_PAG));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENERATE_PATTERN_FROM_DAG));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENERATE_PAG_FROM_DAG));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENERATE_PAG_FROM_TSDAG));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MAKE_BIDIRECTED_UNDIRECTED));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MAKE_UNDIRECTED_BIDIRECTED));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MAKE_ALL_EDGES_UNDIRECTED));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.GENEREATE_COMPLETE_GRAPH));
+        opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXTRACT_STRUCT_MODEL));
     }
 
     private static String getValidPrefix(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) {

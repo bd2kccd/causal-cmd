@@ -62,6 +62,18 @@ public final class CmdParams {
 
     public static final String THREAD = "thread";
 
+    // graph manipulations
+    public static final String CHOOSE_DAG_IN_PATTERN = "choose-dag-in-pattern";
+    public static final String CHOOSE_MAG_IN_PAG = "choose-mag-in-pag";
+    public static final String GENERATE_PATTERN_FROM_DAG = "genereate-pattern-from-dag";
+    public static final String GENERATE_PAG_FROM_DAG = "genereate-pag-from-dag";
+    public static final String GENERATE_PAG_FROM_TSDAG = "genereate-pag-from-tsdag";
+    public static final String MAKE_BIDIRECTED_UNDIRECTED = "make-bidirected-undirected";
+    public static final String MAKE_UNDIRECTED_BIDIRECTED = "make-undirected-bidirected";
+    public static final String MAKE_ALL_EDGES_UNDIRECTED = "make-all-edges-undirected";
+    public static final String GENEREATE_COMPLETE_GRAPH = "generate-complete-graph";
+    public static final String EXTRACT_STRUCT_MODEL = "extract-struct-model";
+
     private CmdParams() {
     }
 
