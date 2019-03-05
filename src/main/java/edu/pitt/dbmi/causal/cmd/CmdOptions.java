@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,8 +23,6 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
-import edu.pitt.dbmi.causal.cmd.util.DataTypes;
-import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
@@ -97,6 +95,11 @@ public final class CmdOptions {
 
         getRequiredOptions().forEach(e -> opts.add(e));
 
+        // optional files
+        opts.add(options.get(CmdParams.METADATA));
+
+        opts.add(options.get(CmdParams.NO_HEADER));
+
         // dataset options
         opts.add(options.get(CmdParams.QUOTE_CHAR));
         opts.add(options.get(CmdParams.COMMENT_MARKER));
@@ -131,6 +134,7 @@ public final class CmdOptions {
 
         options.put(CmdParams.KNOWLEDGE, Option.builder().longOpt(CmdParams.KNOWLEDGE).desc("Prior knowledge file.").hasArg().argName("file").build());
         options.put(CmdParams.EXCLUDE_VARIABLE, Option.builder().longOpt(CmdParams.EXCLUDE_VARIABLE).desc("Variables to be excluded from run.").hasArg().argName("file").build());
+        options.put(CmdParams.METADATA, Option.builder().longOpt(CmdParams.METADATA).desc("Metadata file.  Cannot apply to dataset without header.").hasArg().argName("file").build());
 
         options.put(CmdParams.SKIP_VALIDATION, new Option(null, CmdParams.SKIP_VALIDATION, false, "Skip validation."));
         options.put(CmdParams.SKIP_LATEST, new Option(null, CmdParams.SKIP_LATEST, false, "Skip checking for latest software version."));
@@ -179,15 +183,6 @@ public final class CmdOptions {
                 .filter(e -> e.getValue().isRequired())
                 .map(e -> e.getValue())
                 .collect(Collectors.toList());
-    }
-
-    private String getTimeoutDesc() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Set the time limit for graph searching. ");
-        sb.append("Units: s=second, m=minute, h=hour, d=day. ");
-        sb.append("For an example, 12m = 12 minutes");
-
-        return sb.toString();
     }
 
     private String getDataTypeDesc() {

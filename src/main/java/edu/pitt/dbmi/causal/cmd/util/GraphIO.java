@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,11 +29,11 @@ import java.util.Scanner;
 
 /**
  *
- * Mar 15, 2017 2:56:11 PM
+ * Jan 15, 2019 2:58:45 PM
  *
  * @author Kevin V. Bui (kvb2@pitt.edu)
  */
-public class GraphIO {
+public final class GraphIO {
 
     private GraphIO() {
     }

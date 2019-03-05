@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,11 +25,7 @@ import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
-import edu.pitt.dbmi.causal.cmd.util.Args;
-import edu.pitt.dbmi.causal.cmd.util.DataTypes;
-import edu.pitt.dbmi.causal.cmd.util.Delimiters;
 import edu.pitt.dbmi.causal.cmd.util.FileUtils;
-import edu.pitt.dbmi.causal.cmd.util.OptionFactory;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -53,7 +49,7 @@ import org.apache.commons.cli.ParseException;
  */
 public final class CmdParser {
 
-    private CmdParser() {
+    public CmdParser() {
     }
 
     public static CmdArgs parse(String[] args) throws CmdParserException {
@@ -78,6 +74,9 @@ public final class CmdParser {
                 : null;
         cmdArgs.excludeVariableFile = cmd.hasOption(CmdParams.EXCLUDE_VARIABLE)
                 ? getValidFile(cmd.getOptionValue(CmdParams.EXCLUDE_VARIABLE), parseOptions, CmdParams.EXCLUDE_VARIABLE)
+                : null;
+        cmdArgs.metadataFile = cmd.hasOption(CmdParams.METADATA)
+                ? getValidFile(cmd.getOptionValue(CmdParams.METADATA), parseOptions, CmdParams.METADATA)
                 : null;
         cmdArgs.outDirectory = cmd.hasOption(CmdParams.DIR_OUT)
                 ? Paths.get(cmd.getOptionValue(CmdParams.DIR_OUT))
@@ -164,6 +163,16 @@ public final class CmdParser {
             throw new CmdParserException(parseOptions, exception);
         }
 
+        // ensure metadata is not given with dataset without header
+        boolean hasNoHeader = argsMap.containsKey(CmdParams.NO_HEADER);
+        boolean hasMetadata = argsMap.containsKey(CmdParams.METADATA);
+        if (hasNoHeader && hasMetadata) {
+            invalidOpts.addOption(opts.getOption(CmdParams.NO_HEADER));
+            invalidOpts.addOption(opts.getOption(CmdParams.METADATA));
+            String errMsg = "Metadata cannot apply to dataset without header.";
+            throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
+        }
+
         // ensure delimiter is valid
         String delimiterName = argsMap.get(CmdParams.DELIMITER);
         if (!Delimiters.getInstance().exists(delimiterName)) {
@@ -197,23 +206,35 @@ public final class CmdParser {
             String errMsg = String.format("No such algorithm '%s'.", algorithmCmd);
             throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
-
         if (TetradAlgorithms.getInstance().acceptKnowledge(algorithmClass)) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
         }
 
         addGraphManipulationOptions(opts);
 
-        Class indTestClass = null;
-        if (TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass)) {
+        boolean testParamReq = TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass);
+        boolean scoreParamReq = TetradAlgorithms.getInstance().requireScore(algorithmClass);
+        if (testParamReq) {
             opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
-            try {
-                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
-            } catch (ParseException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.TEST));
-                throw new CmdParserException(parseOptions, exception);
-            }
+        }
+        if (scoreParamReq) {
+            opts.addOption(OptionFactory.createRequiredScoreOpt(dataType));
+        }
 
+        try {
+            Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
+        } catch (ParseException exception) {
+            if (testParamReq) {
+                invalidOpts.addOption(opts.getOption(CmdParams.TEST));
+            }
+            if (scoreParamReq) {
+                invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
+            }
+            throw new CmdParserException(parseOptions, exception);
+        }
+
+        Class indTestClass = null;
+        if (testParamReq) {
             String indTestCmd = argsMap.get(CmdParams.TEST);
             TetradIndependenceTests indTests = TetradIndependenceTests.getInstance();
             if (!indTests.hasCommand(indTestCmd)) {
@@ -231,15 +252,7 @@ public final class CmdParser {
         }
 
         Class scoreClass = null;
-        if (TetradAlgorithms.getInstance().requireScore(algorithmClass)) {
-            opts.addOption(OptionFactory.createRequiredScoreOpt(dataType));
-            try {
-                Args.parseLongOptions(Args.extractLongOptions(args, opts), opts, argsMap);
-            } catch (ParseException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
-                throw new CmdParserException(parseOptions, exception);
-            }
-
+        if (scoreParamReq) {
             String scoreCmd = argsMap.get(CmdParams.SCORE);
             TetradScores scores = TetradScores.getInstance();
             if (!scores.hasCommand(scoreCmd)) {

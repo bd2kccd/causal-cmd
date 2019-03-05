@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 University of Pittsburgh.
+ * Copyright (C) 2019 University of Pittsburgh.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.data.DataType;
-import edu.pitt.dbmi.data.Delimiter;
+import edu.pitt.dbmi.data.reader.Delimiter;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +35,7 @@ public class CmdArgs {
     protected List<Path> datasetFiles;
     protected Path knowledgeFile;
     protected Path excludeVariableFile;
+    protected Path metadataFile;
     protected Path outDirectory;
 
     protected String filePrefix;
@@ -86,6 +87,10 @@ public class CmdArgs {
 
     public Path getExcludeVariableFile() {
         return excludeVariableFile;
+    }
+
+    public Path getMetadataFile() {
+        return metadataFile;
     }
 
     public Path getOutDirectory() {
