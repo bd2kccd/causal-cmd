@@ -21,8 +21,11 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.algcomparison.algorithm.MultiDataSetAlgorithm;
+import edu.cmu.tetrad.algcomparison.algorithm.cluster.ClusterAlgorithm;
 import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
 import edu.cmu.tetrad.data.DataModel;
+import edu.cmu.tetrad.data.DataSet;
+import edu.cmu.tetrad.data.ICovarianceMatrix;
 import edu.cmu.tetrad.data.IKnowledge;
 import edu.cmu.tetrad.graph.Dag;
 import edu.cmu.tetrad.graph.Graph;
@@ -41,8 +44,10 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.rmi.MarshalledObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,15 +72,15 @@ public class TetradRunner {
 
     public void runAlgorithm(PrintStream out) throws AlgorithmRunException, IOException {
         final List<DataModel> dataModels = DataFiles.readInDatasets(cmdArgs, out);
-
         final Algorithm algorithm = getAlgorithm(cmdArgs);
+        final IKnowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);
+
+        final boolean acceptsKnowledge = TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass());
+        final boolean hasKnowledge = !(knowledge == null || knowledge.getVariables().isEmpty());
 
         // add knowledge, if any
-        if (TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass())) {
-            IKnowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);
-            if (knowledge != null) {
-                ((HasKnowledge) algorithm).setKnowledge(knowledge);
-            }
+        if (acceptsKnowledge && hasKnowledge) {
+            ((HasKnowledge) algorithm).setKnowledge(knowledge);
         }
 
         final Parameters parameters = Tetrad.getParameters(cmdArgs);
@@ -88,21 +93,65 @@ public class TetradRunner {
             out.println("--------------------------------------------------------------------------------");
         }
 
-        Graph graph;
-        if (TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.getAlgorithmClass())) {
-            graph = ((MultiDataSetAlgorithm) algorithm).search(dataModels, parameters);
-        } else {
-            graph = algorithm.search(dataModels.get(0), parameters);
-        }
-
-        if (graph != null) {
-            graphs.add(manipulateGraph(graph));
-        }
+        List<Graph> graphList = runSearch(algorithm, parameters, dataModels);
 
         if (verbose) {
             out.println("--------------------------------------------------------------------------------");
         }
         out.printf("End search: %s%n", DateTime.printNow());
+
+        graphList.forEach(graph -> graphs.add(manipulateGraph(graph)));
+    }
+
+    private List<Graph> runSearch(final Algorithm algorithm, final Parameters parameters, final List<DataModel> dataModels) {
+        List<Graph> graphList = new LinkedList<>();
+
+        if (algorithm instanceof MultiDataSetAlgorithm) {
+            int numOfRuns = parameters.getInt("numRuns");
+            while (numOfRuns > 0) {
+                numOfRuns--;
+
+                List<DataSet> dataSets = dataModels.stream()
+                        .map(e -> (DataSet) e)
+                        .collect(Collectors.toCollection(ArrayList::new));
+                if (dataSets.size() < parameters.getInt("randomSelectionSize")) {
+                    throw new IllegalArgumentException("Sorry, the 'random selection size' is greater than "
+                            + "the number of data sets.");
+                }
+                Collections.shuffle(dataSets);
+
+                List<DataModel> sub = new ArrayList<>();
+                for (int j = 0; j < parameters.getInt("randomSelectionSize"); j++) {
+                    sub.add(dataSets.get(j));
+                }
+
+                graphList.add(((MultiDataSetAlgorithm) algorithm).search(sub, parameters));
+            }
+        } else if (algorithm instanceof ClusterAlgorithm) {
+            int numOfRuns = parameters.getInt("numRuns");
+            while (numOfRuns > 0) {
+                numOfRuns--;
+
+                dataModels.forEach(dataModel -> {
+                    if (dataModel instanceof ICovarianceMatrix) {
+                        graphList.add(algorithm.search(dataModel, parameters));
+                    } else if (dataModel instanceof DataSet) {
+                        DataSet dataSet = (DataSet) dataModel;
+                        if (dataSet.isContinuous()) {
+                            graphList.add(algorithm.search(dataSet, parameters));
+                        } else {
+                            throw new IllegalArgumentException("Sorry, you need a continuous dataset for a cluster algorithm.");
+                        }
+                    }
+                });
+            }
+        } else {
+            dataModels.forEach(dataModel -> {
+                graphList.add(algorithm.search(dataModel, parameters));
+            });
+        }
+
+        return graphList;
     }
 
     /**
