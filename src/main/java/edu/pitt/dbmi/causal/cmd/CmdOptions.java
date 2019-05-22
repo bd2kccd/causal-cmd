@@ -162,7 +162,7 @@ public final class CmdOptions {
         params.forEach(param -> {
             ParamDescription paramDesc = paramDescs.get(param);
             String longOpt = param;
-            String desc = paramDesc.getDescription();
+            String desc = paramDesc.getShortDescription();
             Serializable defaultVal = paramDesc.getDefaultValue();
             String argName = defaultVal.getClass().getSimpleName().toLowerCase();
             boolean hasArg = !(paramDesc.getDefaultValue() instanceof Boolean);
