@@ -50,8 +50,8 @@ public class CausalCmdApplicationMetadataTest {
             "--data-type", "mixed",
             "--numCategories", "4",
             "--algorithm", "gfci",
-            "--test", "cond-gauss-lrt",
-            "--score", "cond-gauss-bic",
+            "--test", "cg-lr-test",
+            "--score", "cg-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -70,8 +70,8 @@ public class CausalCmdApplicationMetadataTest {
             "--delimiter", "tab",
             "--data-type", "discrete",
             "--algorithm", "gfci",
-            "--test", "bdeu",
-            "--score", "bdeu",
+            "--test", "bdeu-test",
+            "--score", "bdeu-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -90,8 +90,8 @@ public class CausalCmdApplicationMetadataTest {
             "--delimiter", "tab",
             "--data-type", "continuous",
             "--algorithm", "gfci",
-            "--test", "sem-bic",
-            "--score", "fisher-z",
+            "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
