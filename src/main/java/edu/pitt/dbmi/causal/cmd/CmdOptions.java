@@ -116,6 +116,8 @@ public final class CmdOptions {
 
         opts.add(options.get(CmdParams.SKIP_LATEST));
 
+        opts.add(options.get(CmdParams.EXPERIMENTAL));
+
         return opts;
     }
 
@@ -155,6 +157,8 @@ public final class CmdOptions {
         options.put(CmdParams.MAKE_ALL_EDGES_UNDIRECTED, new Option(null, CmdParams.MAKE_ALL_EDGES_UNDIRECTED, false, "Make all edges undirected."));
         options.put(CmdParams.GENEREATE_COMPLETE_GRAPH, new Option(null, CmdParams.GENEREATE_COMPLETE_GRAPH, false, "Generate complete graph."));
         options.put(CmdParams.EXTRACT_STRUCT_MODEL, new Option(null, CmdParams.EXTRACT_STRUCT_MODEL, false, "Extract sturct model."));
+
+        options.put(CmdParams.EXPERIMENTAL, new Option(null, CmdParams.EXPERIMENTAL, false, "Show experimental algorithms, tests, and scores."));
 
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();

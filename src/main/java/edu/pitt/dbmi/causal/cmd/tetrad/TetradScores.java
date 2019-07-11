@@ -19,6 +19,7 @@
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
 import edu.cmu.tetrad.annotation.AnnotatedClass;
+import edu.cmu.tetrad.annotation.Experimental;
 import edu.cmu.tetrad.annotation.Score;
 import edu.cmu.tetrad.annotation.ScoreAnnotations;
 import edu.cmu.tetrad.data.DataType;
@@ -116,10 +117,21 @@ public final class TetradScores {
         return Collections.unmodifiableList(list);
     }
 
-    public Class getClass(String command) {
-        AnnotatedClass<Score> annotatedClass = annotatedClasses.get(command);
+    public Class getClass(String command, boolean experimental) {
+        if (command == null || command.isEmpty()) {
+            return null;
+        }
 
-        return (annotatedClass == null) ? null : annotatedClass.getClazz();
+        AnnotatedClass<Score> annotatedClass = annotatedClasses.get(command);
+        if (annotatedClass == null) {
+            return null;
+        }
+
+        Class clazz = annotatedClass.getClazz();
+
+        return experimental
+                ? clazz
+                : clazz.isAnnotationPresent(Experimental.class) ? null : clazz;
     }
 
     public String getName(Class clazz) {

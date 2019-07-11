@@ -21,6 +21,7 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 import edu.cmu.tetrad.annotation.Algorithm;
 import edu.cmu.tetrad.annotation.AlgorithmAnnotations;
 import edu.cmu.tetrad.annotation.AnnotatedClass;
+import edu.cmu.tetrad.annotation.Experimental;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -60,14 +61,21 @@ public final class TetradAlgorithms {
                 : annotatedClasses.containsKey(command);
     }
 
-    public Class getAlgorithmClass(String command) {
-        if (command == null) {
+    public Class getAlgorithmClass(String command, boolean experimental) {
+        if (command == null || command.isEmpty()) {
             return null;
         }
 
         AnnotatedClass<Algorithm> annotatedClass = annotatedClasses.get(command);
+        if (annotatedClass == null) {
+            return null;
+        }
 
-        return (annotatedClass == null) ? null : annotatedClass.getClazz();
+        Class clazz = annotatedClass.getClazz();
+
+        return experimental
+                ? clazz
+                : clazz.isAnnotationPresent(Experimental.class) ? null : clazz;
     }
 
     public boolean requireIndependenceTest(Class clazz) {

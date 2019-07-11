@@ -19,6 +19,7 @@
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
 import edu.cmu.tetrad.annotation.AnnotatedClass;
+import edu.cmu.tetrad.annotation.Experimental;
 import edu.cmu.tetrad.annotation.TestOfIndependence;
 import edu.cmu.tetrad.annotation.TestOfIndependenceAnnotations;
 import edu.cmu.tetrad.data.DataType;
@@ -116,14 +117,21 @@ public final class TetradIndependenceTests {
         return Collections.unmodifiableList(list);
     }
 
-    public Class getClass(String command) {
-        if (command == null) {
+    public Class getClass(String command, boolean experimental) {
+        if (command == null || command.isEmpty()) {
             return null;
         }
 
         AnnotatedClass<TestOfIndependence> annotatedClass = annotatedClasses.get(command);
+        if (annotatedClass == null) {
+            return null;
+        }
 
-        return (annotatedClass == null) ? null : annotatedClass.getClazz();
+        Class clazz = annotatedClass.getClazz();
+
+        return experimental
+                ? clazz
+                : clazz.isAnnotationPresent(Experimental.class) ? null : clazz;
     }
 
     public String getName(Class clazz) {
