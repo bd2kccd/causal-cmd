@@ -91,10 +91,10 @@ public final class CmdParser {
                 ? getValidChar(cmd.getOptionValue(CmdParams.QUOTE_CHAR), parseOptions, CmdParams.QUOTE_CHAR)
                 : 0;
         cmdArgs.testClass = cmd.hasOption(CmdParams.TEST)
-                ? TetradIndependenceTests.getInstance().getClass(cmd.getOptionValue(CmdParams.TEST), cmd.hasOption(CmdParams.EXPERIMENTAL))
+                ? TetradIndependenceTests.getInstance().getClass(cmd.getOptionValue(CmdParams.TEST))
                 : null;
         cmdArgs.scoreClass = cmd.hasOption(CmdParams.SCORE)
-                ? TetradScores.getInstance().getClass(cmd.getOptionValue(CmdParams.SCORE), cmd.hasOption(CmdParams.EXPERIMENTAL))
+                ? TetradScores.getInstance().getClass(cmd.getOptionValue(CmdParams.SCORE))
                 : null;
         cmdArgs.filePrefix = getValidPrefix(cmd, cmdArgs, parseOptions);
         cmdArgs.jsonGraph = cmd.hasOption(CmdParams.JSON_GRAPH);
@@ -125,7 +125,7 @@ public final class CmdParser {
     private static void parseRequiredOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
         cmdArgs.dataType = DataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
         cmdArgs.delimiter = Delimiters.getInstance().get(cmd.getOptionValue(CmdParams.DELIMITER));
-        cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(cmd.getOptionValue(CmdParams.ALGORITHM), cmd.hasOption(CmdParams.EXPERIMENTAL));
+        cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(cmd.getOptionValue(CmdParams.ALGORITHM));
 
         String datasetCmd = cmd.getOptionValue(CmdParams.DATASET);
         String[] datasetFiles = datasetCmd.split(",");
@@ -202,7 +202,7 @@ public final class CmdParser {
 
         // get algorithm
         String algorithmCmd = argsMap.get(CmdParams.ALGORITHM);
-        Class algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(algorithmCmd, argsMap.containsKey(CmdParams.EXPERIMENTAL));
+        Class algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(algorithmCmd);
         if (algorithmClass == null) {
             invalidOpts.addOption(opts.getOption(CmdParams.ALGORITHM));
             String errMsg = String.format("No such algorithm '%s'.", algorithmCmd);
@@ -250,7 +250,7 @@ public final class CmdParser {
                 throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
 
-            indTestClass = TetradIndependenceTests.getInstance().getClass(indTestCmd, argsMap.containsKey(CmdParams.EXPERIMENTAL));
+            indTestClass = TetradIndependenceTests.getInstance().getClass(indTestCmd);
         }
 
         Class scoreClass = null;
@@ -268,7 +268,7 @@ public final class CmdParser {
                 throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
 
-            scoreClass = TetradScores.getInstance().getClass(scoreCmd, argsMap.containsKey(CmdParams.EXPERIMENTAL));
+            scoreClass = TetradScores.getInstance().getClass(scoreCmd);
         }
 
         List<String> params = new LinkedList<>();

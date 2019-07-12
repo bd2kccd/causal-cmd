@@ -19,10 +19,10 @@
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
 import edu.cmu.tetrad.annotation.AnnotatedClass;
-import edu.cmu.tetrad.annotation.Experimental;
 import edu.cmu.tetrad.annotation.Score;
 import edu.cmu.tetrad.annotation.ScoreAnnotations;
 import edu.cmu.tetrad.data.DataType;
+import edu.pitt.dbmi.causal.cmd.CausalCmdApplication;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -41,14 +41,19 @@ import java.util.stream.Stream;
  */
 public final class TetradScores {
 
-    private static final TetradScores INSTANCE = new TetradScores();
+    private static TetradScores instance;
 
     private final Map<String, AnnotatedClass<Score>> annotatedClasses;
 
     private final Map<DataType, List<String>> groupByDataType = new EnumMap<>(DataType.class);
 
     private TetradScores() {
-        this.annotatedClasses = ScoreAnnotations.getInstance().getAnnotatedClasses().stream()
+        ScoreAnnotations scoreAnno = ScoreAnnotations.getInstance();
+        List<AnnotatedClass<Score>> scoreList = CausalCmdApplication.showExperimental
+                ? scoreAnno.getAnnotatedClasses()
+                : scoreAnno.filterOutExperimental(scoreAnno.getAnnotatedClasses());
+
+        this.annotatedClasses = scoreList.stream()
                 .filter(e -> !Arrays.asList(e.getAnnotation().dataType()).contains(DataType.Graph))
                 .collect(() -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
                         (m, e) -> m.put(e.getAnnotation().command(), e),
@@ -80,15 +85,25 @@ public final class TetradScores {
     }
 
     public static TetradScores getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            instance = new TetradScores();
+        }
+
+        return instance;
+    }
+
+    public static void clear() {
+        instance = null;
     }
 
     public boolean hasCommand(String command) {
-        return (command == null) ? false : annotatedClasses.containsKey(command);
+        return (command == null || command.isEmpty())
+                ? false
+                : annotatedClasses.containsKey(command);
     }
 
     public boolean hasCommand(String command, DataType dataType) {
-        if (command == null || dataType == null) {
+        if (command == null || command.isEmpty() || dataType == null) {
             return false;
         }
 
@@ -117,21 +132,10 @@ public final class TetradScores {
         return Collections.unmodifiableList(list);
     }
 
-    public Class getClass(String command, boolean experimental) {
-        if (command == null || command.isEmpty()) {
-            return null;
-        }
-
+    public Class getClass(String command) {
         AnnotatedClass<Score> annotatedClass = annotatedClasses.get(command);
-        if (annotatedClass == null) {
-            return null;
-        }
 
-        Class clazz = annotatedClass.getClazz();
-
-        return experimental
-                ? clazz
-                : clazz.isAnnotationPresent(Experimental.class) ? null : clazz;
+        return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }
 
     public String getName(Class clazz) {

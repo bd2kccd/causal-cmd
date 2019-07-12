@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,11 +54,22 @@ public class CausalCmdApplication {
 
     public static final String FOOTER = "Use --help for guidance list of options.  Use --help-all to show all options.";
 
+    public static boolean showExperimental;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         args = Args.clean(args);
+
+        // clear
+        TetradAlgorithms.clear();
+        TetradIndependenceTests.clear();
+        TetradScores.clear();
+        CmdOptions.clear();
+
+        showExperimental = Arrays.stream(args).anyMatch("--experimental"::equals);
+
         if (Args.hasLongParam(args, CmdParams.HELP)) {
             try {
                 Applications.showHelp(args, CmdParser.getHelpOptions(args), null);

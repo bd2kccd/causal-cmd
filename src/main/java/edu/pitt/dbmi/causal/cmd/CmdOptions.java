@@ -41,7 +41,7 @@ import org.apache.commons.cli.Options;
  */
 public final class CmdOptions {
 
-    private static final CmdOptions INSTANCE = new CmdOptions();
+    private static CmdOptions instance;
 
     private final Map<String, Option> options = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
@@ -51,7 +51,15 @@ public final class CmdOptions {
     }
 
     public static CmdOptions getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            instance = new CmdOptions();
+        }
+
+        return instance;
+    }
+
+    public static void clear() {
+        instance = null;
     }
 
     public Option getLongOption(String param) {
