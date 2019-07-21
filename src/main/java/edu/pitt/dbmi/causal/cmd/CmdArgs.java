@@ -72,6 +72,8 @@ public class CmdArgs {
     protected boolean generateCompleteGraph;
     protected boolean extractStructModel;
 
+    protected boolean experimental;
+
     protected Map<String, String> parameters;
 
     public CmdArgs() {
@@ -195,6 +197,10 @@ public class CmdArgs {
 
     public boolean isExtractStructModel() {
         return extractStructModel;
+    }
+
+    public boolean isExperimental() {
+        return experimental;
     }
 
     public Map<String, String> getParameters() {

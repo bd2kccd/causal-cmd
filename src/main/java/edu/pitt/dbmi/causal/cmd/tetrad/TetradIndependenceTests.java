@@ -22,6 +22,7 @@ import edu.cmu.tetrad.annotation.AnnotatedClass;
 import edu.cmu.tetrad.annotation.TestOfIndependence;
 import edu.cmu.tetrad.annotation.TestOfIndependenceAnnotations;
 import edu.cmu.tetrad.data.DataType;
+import edu.pitt.dbmi.causal.cmd.CausalCmdApplication;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -40,14 +41,19 @@ import java.util.stream.Stream;
  */
 public final class TetradIndependenceTests {
 
-    private static final TetradIndependenceTests INSTANCE = new TetradIndependenceTests();
+    private static TetradIndependenceTests instance;
 
     private final Map<String, AnnotatedClass<TestOfIndependence>> annotatedClasses;
 
     private final Map<DataType, List<String>> groupByDataType = new EnumMap<>(DataType.class);
 
     private TetradIndependenceTests() {
-        this.annotatedClasses = TestOfIndependenceAnnotations.getInstance().getAnnotatedClasses().stream()
+        TestOfIndependenceAnnotations testAnno = TestOfIndependenceAnnotations.getInstance();
+        List<AnnotatedClass<TestOfIndependence>> testList = CausalCmdApplication.showExperimental
+                ? testAnno.getAnnotatedClasses()
+                : testAnno.filterOutExperimental(testAnno.getAnnotatedClasses());
+
+        this.annotatedClasses = testList.stream()
                 .filter(e -> !Arrays.asList(e.getAnnotation().dataType()).contains(DataType.Graph))
                 .collect(() -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
                         (m, e) -> m.put(e.getAnnotation().command(), e),
@@ -79,15 +85,25 @@ public final class TetradIndependenceTests {
     }
 
     public static TetradIndependenceTests getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            instance = new TetradIndependenceTests();
+        }
+
+        return instance;
+    }
+
+    public static void clear() {
+        instance = null;
     }
 
     public boolean hasCommand(String command) {
-        return (command == null) ? false : annotatedClasses.containsKey(command);
+        return (command == null || command.isEmpty())
+                ? false
+                : annotatedClasses.containsKey(command);
     }
 
     public boolean hasCommand(String command, DataType dataType) {
-        if (command == null || dataType == null) {
+        if (command == null || command.isEmpty() || dataType == null) {
             return false;
         }
 
@@ -117,7 +133,7 @@ public final class TetradIndependenceTests {
     }
 
     public Class getClass(String command) {
-        if (command == null) {
+        if (command == null || command.isEmpty()) {
             return null;
         }
 

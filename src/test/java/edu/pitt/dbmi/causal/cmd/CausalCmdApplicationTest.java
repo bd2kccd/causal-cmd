@@ -38,6 +38,23 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testExperimentalAlgorithm() throws IOException {
+        String dataset = TestFiles.DISCRETE_DATA;
+        String dirOut = tmpFolder.newFolder("rfci-bsc_discrete").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "discrete",
+            "--algorithm", "rfci-bsc",
+            "--verbose",
+            "--skip-latest",
+            "--experimental",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
     public void testGFCIWithContinuousDataAndChooseMagInPag() throws IOException {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String dirOut = tmpFolder.newFolder("gfci_choose_dag_in_pattern").toString();

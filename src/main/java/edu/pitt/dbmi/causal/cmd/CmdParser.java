@@ -117,6 +117,8 @@ public final class CmdParser {
         cmdArgs.generateCompleteGraph = cmd.hasOption(CmdParams.GENEREATE_COMPLETE_GRAPH);
         cmdArgs.extractStructModel = cmd.hasOption(CmdParams.EXTRACT_STRUCT_MODEL);
 
+        cmdArgs.experimental = cmd.hasOption(CmdParams.EXPERIMENTAL);
+
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
 

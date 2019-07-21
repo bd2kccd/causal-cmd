@@ -21,6 +21,7 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 import edu.cmu.tetrad.annotation.Algorithm;
 import edu.cmu.tetrad.annotation.AlgorithmAnnotations;
 import edu.cmu.tetrad.annotation.AnnotatedClass;
+import edu.pitt.dbmi.causal.cmd.CausalCmdApplication;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -35,19 +36,32 @@ import java.util.stream.Collectors;
  */
 public final class TetradAlgorithms {
 
-    private static final TetradAlgorithms INSTANCE = new TetradAlgorithms();
+    private static TetradAlgorithms instance;
 
     private final Map<String, AnnotatedClass<Algorithm>> annotatedClasses;
 
     private TetradAlgorithms() {
-        this.annotatedClasses = AlgorithmAnnotations.getInstance().getAnnotatedClasses().stream()
+        AlgorithmAnnotations algoAnno = AlgorithmAnnotations.getInstance();
+        List<AnnotatedClass<Algorithm>> algoList = CausalCmdApplication.showExperimental
+                ? algoAnno.getAnnotatedClasses()
+                : algoAnno.filterOutExperimental(algoAnno.getAnnotatedClasses());
+
+        this.annotatedClasses = algoList.stream()
                 .collect(() -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
                         (m, e) -> m.put(e.getAnnotation().command(), e),
                         (m, u) -> m.putAll(u));
     }
 
     public static TetradAlgorithms getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            instance = new TetradAlgorithms();
+        }
+
+        return instance;
+    }
+
+    public static void clear() {
+        instance = null;
     }
 
     public List<String> getCommands() {
@@ -55,13 +69,13 @@ public final class TetradAlgorithms {
     }
 
     public boolean hasCommand(String command) {
-        return (command == null)
+        return (command == null || command.isEmpty())
                 ? false
                 : annotatedClasses.containsKey(command);
     }
 
     public Class getAlgorithmClass(String command) {
-        if (command == null) {
+        if (command == null || command.isEmpty()) {
             return null;
         }
 

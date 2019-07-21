@@ -74,6 +74,8 @@ public final class CmdParams {
     public static final String GENEREATE_COMPLETE_GRAPH = "generate-complete-graph";
     public static final String EXTRACT_STRUCT_MODEL = "extract-struct-model";
 
+    public static final String EXPERIMENTAL = "experimental";
+
     private CmdParams() {
     }
 
