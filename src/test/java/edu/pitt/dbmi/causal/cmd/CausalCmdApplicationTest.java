@@ -64,7 +64,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic-score",
+            "--score", "sem-bic",
             "--verbose",
             "--skip-latest",
             "--choose-mag-in-pag",
@@ -102,7 +102,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic-score",
+            "--score", "sem-bic",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -120,7 +120,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "covariance",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic-score",
+            "--score", "sem-bic",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -140,7 +140,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic-score",
+            "--score", "sem-bic",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -159,7 +159,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic-score",
+            "--score", "sem-bic",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -215,7 +215,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic-score",
+            "--score", "sem-bic",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
