@@ -37,7 +37,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +61,7 @@ public class CausalCmdApplication {
     public static void main(String[] args) {
         args = Args.clean(args);
 
-        // clear
-        TetradAlgorithms.clear();
-        TetradIndependenceTests.clear();
-        TetradScores.clear();
-        CmdOptions.clear();
-
-        showExperimental = Arrays.stream(args).anyMatch("--experimental"::equals);
+        showExperimental = Args.hasLongParam(args, CmdParams.EXPERIMENTAL);
 
         if (Args.hasLongParam(args, CmdParams.HELP)) {
             try {

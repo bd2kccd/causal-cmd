@@ -19,11 +19,11 @@
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
 import edu.cmu.tetrad.annotation.AnnotatedClass;
+import edu.cmu.tetrad.annotation.Experimental;
 import edu.cmu.tetrad.annotation.Score;
 import edu.cmu.tetrad.annotation.ScoreAnnotations;
 import edu.cmu.tetrad.data.DataType;
 import edu.pitt.dbmi.causal.cmd.CausalCmdApplication;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -41,25 +41,24 @@ import java.util.stream.Stream;
  */
 public final class TetradScores {
 
-    private static TetradScores instance;
+    private static final TetradScores INSTANCE = new TetradScores();
 
-    private final Map<String, AnnotatedClass<Score>> annotatedClasses;
+    private final Map<String, AnnotatedClass<Score>> scores = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private final Map<String, AnnotatedClass<Score>> nonExpScores = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     private final Map<DataType, List<String>> groupByDataType = new EnumMap<>(DataType.class);
+    private final Map<DataType, List<String>> nonExpGroupByDataType = new EnumMap<>(DataType.class);
 
     private TetradScores() {
-        ScoreAnnotations scoreAnno = ScoreAnnotations.getInstance();
-        List<AnnotatedClass<Score>> scoreList = CausalCmdApplication.showExperimental
-                ? scoreAnno.getAnnotatedClasses()
-                : scoreAnno.filterOutExperimental(scoreAnno.getAnnotatedClasses());
+        ScoreAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
+            String key = e.getAnnotation().command();
+            scores.put(key, e);
+            if (!e.getClazz().isAnnotationPresent(Experimental.class)) {
+                nonExpScores.put(key, e);
+            }
+        });
 
-        this.annotatedClasses = scoreList.stream()
-                .filter(e -> !Arrays.asList(e.getAnnotation().dataType()).contains(DataType.Graph))
-                .collect(() -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
-                        (m, e) -> m.put(e.getAnnotation().command(), e),
-                        (m, u) -> m.putAll(u));
-
-        this.annotatedClasses.forEach((k, v) -> {
+        scores.forEach((k, v) -> {
             DataType[] dataTypes = v.getAnnotation().dataType();
             for (DataType dataType : dataTypes) {
                 List<String> list = groupByDataType.get(dataType);
@@ -71,35 +70,45 @@ public final class TetradScores {
             }
         });
 
-        // merge continuous datatype with mixed datatype
-        List<String> mergeList = Stream.concat(groupByDataType.get(DataType.Continuous).stream(), groupByDataType.get(DataType.Mixed).stream())
-                .sorted()
-                .collect(Collectors.toList());
-        groupByDataType.put(DataType.Continuous, mergeList);
+        nonExpScores.forEach((k, v) -> {
+            DataType[] dataTypes = v.getAnnotation().dataType();
+            for (DataType dataType : dataTypes) {
+                List<String> list = nonExpGroupByDataType.get(dataType);
+                if (list == null) {
+                    list = new LinkedList<>();
+                    nonExpGroupByDataType.put(dataType, list);
+                }
+                list.add(k);
+            }
+        });
 
-        // merge discrete datatype with mixed datatype
-        mergeList = Stream.concat(groupByDataType.get(DataType.Discrete).stream(), groupByDataType.get(DataType.Mixed).stream())
+        // merge continuous datatype with mixed datatype and merge discrete datatype with mixed datatype
+        groupByDataType.put(DataType.Continuous, mergeList(groupByDataType.get(DataType.Continuous), groupByDataType.get(DataType.Mixed)));
+        groupByDataType.put(DataType.Discrete, mergeList(groupByDataType.get(DataType.Discrete), groupByDataType.get(DataType.Mixed)));
+
+        // merge continuous datatype with mixed datatype and merge discrete datatype with mixed datatype
+        nonExpGroupByDataType.put(DataType.Continuous, mergeList(nonExpGroupByDataType.get(DataType.Continuous), nonExpGroupByDataType.get(DataType.Mixed)));
+        nonExpGroupByDataType.put(DataType.Discrete, mergeList(nonExpGroupByDataType.get(DataType.Discrete), nonExpGroupByDataType.get(DataType.Mixed)));
+    }
+
+    private static List<String> mergeList(List<String> listA, List<String> listB) {
+        return Stream.concat(listA.stream(), listB.stream())
                 .sorted()
                 .collect(Collectors.toList());
-        groupByDataType.put(DataType.Discrete, mergeList);
     }
 
     public static TetradScores getInstance() {
-        if (instance == null) {
-            instance = new TetradScores();
-        }
-
-        return instance;
-    }
-
-    public static void clear() {
-        instance = null;
+        return INSTANCE;
     }
 
     public boolean hasCommand(String command) {
-        return (command == null || command.isEmpty())
-                ? false
-                : annotatedClasses.containsKey(command);
+        if (command == null || command.isEmpty()) {
+            return false;
+        }
+
+        return CausalCmdApplication.showExperimental
+                ? scores.containsKey(command)
+                : nonExpScores.containsKey(command);
     }
 
     public boolean hasCommand(String command, DataType dataType) {
@@ -107,33 +116,44 @@ public final class TetradScores {
             return false;
         }
 
-        if (!groupByDataType.containsKey(dataType)) {
+        Map<DataType, List<String>> map = CausalCmdApplication.showExperimental
+                ? groupByDataType
+                : nonExpGroupByDataType;
+
+        if (!map.containsKey(dataType)) {
             return false;
         }
 
-        return groupByDataType.get(dataType).stream()
+        return map.get(dataType).stream()
                 .anyMatch(e -> e.equalsIgnoreCase(command));
     }
 
     public List<String> getCommands() {
-        List<String> list = annotatedClasses.keySet().stream()
-                .collect(Collectors.toList());
+        List<String> list = CausalCmdApplication.showExperimental
+                ? scores.keySet().stream().collect(Collectors.toList())
+                : nonExpScores.keySet().stream().collect(Collectors.toList());
 
         return Collections.unmodifiableList(list);
     }
 
     public List<String> getCommands(DataType dataType) {
-        List<String> list = new LinkedList<>();
+        Map<DataType, List<String>> map = CausalCmdApplication.showExperimental
+                ? groupByDataType
+                : nonExpGroupByDataType;
 
-        if (groupByDataType.containsKey(dataType)) {
-            list.addAll(groupByDataType.get(dataType));
-        }
-
-        return Collections.unmodifiableList(list);
+        return map.containsKey(dataType)
+                ? Collections.unmodifiableList(map.get(dataType))
+                : Collections.EMPTY_LIST;
     }
 
     public Class getClass(String command) {
-        AnnotatedClass<Score> annotatedClass = annotatedClasses.get(command);
+        if (command == null || command.isEmpty()) {
+            return null;
+        }
+
+        AnnotatedClass<Score> annotatedClass = CausalCmdApplication.showExperimental
+                ? scores.get(command)
+                : nonExpScores.get(command);
 
         return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }

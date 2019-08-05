@@ -19,11 +19,11 @@
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
 import edu.cmu.tetrad.annotation.AnnotatedClass;
+import edu.cmu.tetrad.annotation.Experimental;
 import edu.cmu.tetrad.annotation.TestOfIndependence;
 import edu.cmu.tetrad.annotation.TestOfIndependenceAnnotations;
 import edu.cmu.tetrad.data.DataType;
 import edu.pitt.dbmi.causal.cmd.CausalCmdApplication;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedList;
@@ -41,25 +41,24 @@ import java.util.stream.Stream;
  */
 public final class TetradIndependenceTests {
 
-    private static TetradIndependenceTests instance;
+    private static final TetradIndependenceTests INSTANCE = new TetradIndependenceTests();
 
-    private final Map<String, AnnotatedClass<TestOfIndependence>> annotatedClasses;
+    private final Map<String, AnnotatedClass<TestOfIndependence>> tests = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private final Map<String, AnnotatedClass<TestOfIndependence>> nonExpTests = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     private final Map<DataType, List<String>> groupByDataType = new EnumMap<>(DataType.class);
+    private final Map<DataType, List<String>> nonExpGroupByDataType = new EnumMap<>(DataType.class);
 
     private TetradIndependenceTests() {
-        TestOfIndependenceAnnotations testAnno = TestOfIndependenceAnnotations.getInstance();
-        List<AnnotatedClass<TestOfIndependence>> testList = CausalCmdApplication.showExperimental
-                ? testAnno.getAnnotatedClasses()
-                : testAnno.filterOutExperimental(testAnno.getAnnotatedClasses());
+        TestOfIndependenceAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
+            String key = e.getAnnotation().command();
+            tests.put(key, e);
+            if (!e.getClazz().isAnnotationPresent(Experimental.class)) {
+                nonExpTests.put(key, e);
+            }
+        });
 
-        this.annotatedClasses = testList.stream()
-                .filter(e -> !Arrays.asList(e.getAnnotation().dataType()).contains(DataType.Graph))
-                .collect(() -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
-                        (m, e) -> m.put(e.getAnnotation().command(), e),
-                        (m, u) -> m.putAll(u));
-
-        this.annotatedClasses.forEach((k, v) -> {
+        tests.forEach((k, v) -> {
             DataType[] dataTypes = v.getAnnotation().dataType();
             for (DataType dataType : dataTypes) {
                 List<String> list = groupByDataType.get(dataType);
@@ -71,35 +70,45 @@ public final class TetradIndependenceTests {
             }
         });
 
-        // merge continuous datatype with mixed datatype
-        List<String> mergeList = Stream.concat(groupByDataType.get(DataType.Continuous).stream(), groupByDataType.get(DataType.Mixed).stream())
-                .sorted()
-                .collect(Collectors.toList());
-        groupByDataType.put(DataType.Continuous, mergeList);
+        nonExpTests.forEach((k, v) -> {
+            DataType[] dataTypes = v.getAnnotation().dataType();
+            for (DataType dataType : dataTypes) {
+                List<String> list = nonExpGroupByDataType.get(dataType);
+                if (list == null) {
+                    list = new LinkedList<>();
+                    nonExpGroupByDataType.put(dataType, list);
+                }
+                list.add(k);
+            }
+        });
 
-        // merge discrete datatype with mixed datatype
-        mergeList = Stream.concat(groupByDataType.get(DataType.Discrete).stream(), groupByDataType.get(DataType.Mixed).stream())
+        // merge continuous datatype with mixed datatype and merge discrete datatype with mixed datatype
+        groupByDataType.put(DataType.Continuous, mergeList(groupByDataType.get(DataType.Continuous), groupByDataType.get(DataType.Mixed)));
+        groupByDataType.put(DataType.Discrete, mergeList(groupByDataType.get(DataType.Discrete), groupByDataType.get(DataType.Mixed)));
+
+        // merge continuous datatype with mixed datatype and merge discrete datatype with mixed datatype
+        nonExpGroupByDataType.put(DataType.Continuous, mergeList(nonExpGroupByDataType.get(DataType.Continuous), nonExpGroupByDataType.get(DataType.Mixed)));
+        nonExpGroupByDataType.put(DataType.Discrete, mergeList(nonExpGroupByDataType.get(DataType.Discrete), nonExpGroupByDataType.get(DataType.Mixed)));
+    }
+
+    private static List<String> mergeList(List<String> listA, List<String> listB) {
+        return Stream.concat(listA.stream(), listB.stream())
                 .sorted()
                 .collect(Collectors.toList());
-        groupByDataType.put(DataType.Discrete, mergeList);
     }
 
     public static TetradIndependenceTests getInstance() {
-        if (instance == null) {
-            instance = new TetradIndependenceTests();
-        }
-
-        return instance;
-    }
-
-    public static void clear() {
-        instance = null;
+        return INSTANCE;
     }
 
     public boolean hasCommand(String command) {
-        return (command == null || command.isEmpty())
-                ? false
-                : annotatedClasses.containsKey(command);
+        if (command == null || command.isEmpty()) {
+            return false;
+        }
+
+        return CausalCmdApplication.showExperimental
+                ? tests.containsKey(command)
+                : nonExpTests.containsKey(command);
     }
 
     public boolean hasCommand(String command, DataType dataType) {
@@ -107,29 +116,34 @@ public final class TetradIndependenceTests {
             return false;
         }
 
-        if (!groupByDataType.containsKey(dataType)) {
+        Map<DataType, List<String>> map = CausalCmdApplication.showExperimental
+                ? groupByDataType
+                : nonExpGroupByDataType;
+
+        if (!map.containsKey(dataType)) {
             return false;
         }
 
-        return groupByDataType.get(dataType).stream()
+        return map.get(dataType).stream()
                 .anyMatch(e -> e.equalsIgnoreCase(command));
     }
 
     public List<String> getCommands() {
-        List<String> list = annotatedClasses.keySet().stream()
-                .collect(Collectors.toList());
+        List<String> list = CausalCmdApplication.showExperimental
+                ? tests.keySet().stream().collect(Collectors.toList())
+                : nonExpTests.keySet().stream().collect(Collectors.toList());
 
         return Collections.unmodifiableList(list);
     }
 
     public List<String> getCommands(DataType dataType) {
-        List<String> list = new LinkedList<>();
+        Map<DataType, List<String>> map = CausalCmdApplication.showExperimental
+                ? groupByDataType
+                : nonExpGroupByDataType;
 
-        if (dataType != null && groupByDataType.containsKey(dataType)) {
-            list.addAll(groupByDataType.get(dataType));
-        }
-
-        return Collections.unmodifiableList(list);
+        return map.containsKey(dataType)
+                ? Collections.unmodifiableList(map.get(dataType))
+                : Collections.EMPTY_LIST;
     }
 
     public Class getClass(String command) {
@@ -137,7 +151,9 @@ public final class TetradIndependenceTests {
             return null;
         }
 
-        AnnotatedClass<TestOfIndependence> annotatedClass = annotatedClasses.get(command);
+        AnnotatedClass<TestOfIndependence> annotatedClass = CausalCmdApplication.showExperimental
+                ? tests.get(command)
+                : nonExpTests.get(command);
 
         return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }
