@@ -49,7 +49,7 @@ import org.apache.commons.cli.ParseException;
  */
 public final class CmdParser {
 
-    public CmdParser() {
+    private CmdParser() {
     }
 
     public static CmdArgs parse(String[] args) throws CmdParserException {
