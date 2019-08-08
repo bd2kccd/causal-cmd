@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -206,22 +205,14 @@ public final class Args {
     }
 
     public static boolean hasLongParam(String[] args, String option) {
-        if (isEmpty(args) || !CmdOptions.getInstance().hasLongParam(option)) {
+        if (isEmpty(args)) {
             return false;
         }
 
-        CmdOptions cmdOptions = CmdOptions.getInstance();
-        Option longOpt = cmdOptions.getLongOption(option);
-        for (String arg : args) {
-            if (arg.startsWith("--")) {
-                String opt = arg.substring(2, arg.length());
-                if (longOpt == cmdOptions.getLongOption(opt)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return Arrays.stream(args)
+                .filter(e -> e.startsWith("--"))
+                .map(e -> e.substring(2, e.length()))
+                .anyMatch(option::equals);
     }
 
     public static boolean isEmpty(String[] args) {

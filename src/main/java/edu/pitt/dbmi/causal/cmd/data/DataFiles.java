@@ -64,33 +64,29 @@ public final class DataFiles {
     }
 
     public static Metadata readInMetadata(CmdArgs cmdArgs, PrintStream out) throws IOException {
-        Metadata metadata;
-
         Path file = cmdArgs.getMetadataFile();
         if (file == null) {
-            metadata = null;
+            return null;
         } else {
             LogMessages.readingFileStart(file, LOGGER, out);
-            metadata = (new MetadataFileReader(file)).read();
+            Metadata metadata = (new MetadataFileReader(file)).read();
             LogMessages.readingFileEnd(file, LOGGER, out);
-        }
 
-        return metadata;
+            return metadata;
+        }
     }
 
     public static IKnowledge readInKnowledge(CmdArgs cmdArgs, PrintStream out) throws IOException {
-        IKnowledge knowledge;
-
         Path file = cmdArgs.getKnowledgeFile();
         if (file == null) {
-            knowledge = null;
+            return null;
         } else {
             LogMessages.readingFileStart(file, LOGGER, out);
-            knowledge = (new edu.cmu.tetrad.data.DataReader()).parseKnowledge(file.toFile());
+            IKnowledge knowledge = (new edu.cmu.tetrad.data.DataReader()).parseKnowledge(file.toFile());
             LogMessages.readingFileEnd(file, LOGGER, out);
-        }
 
-        return knowledge;
+            return knowledge;
+        }
     }
 
     public static List<DataModel> readInDatasets(CmdArgs cmdArgs, PrintStream out) throws IOException, AlgorithmRunException {

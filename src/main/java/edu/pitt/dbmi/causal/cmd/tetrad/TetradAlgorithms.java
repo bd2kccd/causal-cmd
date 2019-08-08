@@ -21,6 +21,8 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 import edu.cmu.tetrad.annotation.Algorithm;
 import edu.cmu.tetrad.annotation.AlgorithmAnnotations;
 import edu.cmu.tetrad.annotation.AnnotatedClass;
+import edu.cmu.tetrad.annotation.Experimental;
+import edu.pitt.dbmi.causal.cmd.CausalCmdApplication;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -37,13 +39,17 @@ public final class TetradAlgorithms {
 
     private static final TetradAlgorithms INSTANCE = new TetradAlgorithms();
 
-    private final Map<String, AnnotatedClass<Algorithm>> annotatedClasses;
+    private final Map<String, AnnotatedClass<Algorithm>> algorithms = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private final Map<String, AnnotatedClass<Algorithm>> nonExpAlgorithms = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     private TetradAlgorithms() {
-        this.annotatedClasses = AlgorithmAnnotations.getInstance().getAnnotatedClasses().stream()
-                .collect(() -> new TreeMap<>(String.CASE_INSENSITIVE_ORDER),
-                        (m, e) -> m.put(e.getAnnotation().command(), e),
-                        (m, u) -> m.putAll(u));
+        AlgorithmAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
+            String key = e.getAnnotation().command();
+            algorithms.put(key, e);
+            if (!e.getClazz().isAnnotationPresent(Experimental.class)) {
+                nonExpAlgorithms.put(key, e);
+            }
+        });
     }
 
     public static TetradAlgorithms getInstance() {
@@ -51,21 +57,31 @@ public final class TetradAlgorithms {
     }
 
     public List<String> getCommands() {
-        return Collections.unmodifiableList(annotatedClasses.keySet().stream().collect(Collectors.toList()));
+        List<String> list = CausalCmdApplication.showExperimental
+                ? algorithms.keySet().stream().collect(Collectors.toList())
+                : nonExpAlgorithms.keySet().stream().collect(Collectors.toList());
+
+        return Collections.unmodifiableList(list);
     }
 
     public boolean hasCommand(String command) {
-        return (command == null)
-                ? false
-                : annotatedClasses.containsKey(command);
+        if (command == null || command.isEmpty()) {
+            return false;
+        }
+
+        return CausalCmdApplication.showExperimental
+                ? algorithms.containsKey(command)
+                : nonExpAlgorithms.containsKey(command);
     }
 
     public Class getAlgorithmClass(String command) {
-        if (command == null) {
+        if (command == null || command.isEmpty()) {
             return null;
         }
 
-        AnnotatedClass<Algorithm> annotatedClass = annotatedClasses.get(command);
+        AnnotatedClass<Algorithm> annotatedClass = CausalCmdApplication.showExperimental
+                ? algorithms.get(command)
+                : nonExpAlgorithms.get(command);
 
         return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }

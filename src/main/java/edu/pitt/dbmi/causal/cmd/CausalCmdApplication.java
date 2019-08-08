@@ -53,11 +53,16 @@ public class CausalCmdApplication {
 
     public static final String FOOTER = "Use --help for guidance list of options.  Use --help-all to show all options.";
 
+    public static boolean showExperimental;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         args = Args.clean(args);
+
+        showExperimental = Args.hasLongParam(args, CmdParams.EXPERIMENTAL);
+
         if (Args.hasLongParam(args, CmdParams.HELP)) {
             try {
                 Applications.showHelp(args, CmdParser.getHelpOptions(args), null);

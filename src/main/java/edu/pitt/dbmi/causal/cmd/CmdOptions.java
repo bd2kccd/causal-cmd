@@ -41,7 +41,7 @@ import org.apache.commons.cli.Options;
  */
 public final class CmdOptions {
 
-    private static final CmdOptions INSTANCE = new CmdOptions();
+    private static CmdOptions instance;
 
     private final Map<String, Option> options = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
@@ -51,7 +51,15 @@ public final class CmdOptions {
     }
 
     public static CmdOptions getInstance() {
-        return INSTANCE;
+        if (instance == null) {
+            instance = new CmdOptions();
+        }
+
+        return instance;
+    }
+
+    public static void clear() {
+        instance = null;
     }
 
     public Option getLongOption(String param) {
@@ -116,6 +124,8 @@ public final class CmdOptions {
 
         opts.add(options.get(CmdParams.SKIP_LATEST));
 
+        opts.add(options.get(CmdParams.EXPERIMENTAL));
+
         return opts;
     }
 
@@ -156,13 +166,15 @@ public final class CmdOptions {
         options.put(CmdParams.GENEREATE_COMPLETE_GRAPH, new Option(null, CmdParams.GENEREATE_COMPLETE_GRAPH, false, "Generate complete graph."));
         options.put(CmdParams.EXTRACT_STRUCT_MODEL, new Option(null, CmdParams.EXTRACT_STRUCT_MODEL, false, "Extract sturct model."));
 
+        options.put(CmdParams.EXPERIMENTAL, new Option(null, CmdParams.EXPERIMENTAL, false, "Show experimental algorithms, tests, and scores."));
+
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
         Set<String> params = paramDescs.getNames();
         params.forEach(param -> {
             ParamDescription paramDesc = paramDescs.get(param);
             String longOpt = param;
-            String desc = paramDesc.getDescription();
+            String desc = paramDesc.getShortDescription();
             Serializable defaultVal = paramDesc.getDefaultValue();
             String argName = defaultVal.getClass().getSimpleName().toLowerCase();
             boolean hasArg = !(paramDesc.getDefaultValue() instanceof Boolean);

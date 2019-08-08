@@ -49,7 +49,7 @@ import org.apache.commons.cli.ParseException;
  */
 public final class CmdParser {
 
-    public CmdParser() {
+    private CmdParser() {
     }
 
     public static CmdArgs parse(String[] args) throws CmdParserException {
@@ -116,6 +116,8 @@ public final class CmdParser {
         cmdArgs.makeAllEdgesUndirected = cmd.hasOption(CmdParams.MAKE_ALL_EDGES_UNDIRECTED);
         cmdArgs.generateCompleteGraph = cmd.hasOption(CmdParams.GENEREATE_COMPLETE_GRAPH);
         cmdArgs.extractStructModel = cmd.hasOption(CmdParams.EXTRACT_STRUCT_MODEL);
+
+        cmdArgs.experimental = cmd.hasOption(CmdParams.EXPERIMENTAL);
 
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }

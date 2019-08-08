@@ -19,8 +19,6 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -36,22 +34,14 @@ public class CausalCmdApplicationMetadataTest {
     @Rule
     public final TemporaryFolder tmpFolder = new TemporaryFolder();
 
-    private final Path continuousDataFile = Paths.get(getClass().getResource("/data/metadata/sim_continuous_intervention.txt").getFile());
-    private final Path discreteDataFile = Paths.get(getClass().getResource("/data/metadata/sim_discrete_intervention.txt").getFile());
-    private final Path mixedDataFile = Paths.get(getClass().getResource("/data/metadata/sim_mixed_intervention.txt").getFile());
-
-    private final Path continuousMetadataFile = Paths.get(getClass().getResource("/data/metadata/sim_continuous_intervention_metadata.json").getFile());
-    private final Path discreteMetadataFile = Paths.get(getClass().getResource("/data/metadata/sim_discrete_intervention_metadata.json").getFile());
-    private final Path mixedMetadataFile = Paths.get(getClass().getResource("/data/metadata/sim_mixed_intervention_metadata.json").getFile());
-
     public CausalCmdApplicationMetadataTest() {
     }
 
     @Test
     public void testGFCIWithMixedData() throws IOException {
-        String dataset = mixedDataFile.toString();
-        String metadata = mixedMetadataFile.toString();
-        String dirOut = tmpFolder.newFolder("gfci").toString();
+        String dataset = TestFiles.MIXED_INTERVENTIONAL_DATA;
+        String metadata = TestFiles.MIXED_INTERVENTIONAL_METADATA;
+        String dirOut = tmpFolder.newFolder("gfci_interv_mixed").toString();
         String[] args = {
             "--dataset", dataset,
             "--metadata", metadata,
@@ -60,8 +50,8 @@ public class CausalCmdApplicationMetadataTest {
             "--data-type", "mixed",
             "--numCategories", "4",
             "--algorithm", "gfci",
-            "--test", "cond-gauss-lrt",
-            "--score", "cond-gauss-bic",
+            "--test", "cg-lr-test",
+            "--score", "cg-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -71,17 +61,17 @@ public class CausalCmdApplicationMetadataTest {
 
     @Test
     public void testGFCIWithDiscreteData() throws IOException {
-        String dataset = discreteDataFile.toString();
-        String metadata = discreteMetadataFile.toString();
-        String dirOut = tmpFolder.newFolder("gfci").toString();
+        String dataset = TestFiles.DISCRETE_INTERVENTIONAL_DATA;
+        String metadata = TestFiles.DISCRETE_INTERVENTIONAL_METADATA;
+        String dirOut = tmpFolder.newFolder("gfci_interv_discrete").toString();
         String[] args = {
             "--dataset", dataset,
             "--metadata", metadata,
             "--delimiter", "tab",
             "--data-type", "discrete",
             "--algorithm", "gfci",
-            "--test", "bdeu",
-            "--score", "bdeu",
+            "--test", "bdeu-test",
+            "--score", "bdeu-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -91,17 +81,17 @@ public class CausalCmdApplicationMetadataTest {
 
     @Test
     public void testGFCIWithContinuousData() throws IOException {
-        String dataset = continuousDataFile.toString();
-        String metadata = continuousMetadataFile.toString();
-        String dirOut = tmpFolder.newFolder("gfci").toString();
+        String dataset = TestFiles.CONTINUOUS_INTERVENTIONAL_DATA;
+        String metadata = TestFiles.CONTINUOUS_INTERVENTIONAL_METADATA;
+        String dirOut = tmpFolder.newFolder("gfci_interv_cont").toString();
         String[] args = {
             "--dataset", dataset,
             "--metadata", metadata,
             "--delimiter", "tab",
             "--data-type", "continuous",
             "--algorithm", "gfci",
-            "--test", "sem-bic",
-            "--score", "fisher-z",
+            "--test", "fisher-z-test",
+            "--score", "sem-bic",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
