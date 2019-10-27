@@ -216,6 +216,8 @@ public class CausalCmdApplicationTest {
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
             "--score", "sem-bic",
+            "--penaltyDiscount", "1.0",
+            "--structurePrior", "0.01",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
