@@ -33,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -312,14 +313,16 @@ public final class CmdParser {
      * @return list of parameters for the algorithm, test and score
      */
     private static List<String> getAllParameters(Algorithm algorithm) {
+        if (algorithm == null) {
+            return Collections.EMPTY_LIST;
+        }
+
         List<String> params = new LinkedList<>();
 
         // add algorithm parameters
-        if (algorithm != null) {
-            params.addAll(algorithm.getParameters());
-        }
+        params.addAll(algorithm.getParameters());
 
-        // // add the algorithm test parameters, if any
+        // add the algorithm test parameters, if any
         if (algorithm instanceof TakesIndependenceWrapper) {
             params.addAll(((TakesIndependenceWrapper) algorithm).getIndependenceWrapper().getParameters());
         }
