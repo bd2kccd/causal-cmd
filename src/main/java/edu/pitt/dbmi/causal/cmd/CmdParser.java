@@ -18,7 +18,10 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
+import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
+import edu.cmu.tetrad.algcomparison.utils.TakesIndependenceWrapper;
+import edu.cmu.tetrad.algcomparison.utils.UsesScoreWrapper;
 import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.util.ParamDescription;
 import edu.cmu.tetrad.util.ParamDescriptions;
@@ -30,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -273,7 +277,7 @@ public final class CmdParser {
 
         List<String> params = new LinkedList<>();
         try {
-            params.addAll(AlgorithmFactory.create(algorithmClass, indTestClass, scoreClass).getParameters());
+            params.addAll(getAllParameters(AlgorithmFactory.create(algorithmClass, indTestClass, scoreClass)));
         } catch (IllegalAccessException | InstantiationException exception) {
             throw new CmdParserException(parseOptions, exception);
         }
@@ -299,6 +303,36 @@ public final class CmdParser {
             throw new CmdParserException(parseOptions, exception);
         }
         return parseOptions;
+    }
+
+    /**
+     * Get the parameters for the algorithm, the algorithm's test and the
+     * algorithm's score.
+     *
+     * @param algorithm to get parameters from
+     * @return list of parameters for the algorithm, test and score
+     */
+    private static List<String> getAllParameters(Algorithm algorithm) {
+        if (algorithm == null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<String> params = new LinkedList<>();
+
+        // add algorithm parameters
+        params.addAll(algorithm.getParameters());
+
+        // add the algorithm test parameters, if any
+        if (algorithm instanceof TakesIndependenceWrapper) {
+            params.addAll(((TakesIndependenceWrapper) algorithm).getIndependenceWrapper().getParameters());
+        }
+
+        // add the algorithm's score parameters, if any
+        if (algorithm instanceof UsesScoreWrapper) {
+            params.addAll(((UsesScoreWrapper) algorithm).getScoreWrapper().getParameters());
+        }
+
+        return params;
     }
 
     private static void addGraphManipulationOptions(Options opts) {
