@@ -368,7 +368,7 @@ public final class CmdParser {
 
         List<String> params = new LinkedList<>();
         try {
-            params.addAll(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass()).getParameters());
+            params.addAll(getAllParameters(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass())));
         } catch (IllegalAccessException | InstantiationException exception) {
             throw new CmdParserException(parseOptions, exception);
         }
