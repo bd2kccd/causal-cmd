@@ -91,7 +91,7 @@ public class CausalCmdApplicationMetadataTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-test",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
