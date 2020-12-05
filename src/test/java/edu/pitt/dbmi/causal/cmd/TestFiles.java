@@ -18,6 +18,11 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  *
  * Mar 20, 2019 3:12:52 PM
@@ -72,6 +77,10 @@ final class TestFiles {
             .getResource("/data/metadata/sim_mixed_intervention_metadata.json").getFile();
 
     private TestFiles() {
+    }
+
+    public static Path createSubDir(Path dir, String name) throws IOException {
+        return Files.createDirectory(Paths.get(dir.toString(), name));
     }
 
 }
