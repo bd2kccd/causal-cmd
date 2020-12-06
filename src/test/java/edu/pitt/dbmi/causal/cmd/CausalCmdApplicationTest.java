@@ -19,9 +19,10 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import java.io.IOException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import java.nio.file.Path;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  *
@@ -31,16 +32,14 @@ import org.junit.rules.TemporaryFolder;
  */
 public class CausalCmdApplicationTest {
 
-    @Rule
-    public final TemporaryFolder tmpFolder = new TemporaryFolder();
+    @TempDir
+    public static Path tempDir;
 
-    public CausalCmdApplicationTest() {
-    }
-
+    @Disabled
     @Test
     public void testExperimentalAlgorithm() throws IOException {
         String dataset = TestFiles.DISCRETE_DATA;
-        String dirOut = tmpFolder.newFolder("rfci-bsc_discrete").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "rfci-bsc_discrete").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
@@ -55,16 +54,35 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testGFCIWithContinuousMissingData() throws IOException {
+        String dataset = TestFiles.CONTINUOUS_10VAR_1KCASE_MISSING_DATA;
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_missing_values").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "comma",
+            "--data-type", "continuous",
+            "--algorithm", "gfci",
+            "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
+            "--missing", "*",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
     public void testGFCIWithContinuousDataAndChooseMagInPag() throws IOException {
         String dataset = TestFiles.CONTINUOUS_DATA;
-        String dirOut = tmpFolder.newFolder("gfci_choose_dag_in_pattern").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_choose_dag_in_pattern").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-score",
             "--verbose",
             "--skip-latest",
             "--choose-mag-in-pag",
@@ -77,12 +95,13 @@ public class CausalCmdApplicationTest {
     public void testMultiFaskWithMultipleContinuousData() throws IOException {
         String dataset1 = TestFiles.CONTINUOUS_DATA_20K_PART1;
         String dataset2 = TestFiles.CONTINUOUS_DATA_20K_PART2;
-        String dirOut = tmpFolder.newFolder("multi-fask_cont").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "multi-fask_cont").toString();
         String[] args = {
             "--dataset", dataset1 + "," + dataset2,
             "--delimiter", "tab",
             "--data-type", "continuous",
             "--algorithm", "multi-fask",
+            "--test", "fisher-z-test",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -94,7 +113,7 @@ public class CausalCmdApplicationTest {
     public void testGFCIWithContinuousDataAndVariablesToExclude() throws IOException {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String excludeVar = TestFiles.EXCLUDE_VARIABLES;
-        String dirOut = tmpFolder.newFolder("gfci_exclude_vars").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_exclude_vars").toString();
         String[] args = {
             "--dataset", dataset,
             "--exclude-var", excludeVar,
@@ -102,7 +121,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -113,14 +132,14 @@ public class CausalCmdApplicationTest {
     @Test
     public void testFGESCovariance() throws IOException {
         String dataset = TestFiles.COVARIANCE_CONTINUOUS_DATA;
-        String dirOut = tmpFolder.newFolder("gfci_covar").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_covar").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
             "--data-type", "covariance",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -132,7 +151,7 @@ public class CausalCmdApplicationTest {
     public void testGFCIWithContinuousDataAndKnowledge() throws IOException {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String knowledge = TestFiles.KNOWLEDGE_CONTINUOUS_DATA;
-        String dirOut = tmpFolder.newFolder("gfci_knowledge").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_knowledge").toString();
         String[] args = {
             "--dataset", dataset,
             "--knowledge", knowledge,
@@ -140,7 +159,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -151,7 +170,7 @@ public class CausalCmdApplicationTest {
     @Test
     public void testGFCIWithNoHeaderContinuousData() throws IOException {
         String dataset = TestFiles.CONTINUOUS_DATA_NO_HEADER;
-        String dirOut = tmpFolder.newFolder("gfci_cont_no_header").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_cont_no_header").toString();
         String[] args = {
             "--dataset", dataset,
             "--no-header",
@@ -159,7 +178,7 @@ public class CausalCmdApplicationTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
@@ -170,7 +189,7 @@ public class CausalCmdApplicationTest {
     @Test
     public void testGFCIWithMixedData() throws IOException {
         String dataset = TestFiles.MIXED_DATA;
-        String dirOut = tmpFolder.newFolder("gfci_mixed").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_mixed").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
@@ -189,13 +208,13 @@ public class CausalCmdApplicationTest {
     @Test
     public void testGFCIWithDiscreteData() throws IOException {
         String dataset = TestFiles.DISCRETE_DATA;
-        String dirOut = tmpFolder.newFolder("gfci_discrete").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_discrete").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
             "--data-type", "discrete",
             "--algorithm", "gfci",
-            "--test", "bdeu-test",
+            "--test", "g-square-test",
             "--score", "bdeu-score",
             "--faithfulnessAssumed",
             "--verbose",
@@ -208,14 +227,14 @@ public class CausalCmdApplicationTest {
     @Test
     public void testGFCIWithContinuousData() throws IOException {
         String dataset = TestFiles.CONTINUOUS_DATA;
-        String dirOut = tmpFolder.newFolder("gfci_cont").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_cont").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-score",
             "--penaltyDiscount", "1.0",
             "--structurePrior", "0.01",
             "--verbose",

@@ -19,9 +19,9 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import java.io.IOException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import java.nio.file.Path;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  *
@@ -31,17 +31,14 @@ import org.junit.rules.TemporaryFolder;
  */
 public class CausalCmdApplicationMetadataTest {
 
-    @Rule
-    public final TemporaryFolder tmpFolder = new TemporaryFolder();
-
-    public CausalCmdApplicationMetadataTest() {
-    }
+    @TempDir
+    public static Path tempDir;
 
     @Test
     public void testGFCIWithMixedData() throws IOException {
         String dataset = TestFiles.MIXED_INTERVENTIONAL_DATA;
         String metadata = TestFiles.MIXED_INTERVENTIONAL_METADATA;
-        String dirOut = tmpFolder.newFolder("gfci_interv_mixed").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_interv_mixed").toString();
         String[] args = {
             "--dataset", dataset,
             "--metadata", metadata,
@@ -63,14 +60,14 @@ public class CausalCmdApplicationMetadataTest {
     public void testGFCIWithDiscreteData() throws IOException {
         String dataset = TestFiles.DISCRETE_INTERVENTIONAL_DATA;
         String metadata = TestFiles.DISCRETE_INTERVENTIONAL_METADATA;
-        String dirOut = tmpFolder.newFolder("gfci_interv_discrete").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_interv_discrete").toString();
         String[] args = {
             "--dataset", dataset,
             "--metadata", metadata,
             "--delimiter", "tab",
             "--data-type", "discrete",
             "--algorithm", "gfci",
-            "--test", "bdeu-test",
+            "--test", "g-square-test",
             "--score", "bdeu-score",
             "--verbose",
             "--skip-latest",
@@ -83,7 +80,7 @@ public class CausalCmdApplicationMetadataTest {
     public void testGFCIWithContinuousData() throws IOException {
         String dataset = TestFiles.CONTINUOUS_INTERVENTIONAL_DATA;
         String metadata = TestFiles.CONTINUOUS_INTERVENTIONAL_METADATA;
-        String dirOut = tmpFolder.newFolder("gfci_interv_cont").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_interv_cont").toString();
         String[] args = {
             "--dataset", dataset,
             "--metadata", metadata,
@@ -91,7 +88,7 @@ public class CausalCmdApplicationMetadataTest {
             "--data-type", "continuous",
             "--algorithm", "gfci",
             "--test", "fisher-z-test",
-            "--score", "sem-bic",
+            "--score", "sem-bic-score",
             "--verbose",
             "--skip-latest",
             "--out", dirOut

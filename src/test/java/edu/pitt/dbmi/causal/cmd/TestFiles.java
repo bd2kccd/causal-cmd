@@ -18,6 +18,11 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  *
  * Mar 20, 2019 3:12:52 PM
@@ -28,6 +33,9 @@ final class TestFiles {
 
     public static final String CONTINUOUS_DATA = TestFiles.class
             .getResource("/data/sim_data_continuous_20var_100case.txt").getFile();
+
+    public static final String CONTINUOUS_10VAR_1KCASE_MISSING_DATA = TestFiles.class
+            .getResource("/data/sim_data_continuous_10var_1kcase_missing.csv").getFile();
 
     public static final String CONTINUOUS_DATA_NO_HEADER = TestFiles.class
             .getResource("/data/sim_data_continuous_20var_100case_no_header.txt").getFile();
@@ -72,6 +80,10 @@ final class TestFiles {
             .getResource("/data/metadata/sim_mixed_intervention_metadata.json").getFile();
 
     private TestFiles() {
+    }
+
+    public static Path createSubDir(Path dir, String name) throws IOException {
+        return Files.createDirectory(Paths.get(dir.toString(), name));
     }
 
 }
