@@ -54,6 +54,25 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testGFCIWithContinuousMissingData() throws IOException {
+        String dataset = TestFiles.CONTINUOUS_10VAR_1KCASE_MISSING_DATA;
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_missing_values").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "comma",
+            "--data-type", "continuous",
+            "--algorithm", "gfci",
+            "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
+            "--missing", "*",
+            "--verbose",
+            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
     public void testGFCIWithContinuousDataAndChooseMagInPag() throws IOException {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_choose_dag_in_pattern").toString();

@@ -34,6 +34,9 @@ final class TestFiles {
     public static final String CONTINUOUS_DATA = TestFiles.class
             .getResource("/data/sim_data_continuous_20var_100case.txt").getFile();
 
+    public static final String CONTINUOUS_10VAR_1KCASE_MISSING_DATA = TestFiles.class
+            .getResource("/data/sim_data_continuous_10var_1kcase_missing.csv").getFile();
+
     public static final String CONTINUOUS_DATA_NO_HEADER = TestFiles.class
             .getResource("/data/sim_data_continuous_20var_100case_no_header.txt").getFile();
 
