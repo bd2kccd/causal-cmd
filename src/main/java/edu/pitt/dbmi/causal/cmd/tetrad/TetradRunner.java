@@ -86,6 +86,15 @@ public class TetradRunner {
         final Parameters parameters = Tetrad.getParameters(cmdArgs);
         parameters.set("printStream", out);
 
+        // warn user about the default use of testwise deletion of data contain missing values
+        boolean hasMissingValues = containsMissingValues(dataModels);
+        boolean hasScore = cmdArgs.getScoreClass() != null;
+        boolean hasTest = cmdArgs.getTestClass() != null;
+        if (hasMissingValues && (hasScore || hasTest)) {
+            out.println();
+            out.println("WARNING: Dataset contains missing values;testwise deletion will be used in test and/or score.");
+        }
+
         boolean verbose = parameters.getBoolean("verbose", false);
 
         out.printf("%nStart search: %s%n", DateTime.printNow());
@@ -101,6 +110,28 @@ public class TetradRunner {
         out.printf("End search: %s%n", DateTime.printNow());
 
         graphList.forEach(graph -> graphs.add(manipulateGraph(graph)));
+    }
+
+    /**
+     * Determine if any of the data model contains missing values;
+     *
+     * @param dataModels
+     * @return
+     */
+    private boolean containsMissingValues(final List<DataModel> dataModels) {
+        boolean hasMissingValues = false;
+
+        for (DataModel dataModel : dataModels) {
+            if (dataModel instanceof DataSet) {
+                DataSet dataSet = (DataSet) dataModel;
+                if (dataSet.existsMissingValue()) {
+                    hasMissingValues = true;
+                    break;
+                }
+            }
+        }
+
+        return hasMissingValues;
     }
 
     private List<Graph> runSearch(final Algorithm algorithm, final Parameters parameters, final List<DataModel> dataModels) {
