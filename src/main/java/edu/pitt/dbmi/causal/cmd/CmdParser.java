@@ -25,6 +25,7 @@ import edu.cmu.tetrad.algcomparison.utils.UsesScoreWrapper;
 import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.util.ParamDescription;
 import edu.cmu.tetrad.util.ParamDescriptions;
+import edu.cmu.tetrad.util.Params;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
@@ -277,7 +278,7 @@ public final class CmdParser {
 
         List<String> params = new LinkedList<>();
         try {
-            params.addAll(getAllParameters(AlgorithmFactory.create(algorithmClass, indTestClass, scoreClass)));
+            params.addAll(getAlgorithmRelatedParameters(AlgorithmFactory.create(algorithmClass, indTestClass, scoreClass)));
         } catch (IllegalAccessException | InstantiationException exception) {
             throw new CmdParserException(parseOptions, exception);
         }
@@ -306,13 +307,13 @@ public final class CmdParser {
     }
 
     /**
-     * Get the parameters for the algorithm, the algorithm's test and the
-     * algorithm's score.
+     * Get the parameters for the algorithm, the algorithm's test, algorithm's
+     * score and bootstrap.
      *
      * @param algorithm to get parameters from
      * @return list of parameters for the algorithm, test and score
      */
-    private static List<String> getAllParameters(Algorithm algorithm) {
+    private static List<String> getAlgorithmRelatedParameters(Algorithm algorithm) {
         if (algorithm == null) {
             return Collections.EMPTY_LIST;
         }
@@ -331,6 +332,9 @@ public final class CmdParser {
         if (algorithm instanceof UsesScoreWrapper) {
             params.addAll(((UsesScoreWrapper) algorithm).getScoreWrapper().getParameters());
         }
+
+        // add the bootstrap parameters, if any
+        params.addAll(Params.getBootstrappingParameters(algorithm));
 
         return params;
     }
@@ -368,7 +372,7 @@ public final class CmdParser {
 
         List<String> params = new LinkedList<>();
         try {
-            params.addAll(getAllParameters(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass())));
+            params.addAll(getAlgorithmRelatedParameters(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass())));
         } catch (IllegalAccessException | InstantiationException exception) {
             throw new CmdParserException(parseOptions, exception);
         }

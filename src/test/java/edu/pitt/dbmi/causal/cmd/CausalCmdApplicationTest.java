@@ -236,7 +236,7 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--penaltyDiscount", "1.0",
-            "--structurePrior", "0.01",
+            "--semBicStructurePrior", "0.01",
             "--verbose",
             "--skip-latest",
             "--out", dirOut
