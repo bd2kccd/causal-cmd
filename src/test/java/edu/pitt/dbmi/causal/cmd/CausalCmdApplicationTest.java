@@ -46,7 +46,6 @@ public class CausalCmdApplicationTest {
             "--data-type", "discrete",
             "--algorithm", "rfci-bsc",
             "--verbose",
-            "--skip-latest",
             "--experimental",
             "--out", dirOut
         };
@@ -66,7 +65,6 @@ public class CausalCmdApplicationTest {
             "--score", "sem-bic-score",
             "--missing", "*",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -84,7 +82,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--choose-mag-in-pag",
             "--out", dirOut
         };
@@ -103,7 +100,6 @@ public class CausalCmdApplicationTest {
             "--algorithm", "multi-fask",
             "--test", "fisher-z-test",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -123,7 +119,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -141,7 +136,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -161,7 +155,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -180,7 +173,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -199,7 +191,6 @@ public class CausalCmdApplicationTest {
             "--test", "cg-lr-test",
             "--score", "cg-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -218,7 +209,6 @@ public class CausalCmdApplicationTest {
             "--score", "bdeu-score",
             "--faithfulnessAssumed",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -238,7 +228,6 @@ public class CausalCmdApplicationTest {
             "--penaltyDiscount", "1.0",
             "--semBicStructurePrior", "0.01",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);

@@ -50,7 +50,6 @@ public class CausalCmdApplicationMetadataTest {
             "--test", "cg-lr-test",
             "--score", "cg-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -70,7 +69,6 @@ public class CausalCmdApplicationMetadataTest {
             "--test", "g-square-test",
             "--score", "bdeu-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -90,7 +88,6 @@ public class CausalCmdApplicationMetadataTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);

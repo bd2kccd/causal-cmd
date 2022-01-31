@@ -19,7 +19,6 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.latest.LatestClient;
 import edu.pitt.dbmi.causal.cmd.data.DataValidations;
 import edu.pitt.dbmi.causal.cmd.tetrad.Tetrad;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
@@ -85,20 +84,6 @@ public class CausalCmdApplication {
 
             if (cmdArgs == null) {
                 System.exit(-1);
-            }
-
-            if (!cmdArgs.isSkipLatest()) {
-                try {
-                    LatestClient latestClient = LatestClient.getInstance();
-                    String version = Applications.jarVersion();
-                    if (version == null) {
-                        version = "DEVELOPMENT";
-                    }
-                    latestClient.checkLatest("causal-cmd", version);
-                    System.out.println(latestClient.getLatestResult());
-                } catch (Exception exception) {
-                    LOGGER.error("Unable to check for the latest version.", exception);
-                }
             }
 
             try {

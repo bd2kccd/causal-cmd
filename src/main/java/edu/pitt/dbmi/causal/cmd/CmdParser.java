@@ -103,7 +103,6 @@ public final class CmdParser {
                 : null;
         cmdArgs.filePrefix = getValidPrefix(cmd, cmdArgs, parseOptions);
         cmdArgs.jsonGraph = cmd.hasOption(CmdParams.JSON_GRAPH);
-        cmdArgs.skipLatest = cmd.hasOption(CmdParams.SKIP_LATEST);
         cmdArgs.skipValidation = cmd.hasOption(CmdParams.SKIP_VALIDATION);
         cmdArgs.hasHeader = !cmd.hasOption(CmdParams.NO_HEADER);
         cmdArgs.numOfThreads = cmd.hasOption(CmdParams.THREAD)
