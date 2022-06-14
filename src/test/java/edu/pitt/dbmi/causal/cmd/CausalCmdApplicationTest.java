@@ -234,4 +234,21 @@ public class CausalCmdApplicationTest {
         CausalCmdApplication.main(args);
     }
 
+    @Test
+    public void testGRaSPWithContinuousData() throws IOException {
+        String dataset = TestFiles.CONTINUOUS_DATA;
+        String dirOut = TestFiles.createSubDir(tempDir, "grasp_cont").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "grasp",
+            "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
+            "--verbose",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
 }
