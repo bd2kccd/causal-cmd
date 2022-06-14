@@ -20,6 +20,8 @@ package edu.pitt.dbmi.causal.cmd.data;
 
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataType;
+import edu.cmu.tetrad.data.DataUtils;
+import edu.cmu.tetrad.data.DelimiterType;
 import edu.cmu.tetrad.data.IKnowledge;
 import edu.cmu.tetrad.util.DataConvertUtils;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
@@ -82,7 +84,7 @@ public final class DataFiles {
             return null;
         } else {
             LogMessages.readingFileStart(file, LOGGER, out);
-            IKnowledge knowledge = (new edu.cmu.tetrad.data.DataReader()).parseKnowledge(file.toFile());
+            IKnowledge knowledge = DataUtils.loadKnowledge(file.toFile(), DelimiterType.WHITESPACE, "//");
             LogMessages.readingFileEnd(file, LOGGER, out);
 
             return knowledge;

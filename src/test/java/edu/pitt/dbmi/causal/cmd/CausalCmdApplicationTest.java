@@ -89,16 +89,17 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testMultiFaskWithMultipleContinuousData() throws IOException {
+    public void testFaskVoteWithMultipleContinuousData() throws IOException {
         String dataset1 = TestFiles.CONTINUOUS_DATA_20K_PART1;
         String dataset2 = TestFiles.CONTINUOUS_DATA_20K_PART2;
-        String dirOut = TestFiles.createSubDir(tempDir, "multi-fask_cont").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "fask-vote_cont").toString();
         String[] args = {
             "--dataset", dataset1 + "," + dataset2,
             "--delimiter", "tab",
             "--data-type", "continuous",
-            "--algorithm", "multi-fask",
+            "--algorithm", "fask-vote",
             "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
             "--verbose",
             "--out", dirOut
         };
