@@ -71,6 +71,18 @@ public class CausalCmdApplication {
             }
         } else if (Args.hasLongParam(args, CmdParams.HELP_ALL)) {
             Applications.showHelp(CmdOptions.getInstance().getOptions(), null);
+        } else if (Args.hasLongParam(args, CmdParams.HELP_ALGO_DESC)
+                || Args.hasLongParam(args, CmdParams.HELP_SCORE_DESC)
+                || Args.hasLongParam(args, CmdParams.HELP_TEST_DESC)) {
+            if (Args.hasLongParam(args, CmdParams.HELP_ALGO_DESC)) {
+                Applications.showAlgorithmsAndDescriptions();
+            }
+            if (Args.hasLongParam(args, CmdParams.HELP_SCORE_DESC)) {
+                Applications.showScoresAndDescriptions();
+            }
+            if (Args.hasLongParam(args, CmdParams.HELP_TEST_DESC)) {
+                Applications.showTestsAndDescriptions();
+            }
         } else if (Args.hasLongParam(args, CmdParams.VERSION)) {
             System.out.println(Applications.getVersion());
         } else {
@@ -106,7 +118,7 @@ public class CausalCmdApplication {
             Files.deleteIfExists(outTxtFile);
         }
 
-        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
+        try ( PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
             writeOutParameters(cmdArgs, out);
 
             if (!cmdArgs.isSkipValidation()) {
