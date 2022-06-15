@@ -118,7 +118,7 @@ public class CausalCmdApplication {
             Files.deleteIfExists(outTxtFile);
         }
 
-        try ( PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
+        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
             writeOutParameters(cmdArgs, out);
 
             if (!cmdArgs.isSkipValidation()) {
@@ -174,7 +174,7 @@ public class CausalCmdApplication {
         out.println("--------------------------------------------------------------------------------");
         out.printf("number of threads: %s%n", cmdArgs.getNumOfThreads());
 
-        String files = cmdArgs.getDatasetFiles().stream()
+        String dataFiles = cmdArgs.getDatasetFiles().stream()
                 .map(e -> e.getFileName().toString())
                 .collect(Collectors.joining(","));
         Delimiter delimiter = cmdArgs.getDelimiter();
@@ -185,12 +185,19 @@ public class CausalCmdApplication {
         out.println();
         out.println("Dataset");
         out.println("--------------------------------------------------------------------------------");
-        out.printf("file: %s%n", files);
+        out.printf("file: %s%n", dataFiles);
         out.printf("header: %s%n", hasHeader ? "yes" : "no");
         out.printf("delimiter: %s%n", delimiter.name().toLowerCase());
         out.printf("quote char: %s%n", (quoteChar <= 0) ? "none" : String.valueOf(quoteChar));
         out.printf("missing marker: %s%n", (missing == null || missing.isEmpty()) ? "none" : missing);
         out.printf("comment marker: %s%n", (comment == null || comment.isEmpty()) ? "none" : comment);
+
+        if (cmdArgs.getKnowledgeFile() != null) {
+            out.println();
+            out.println("Knowledge");
+            out.println("--------------------------------------------------------------------------------");
+            out.printf("file: %s%n", cmdArgs.getKnowledgeFile().getFileName().toString());
+        }
 
         out.println();
         out.println("Algorithm Run");
