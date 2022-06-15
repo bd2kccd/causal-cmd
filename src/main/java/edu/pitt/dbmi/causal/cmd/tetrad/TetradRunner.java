@@ -32,7 +32,7 @@ import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.graph.Node;
 import edu.cmu.tetrad.graph.NodeType;
-import edu.cmu.tetrad.search.DagToPag2;
+import edu.cmu.tetrad.search.DagToPag;
 import edu.cmu.tetrad.search.SearchGraphUtils;
 import edu.cmu.tetrad.search.TsDagToPag;
 import edu.cmu.tetrad.util.Parameters;
@@ -211,7 +211,7 @@ public class TetradRunner {
 
         if (cmdArgs.isGeneratePatternFromDag()) {
             try {
-                graph = SearchGraphUtils.patternFromDag(graph);
+                graph = SearchGraphUtils.cpdagFromDag(graph);
             } catch (Exception exception) {
                 LOGGER.error("Unable to generate pattern graph from DAG.", exception);
             }
@@ -226,7 +226,7 @@ public class TetradRunner {
                     throw new IllegalArgumentException("The source graph is not a DAG.");
                 }
 
-                DagToPag2 p = new DagToPag2(graph);
+                DagToPag p = new DagToPag(graph);
                 graph = p.convert();
 
             } catch (Exception exception) {

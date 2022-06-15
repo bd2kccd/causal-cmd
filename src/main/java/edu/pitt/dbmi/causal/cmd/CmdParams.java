@@ -29,10 +29,12 @@ public final class CmdParams {
     // user guide
     public static final String HELP = "help";
     public static final String HELP_ALL = "help-all";
+    public static final String HELP_ALGO_DESC = "help-algo-desc";
+    public static final String HELP_SCORE_DESC = "help-score-desc";
+    public static final String HELP_TEST_DESC = "help-test-desc";
     public static final String VERSION = "version";
 
     public static final String SKIP_VALIDATION = "skip-validation";
-    public static final String SKIP_LATEST = "skip-latest";
 
     // output
     public static final String FILE_PREFIX = "prefix";

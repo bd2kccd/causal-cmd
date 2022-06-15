@@ -46,7 +46,6 @@ public class CausalCmdApplicationTest {
             "--data-type", "discrete",
             "--algorithm", "rfci-bsc",
             "--verbose",
-            "--skip-latest",
             "--experimental",
             "--out", dirOut
         };
@@ -66,7 +65,6 @@ public class CausalCmdApplicationTest {
             "--score", "sem-bic-score",
             "--missing", "*",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -84,7 +82,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--choose-mag-in-pag",
             "--out", dirOut
         };
@@ -92,18 +89,18 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testMultiFaskWithMultipleContinuousData() throws IOException {
+    public void testFaskVoteWithMultipleContinuousData() throws IOException {
         String dataset1 = TestFiles.CONTINUOUS_DATA_20K_PART1;
         String dataset2 = TestFiles.CONTINUOUS_DATA_20K_PART2;
-        String dirOut = TestFiles.createSubDir(tempDir, "multi-fask_cont").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "fask-vote_cont").toString();
         String[] args = {
             "--dataset", dataset1 + "," + dataset2,
             "--delimiter", "tab",
             "--data-type", "continuous",
-            "--algorithm", "multi-fask",
+            "--algorithm", "fask-vote",
             "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -123,7 +120,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -141,7 +137,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -161,7 +156,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -180,7 +174,6 @@ public class CausalCmdApplicationTest {
             "--test", "fisher-z-test",
             "--score", "sem-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -199,7 +192,6 @@ public class CausalCmdApplicationTest {
             "--test", "cg-lr-test",
             "--score", "cg-bic-score",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -218,7 +210,6 @@ public class CausalCmdApplicationTest {
             "--score", "bdeu-score",
             "--faithfulnessAssumed",
             "--verbose",
-            "--skip-latest",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
@@ -238,7 +229,23 @@ public class CausalCmdApplicationTest {
             "--penaltyDiscount", "1.0",
             "--semBicStructurePrior", "0.01",
             "--verbose",
-            "--skip-latest",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
+    public void testGRaSPWithContinuousData() throws IOException {
+        String dataset = TestFiles.CONTINUOUS_DATA;
+        String dirOut = TestFiles.createSubDir(tempDir, "grasp_cont").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "grasp",
+            "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
+            "--verbose",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);

@@ -83,6 +83,9 @@ public final class CmdOptions {
         List<Option> optList = getBaseOptions();
         optList.add(options.get(CmdParams.HELP));
         optList.add(options.get(CmdParams.HELP_ALL));
+        optList.add(options.get(CmdParams.HELP_ALGO_DESC));
+        optList.add(options.get(CmdParams.HELP_SCORE_DESC));
+        optList.add(options.get(CmdParams.HELP_TEST_DESC));
         optList.add(options.get(CmdParams.VERSION));
 
         return toOptions(optList);
@@ -122,8 +125,6 @@ public final class CmdOptions {
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
-        opts.add(options.get(CmdParams.SKIP_LATEST));
-
         opts.add(options.get(CmdParams.EXPERIMENTAL));
 
         return opts;
@@ -137,6 +138,9 @@ public final class CmdOptions {
 
         options.put(CmdParams.HELP, new Option(null, CmdParams.HELP, false, "Show help."));
         options.put(CmdParams.HELP_ALL, new Option(null, CmdParams.HELP_ALL, false, "Show all options and descriptions."));
+        options.put(CmdParams.HELP_ALGO_DESC, new Option(null, CmdParams.HELP_ALGO_DESC, false, "Show all the algorithms along with their descriptions."));
+        options.put(CmdParams.HELP_SCORE_DESC, new Option(null, CmdParams.HELP_SCORE_DESC, false, "Show all the scores along with their descriptions."));
+        options.put(CmdParams.HELP_TEST_DESC, new Option(null, CmdParams.HELP_TEST_DESC, false, "Show all the independence tests along with their descriptions."));
         options.put(CmdParams.VERSION, new Option(null, CmdParams.VERSION, false, "Show version."));
         options.put(CmdParams.FILE_PREFIX, Option.builder().longOpt(CmdParams.FILE_PREFIX).desc("Output file name prefix.").hasArg().argName("string").build());
         options.put(CmdParams.JSON_GRAPH, new Option(null, CmdParams.JSON_GRAPH, false, "Write out graph as json."));
@@ -147,7 +151,6 @@ public final class CmdOptions {
         options.put(CmdParams.METADATA, Option.builder().longOpt(CmdParams.METADATA).desc("Metadata file.  Cannot apply to dataset without header.").hasArg().argName("file").build());
 
         options.put(CmdParams.SKIP_VALIDATION, new Option(null, CmdParams.SKIP_VALIDATION, false, "Skip validation."));
-        options.put(CmdParams.SKIP_LATEST, new Option(null, CmdParams.SKIP_LATEST, false, "Skip checking for latest software version."));
 
         options.put(CmdParams.THREAD, Option.builder().longOpt(CmdParams.THREAD).desc("Number threads.").hasArg().argName("string").build());
 

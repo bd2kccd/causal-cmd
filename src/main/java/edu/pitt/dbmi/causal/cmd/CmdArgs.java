@@ -56,7 +56,6 @@ public class CmdArgs {
 
     protected boolean skipValidation;
     protected boolean jsonGraph;
-    protected boolean skipLatest;
 
     protected int numOfThreads;
 
@@ -149,10 +148,6 @@ public class CmdArgs {
 
     public boolean isJsonGraph() {
         return jsonGraph;
-    }
-
-    public boolean isSkipLatest() {
-        return skipLatest;
     }
 
     public int getNumOfThreads() {

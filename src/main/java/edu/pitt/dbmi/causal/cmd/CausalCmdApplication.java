@@ -19,7 +19,6 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.latest.LatestClient;
 import edu.pitt.dbmi.causal.cmd.data.DataValidations;
 import edu.pitt.dbmi.causal.cmd.tetrad.Tetrad;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
@@ -72,6 +71,18 @@ public class CausalCmdApplication {
             }
         } else if (Args.hasLongParam(args, CmdParams.HELP_ALL)) {
             Applications.showHelp(CmdOptions.getInstance().getOptions(), null);
+        } else if (Args.hasLongParam(args, CmdParams.HELP_ALGO_DESC)
+                || Args.hasLongParam(args, CmdParams.HELP_SCORE_DESC)
+                || Args.hasLongParam(args, CmdParams.HELP_TEST_DESC)) {
+            if (Args.hasLongParam(args, CmdParams.HELP_ALGO_DESC)) {
+                Applications.showAlgorithmsAndDescriptions();
+            }
+            if (Args.hasLongParam(args, CmdParams.HELP_SCORE_DESC)) {
+                Applications.showScoresAndDescriptions();
+            }
+            if (Args.hasLongParam(args, CmdParams.HELP_TEST_DESC)) {
+                Applications.showTestsAndDescriptions();
+            }
         } else if (Args.hasLongParam(args, CmdParams.VERSION)) {
             System.out.println(Applications.getVersion());
         } else {
@@ -85,20 +96,6 @@ public class CausalCmdApplication {
 
             if (cmdArgs == null) {
                 System.exit(-1);
-            }
-
-            if (!cmdArgs.isSkipLatest()) {
-                try {
-                    LatestClient latestClient = LatestClient.getInstance();
-                    String version = Applications.jarVersion();
-                    if (version == null) {
-                        version = "DEVELOPMENT";
-                    }
-                    latestClient.checkLatest("causal-cmd", version);
-                    System.out.println(latestClient.getLatestResult());
-                } catch (Exception exception) {
-                    LOGGER.error("Unable to check for the latest version.", exception);
-                }
             }
 
             try {
@@ -121,7 +118,7 @@ public class CausalCmdApplication {
             Files.deleteIfExists(outTxtFile);
         }
 
-        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
+        try ( PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
             writeOutParameters(cmdArgs, out);
 
             if (!cmdArgs.isSkipValidation()) {
