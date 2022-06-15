@@ -18,6 +18,12 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
+import edu.cmu.tetrad.util.AlgorithmDescriptions;
+import edu.cmu.tetrad.util.IndependenceTestDescriptions;
+import edu.cmu.tetrad.util.ScoreDescriptions;
+import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
+import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
+import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -80,6 +86,51 @@ public final class Applications {
         } else {
             formatter.printHelp(cmdLineSyntax, null, helpOpts, footer, true);
         }
+    }
+
+    public static void showTestsAndDescriptions() {
+        System.out.println("================================================================================");
+        System.out.println("Independence Tests");
+        System.out.println("================================================================================");
+        IndependenceTestDescriptions desc = IndependenceTestDescriptions.getInstance();
+        TetradIndependenceTests.getInstance().getCommands()
+                .forEach(e -> {
+                    System.out.println(e);
+                    System.out.println("--------------------------------------------------------------------------------");
+                    System.out.println(desc.get(e));
+                    System.out.println();
+                    System.out.println();
+                });
+    }
+
+    public static void showScoresAndDescriptions() {
+        System.out.println("================================================================================");
+        System.out.println("Scores");
+        System.out.println("================================================================================");
+        ScoreDescriptions desc = ScoreDescriptions.getInstance();
+        TetradScores.getInstance().getCommands()
+                .forEach(e -> {
+                    System.out.println(e);
+                    System.out.println("--------------------------------------------------------------------------------");
+                    System.out.println(desc.get(e));
+                    System.out.println();
+                    System.out.println();
+                });
+    }
+
+    public static void showAlgorithmsAndDescriptions() {
+        System.out.println("================================================================================");
+        System.out.println("Algorithms");
+        System.out.println("================================================================================");
+        AlgorithmDescriptions desc = AlgorithmDescriptions.getInstance();
+        TetradAlgorithms.getInstance().getCommands()
+                .forEach(e -> {
+                    System.out.println(e);
+                    System.out.println("--------------------------------------------------------------------------------");
+                    System.out.println(desc.get(e));
+                    System.out.println();
+                    System.out.println();
+                });
     }
 
     public static void showHelp(Options options) {
