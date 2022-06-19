@@ -47,6 +47,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
+ * The class {@code CmdParser} is a utility class for parsing and extractiong
+ * command-line options.
  *
  * Sep 15, 2017 11:34:22 AM
  *
@@ -73,6 +75,14 @@ public final class CmdParser {
         return cmdArgs;
     }
 
+    /**
+     * Parse command-line options.
+     *
+     * @param cmd
+     * @param parseOptions
+     * @param cmdArgs
+     * @throws CmdParserException
+     */
     private static void parseOptionalOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
         cmdArgs.knowledgeFile = cmd.hasOption(CmdParams.KNOWLEDGE)
                 ? getValidFile(cmd.getOptionValue(CmdParams.KNOWLEDGE), parseOptions, CmdParams.KNOWLEDGE)
@@ -126,6 +136,14 @@ public final class CmdParser {
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
 
+    /**
+     * Parse the required command-line options.
+     *
+     * @param cmd
+     * @param parseOptions
+     * @param cmdArgs
+     * @throws CmdParserException
+     */
     private static void parseRequiredOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
         cmdArgs.dataType = DataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
         cmdArgs.delimiter = Delimiters.getInstance().get(cmd.getOptionValue(CmdParams.DELIMITER));
@@ -151,6 +169,13 @@ public final class CmdParser {
         }
     }
 
+    /**
+     * Get the options for the help message.
+     *
+     * @param args
+     * @return
+     * @throws CmdParserException
+     */
     public static ParseOptions getHelpOptions(String[] args) throws CmdParserException {
         CmdOptions cmdOptions = CmdOptions.getInstance();
 
@@ -338,6 +363,11 @@ public final class CmdParser {
         return params;
     }
 
+    /**
+     * Add options for manipulating Tetrad output graph.
+     *
+     * @param opts
+     */
     private static void addGraphManipulationOptions(Options opts) {
         opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.CHOOSE_DAG_IN_PATTERN));
         opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.CHOOSE_MAG_IN_PAG));
@@ -466,6 +496,16 @@ public final class CmdParser {
         return parameters;
     }
 
+    /**
+     * Extract the thread number from the command-line option and check to make
+     * sure the number is valid.
+     *
+     * @param value
+     * @param parseOptions
+     * @param cmdParam
+     * @return
+     * @throws CmdParserException
+     */
     private static int getValidThreadNumber(String value, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
         int numOfThreads = 0;
 
@@ -489,6 +529,16 @@ public final class CmdParser {
         return numOfThreads;
     }
 
+    /**
+     * Extract the delimiter charactor from the command-line option and make
+     * sure the character is valid.
+     *
+     * @param quoteChar
+     * @param parseOptions
+     * @param cmdParam
+     * @return
+     * @throws CmdParserException
+     */
     private static char getValidChar(String quoteChar, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
         char c = 0;
 
@@ -506,6 +556,16 @@ public final class CmdParser {
         return c;
     }
 
+    /**
+     * Extract the file location from the command-line option and make sure the
+     * file is valid.
+     *
+     * @param filePath
+     * @param parseOptions
+     * @param cmdParam
+     * @return
+     * @throws CmdParserException
+     */
     private static Path getValidFile(String filePath, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
         Path file = Paths.get(filePath);
 

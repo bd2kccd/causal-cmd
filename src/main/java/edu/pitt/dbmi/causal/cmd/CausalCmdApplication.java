@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The class {@code CausalCmdApplication} is the main application .
  *
  * Mar 8, 2017 6:11:17 PM
  *
@@ -55,7 +56,9 @@ public class CausalCmdApplication {
     public static boolean showExperimental;
 
     /**
-     * @param args the command line arguments
+     * Main executable method.
+     *
+     * @param args command-line arguments
      */
     public static void main(String[] args) {
         args = Args.clean(args);
@@ -108,6 +111,14 @@ public class CausalCmdApplication {
         }
     }
 
+    /**
+     * Run Tetrad algorithm.
+     *
+     * @param cmdArgs command-line parameters and argument values.
+     * @throws AlgorithmRunException whenever algorithm fails to run
+     * @throws ValidationException whenever data validation fails
+     * @throws IOException whenever unable to read or write file
+     */
     private static void runTetrad(CmdArgs cmdArgs) throws AlgorithmRunException, ValidationException, IOException {
         String outDir = cmdArgs.getOutDirectory().toString();
         String prefix = cmdArgs.getFilePrefix();
@@ -118,7 +129,7 @@ public class CausalCmdApplication {
             Files.deleteIfExists(outTxtFile);
         }
 
-        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
+        try ( PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
             writeOutParameters(cmdArgs, out);
 
             if (!cmdArgs.isSkipValidation()) {
@@ -156,6 +167,12 @@ public class CausalCmdApplication {
         }
     }
 
+    /**
+     * Write out the command-line parameters and arguments to output stream.
+     *
+     * @param cmdArgs command-line parameters and arguments
+     * @param out output stream writer
+     */
     private static void writeOutParameters(CmdArgs cmdArgs, PrintStream out) {
         Class algoClass = cmdArgs.getAlgorithmClass();
         Class indTestClass = cmdArgs.getTestClass();

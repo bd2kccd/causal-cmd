@@ -19,6 +19,8 @@
 package edu.pitt.dbmi.causal.cmd;
 
 /**
+ * The class {@code AlgorithmRunException} occurs when an algorithm that is
+ * attempted to run or was running failed.
  *
  * Oct 2, 2017 10:45:47 AM
  *

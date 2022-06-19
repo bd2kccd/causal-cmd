@@ -19,6 +19,7 @@
 package edu.pitt.dbmi.causal.cmd;
 
 /**
+ * The class {@code CmdParams} contains all the command-line parameter names.
  *
  * Sep 7, 2017 4:52:54 PM
  *

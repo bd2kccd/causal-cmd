@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * The class {@code CmdArgs} holds values extracted from the command-line
+ * arguments.
  *
  * Sep 24, 2017 10:10:21 PM
  *

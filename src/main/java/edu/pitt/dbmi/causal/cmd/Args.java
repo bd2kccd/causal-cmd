@@ -30,6 +30,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
+ * The class {@code Args} is a utility class for parsing, extracting, and
+ * manipulate command-line arguments .
  *
  * Mar 9, 2017 3:37:35 PM
  *
@@ -40,6 +42,13 @@ public final class Args {
     private Args() {
     }
 
+    /**
+     * Remove the given option from the command-line arguments.
+     *
+     * @param args command-line arguments
+     * @param option option to remove
+     * @return command-line arguments
+     */
     public static String[] removeLongOption(String[] args, String option) {
         CmdOptions cmdOptions = CmdOptions.getInstance();
         List<String> argsToKeep = new LinkedList<>();
@@ -63,9 +72,19 @@ public final class Args {
             }
         }
 
-        return argsToKeep.toArray(new String[argsToKeep.size()]);
+        return argsToKeep.toArray(String[]::new);
     }
 
+    /**
+     * Parse options from command-line arguments by its multi-character name
+     * into argsMap.
+     *
+     * @param args command-line arguments
+     * @param options multi-character name options.
+     * @param argsMap holds options by name
+     * @throws ParseException whenever error occurs during parsing of a
+     * command-line.
+     */
     public static void parseLongOptions(String[] args, Options options, Map<String, String> argsMap) throws ParseException {
         CommandLine cmd = (new DefaultParser()).parse(options, args);
         options.getOptions().forEach(option -> {
@@ -76,6 +95,16 @@ public final class Args {
         });
     }
 
+    /**
+     * Parse options from command-line arguments by its single-character name
+     * into argsMap.
+     *
+     * @param args command-line arguments
+     * @param options single-character name options.
+     * @param argsMap holds options by name
+     * @throws ParseException whenever error occurs during parsing of a
+     * command-line.
+     */
     public static void parse(String[] args, Options options, Map<String, String> argsMap) throws ParseException {
         CommandLine cmd = (new DefaultParser()).parse(options, args);
         options.getOptions().forEach(option -> {
@@ -91,6 +120,13 @@ public final class Args {
         });
     }
 
+    /**
+     * Extract multi-character name options from command-line arguments.
+     *
+     * @param args command-line arguments
+     * @param options multi-character name options.
+     * @return extracted command-line arguments
+     */
     public static String[] extractLongOptions(String[] args, Options options) {
         List<String> argsList = new LinkedList<>();
 
@@ -107,9 +143,17 @@ public final class Args {
             }
         });
 
-        return argsList.toArray(new String[argsList.size()]);
+        return argsList.toArray(String[]::new);
     }
 
+    /**
+     * Extract both multi-character name and single-character name options from
+     * command-line arguments.
+     *
+     * @param args command-line arguments
+     * @param options multi-character name and single-character name options.
+     * @return command-line arguments
+     */
     public static String[] extractOptions(String[] args, Options options) {
         List<String> argsList = new LinkedList<>();
 
@@ -135,15 +179,15 @@ public final class Args {
             }
         });
 
-        return argsList.toArray(new String[argsList.size()]);
+        return argsList.toArray(String[]::new);
     }
 
     /**
-     * Parse the long parameters from the command inputs to map where the
-     * parameters are map keys and parameter values are map values.
+     * Extract multi-character name options into a parameter-argument
+     * collection.
      *
-     * @param args
-     * @return
+     * @param args command-line arguments
+     * @return parameter-argument collection
      */
     public static Map<String, String> toMapLongOptions(String[] args) {
         Map<String, String> map = new HashMap<>();
@@ -171,11 +215,11 @@ public final class Args {
     }
 
     /**
-     * Parse the command inputs to map where the parameters are map keys and
-     * parameter values are map values.
+     * Extract multi-character name and and single-character name options into a
+     * parameter-argument collection.
      *
-     * @param args
-     * @return
+     * @param args command-line arguments
+     * @return parameter-argument collection
      */
     public static Map<String, String> toMapOptions(String[] args) {
         Map<String, String> map = new HashMap<>();
@@ -204,6 +248,13 @@ public final class Args {
         return map;
     }
 
+    /**
+     * Check if the given option is in the command-line arguments.
+     *
+     * @param args command-line arguments
+     * @param option option to check for
+     * @return true if the given option is found in the command-line arguments
+     */
     public static boolean hasLongParam(String[] args, String option) {
         if (isEmpty(args)) {
             return false;
@@ -215,10 +266,23 @@ public final class Args {
                 .anyMatch(option::equals);
     }
 
+    /**
+     * Test if the command-line arguments has any parameters or arguments.
+     *
+     * @param args command-line arguments
+     * @return true if the command-line arguments has not parameters or
+     * arguments
+     */
     public static boolean isEmpty(String[] args) {
         return (args == null || args.length == 0);
     }
 
+    /**
+     * Remove extract spaces in the parameter names and arguments.
+     *
+     * @param args command-line arguments
+     * @return command-line arguments
+     */
     public static String[] clean(String[] args) {
         return (args == null)
                 ? new String[0]

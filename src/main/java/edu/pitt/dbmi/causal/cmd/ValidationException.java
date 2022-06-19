@@ -19,6 +19,7 @@
 package edu.pitt.dbmi.causal.cmd;
 
 /**
+ * The class {@code ValidationException} occurs when data validation fails.
  *
  * Sep 27, 2017 12:15:27 PM
  *

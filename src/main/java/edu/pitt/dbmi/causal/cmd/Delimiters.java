@@ -26,6 +26,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
+ * The class {@code Delimiters} contains the data delimiters supported by
+ * Tetrad.
  *
  * Jan 8, 2019 11:29:32 AM
  *
