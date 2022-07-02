@@ -170,6 +170,8 @@ public final class CmdOptions {
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
         opts.add(options.get(CmdParams.EXPERIMENTAL));
+        
+        opts.add(options.get(CmdParams.DEFAULT));
 
         return opts;
     }
@@ -217,6 +219,8 @@ public final class CmdOptions {
         options.put(CmdParams.EXTRACT_STRUCT_MODEL, new Option(null, CmdParams.EXTRACT_STRUCT_MODEL, false, "Extract sturct model."));
 
         options.put(CmdParams.EXPERIMENTAL, new Option(null, CmdParams.EXPERIMENTAL, false, "Show experimental algorithms, tests, and scores."));
+
+        options.put(CmdParams.DEFAULT, new Option(null, CmdParams.DEFAULT, false, "Use Tetrad default parameter values."));
 
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();

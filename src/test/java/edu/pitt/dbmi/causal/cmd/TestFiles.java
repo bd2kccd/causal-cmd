@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -84,6 +86,17 @@ final class TestFiles {
 
     public static Path createSubDir(Path dir, String name) throws IOException {
         return Files.createDirectory(Paths.get(dir.toString(), name));
+    }
+
+    public static List<String> readFileLineByLine(Path file) {
+        List<String> allLines = new LinkedList<>();
+
+        try {
+            allLines.addAll(Files.readAllLines(file));
+        } catch (IOException exception) {
+        }
+
+        return allLines;
     }
 
 }

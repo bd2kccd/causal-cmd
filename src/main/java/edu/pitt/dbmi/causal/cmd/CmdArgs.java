@@ -74,6 +74,8 @@ public class CmdArgs {
     protected boolean extractStructModel;
 
     protected boolean experimental;
+    
+    protected boolean defaultParamValues;
 
     protected Map<String, String> parameters;
 
@@ -198,6 +200,10 @@ public class CmdArgs {
 
     public boolean isExperimental() {
         return experimental;
+    }
+
+    public boolean isDefaultParamValues() {
+        return defaultParamValues;
     }
 
     public Map<String, String> getParameters() {

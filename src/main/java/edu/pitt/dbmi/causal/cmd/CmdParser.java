@@ -36,9 +36,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -132,6 +134,8 @@ public final class CmdParser {
         cmdArgs.extractStructModel = cmd.hasOption(CmdParams.EXTRACT_STRUCT_MODEL);
 
         cmdArgs.experimental = cmd.hasOption(CmdParams.EXPERIMENTAL);
+
+        cmdArgs.defaultParamValues = cmd.hasOption(CmdParams.DEFAULT);
 
         cmdArgs.parameters = getValidParameters(cmd, cmdArgs, parseOptions);
     }
@@ -300,7 +304,7 @@ public final class CmdParser {
             scoreClass = TetradScores.getInstance().getClass(scoreCmd);
         }
 
-        List<String> params = new LinkedList<>();
+        Set<String> params = new HashSet<>();
         try {
             params.addAll(getAlgorithmRelatedParameters(AlgorithmFactory.create(algorithmClass, indTestClass, scoreClass)));
         } catch (IllegalAccessException | InstantiationException exception) {
@@ -334,15 +338,15 @@ public final class CmdParser {
      * Get the parameters for the algorithm, the algorithm's test, algorithm's
      * score and bootstrap.
      *
-     * @param algorithm to get parameters from
-     * @return list of parameters for the algorithm, test and score
+     * @param algorithm
+     * @return
      */
-    private static List<String> getAlgorithmRelatedParameters(Algorithm algorithm) {
+    private static Set<String> getAlgorithmRelatedParameters(Algorithm algorithm) {
         if (algorithm == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.EMPTY_SET;
         }
 
-        List<String> params = new LinkedList<>();
+        Set<String> params = new HashSet<>();
 
         // add algorithm parameters
         params.addAll(algorithm.getParameters());
@@ -396,27 +400,52 @@ public final class CmdParser {
         return fields[fields.length - 1];
     }
 
-    private static Map<String, String> getValidParameters(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
-        Map<String, String> parameters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
-        List<String> params = new LinkedList<>();
+    /**
+     * Get all the parameters related to the selected algorithm, test, and
+     * score.
+     *
+     * @param cmdArgs
+     * @param parseOptions
+     * @return
+     * @throws CmdParserException
+     */
+    private static Set<String> getAllRelatedParameters(CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
         try {
-            params.addAll(getAlgorithmRelatedParameters(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass())));
+            return getAlgorithmRelatedParameters(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass()));
         } catch (IllegalAccessException | InstantiationException exception) {
             throw new CmdParserException(parseOptions, exception);
         }
+    }
 
-        // add --numCategories to validate with other tetrad parameters
-        if (cmd.hasOption(CmdParams.NUM_CATEGORIES)) {
-            params.add(CmdParams.NUM_CATEGORIES);
-        }
+    /**
+     * Get all the parameters for algorithm, test, and score. Use default values
+     * for the parameters if user use the "--default" flag. Replace any value if
+     * user explicitly specified with parameter-arg input or flag.
+     *
+     * @param cmd
+     * @param cmdArgs
+     * @param parseOptions
+     * @return
+     * @throws CmdParserException
+     */
+    private static Map<String, String> getValidParameters(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
+        Map<String, String> parametersWithValues = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
+        Set<String> parameters = getAllRelatedParameters(cmdArgs, parseOptions);
+
+        setParametersAndValues(parametersWithValues, parameters, cmdArgs.defaultParamValues);
+        setUserParameterValues(parametersWithValues, parameters, cmd, parseOptions);
+
+        return parametersWithValues;
+    }
+
+    private static void setUserParameterValues(Map<String, String> parametersWithValues, Set<String> parameters, CommandLine cmd, ParseOptions parseOptions) throws CmdParserException {
+        ParamDescriptions paramDescriptions = ParamDescriptions.getInstance();
         Options opts = parseOptions.getOptions();
         Options invalidOpts = parseOptions.getInvalidValueOptions();
-        ParamDescriptions paramDescs = ParamDescriptions.getInstance();
-        for (String param : params) {
-            ParamDescription paramDesc = paramDescs.get(param);
+        for (String param : parameters) {
             if (cmd.hasOption(param)) {
+                ParamDescription paramDesc = paramDescriptions.get(param);
                 String value = cmd.getOptionValue(param);
                 Option opt = opts.getOption(param);
                 Object type = opt.getType();
@@ -471,29 +500,31 @@ public final class CmdParser {
                         value = "true";
                     }
                 }
-                parameters.put(param, value);
-            } else {
-                Serializable defaultValue = paramDesc.getDefaultValue();
-                String value = (defaultValue instanceof Boolean)
-                        ? Boolean.FALSE.toString()
-                        : defaultValue.toString();
-                parameters.put(param, value);
-            }
-        };
-
-        // remove --numCategories parameter after validation
-        if (parameters.containsKey(CmdParams.NUM_CATEGORIES)) {
-            String value = parameters.remove(CmdParams.NUM_CATEGORIES);
-            try {
-                cmdArgs.numCategories = Integer.parseInt(value);
-            } catch (NumberFormatException exception) {
-                invalidOpts.addOption(opts.getOption(CmdParams.NUM_CATEGORIES));
-                String errMsg = String.format("The value '%s' for parameter %s is not a integer.", value, CmdParams.NUM_CATEGORIES);
-                throw new CmdParserException(parseOptions, new NumberFormatException(errMsg));
+                parametersWithValues.put(param, value);
             }
         }
+    }
 
-        return parameters;
+    /**
+     * Add all the parameters with values.
+     *
+     * @param parametersWithValues holds parameters along with their values
+     * @param parameters parameters to add
+     * @param useDefaultValues true if default values should be used for boolean
+     * parameters. Else, the values for the boolean parameters are false.
+     */
+    private static void setParametersAndValues(Map<String, String> parametersWithValues, Set<String> parameters, boolean useDefaultValues) {
+        ParamDescriptions paramDescriptions = ParamDescriptions.getInstance();
+        for (String param : parameters) {
+            ParamDescription paramDesc = paramDescriptions.get(param);
+            Serializable defaultValue = paramDesc.getDefaultValue();
+            String value = useDefaultValues
+                    ? String.valueOf(defaultValue)
+                    : (defaultValue instanceof Boolean)
+                            ? Boolean.FALSE.toString()
+                            : String.valueOf(defaultValue);
+            parametersWithValues.put(param, value);
+        }
     }
 
     /**

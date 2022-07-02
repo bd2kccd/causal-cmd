@@ -20,7 +20,6 @@ package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.graph.Graph;
 import edu.pitt.dbmi.causal.cmd.data.DataValidations;
-import edu.pitt.dbmi.causal.cmd.tetrad.Tetrad;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradRunner;
@@ -129,7 +128,7 @@ public class CausalCmdApplication {
             Files.deleteIfExists(outTxtFile);
         }
 
-        try ( PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
+        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
             writeOutParameters(cmdArgs, out);
 
             if (!cmdArgs.isSkipValidation()) {
@@ -232,8 +231,8 @@ public class CausalCmdApplication {
         out.println();
         out.println("Algorithm Parameters");
         out.println("--------------------------------------------------------------------------------");
-        Tetrad.getParameterValues(cmdArgs)
-                .forEach((k, v) -> out.printf("%s: %s%n", k, WordUtil.toYesOrNo(v)));
+        cmdArgs.getParameters().forEach((k, v) -> out.printf("%s: %s%n", k, WordUtil.toYesOrNo(v)));
+
         out.println();
         out.println();
     }
