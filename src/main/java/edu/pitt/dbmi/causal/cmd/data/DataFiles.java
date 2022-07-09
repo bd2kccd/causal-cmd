@@ -53,6 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The class {@code DataFiles} is a utility class for reading various data
+ * files.
  *
  * Jan 14, 2019 11:25:47 AM
  *
@@ -60,11 +62,22 @@ import org.slf4j.LoggerFactory;
  */
 public final class DataFiles {
 
+    /**
+     * The logger for the class {@code DataFiles}.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(DataFiles.class);
 
     private DataFiles() {
     }
 
+    /**
+     * Read in metadata file.
+     *
+     * @param cmdArgs
+     * @param out
+     * @return
+     * @throws IOException
+     */
     public static Metadata readInMetadata(CmdArgs cmdArgs, PrintStream out) throws IOException {
         Path file = cmdArgs.getMetadataFile();
         if (file == null) {
@@ -78,6 +91,14 @@ public final class DataFiles {
         }
     }
 
+    /**
+     * Read in knowledge file.
+     *
+     * @param cmdArgs
+     * @param out
+     * @return
+     * @throws IOException
+     */
     public static IKnowledge readInKnowledge(CmdArgs cmdArgs, PrintStream out) throws IOException {
         Path file = cmdArgs.getKnowledgeFile();
         if (file == null) {
@@ -91,6 +112,15 @@ public final class DataFiles {
         }
     }
 
+    /**
+     * Read in datasets files.
+     *
+     * @param cmdArgs
+     * @param out
+     * @return
+     * @throws IOException
+     * @throws AlgorithmRunException
+     */
     public static List<DataModel> readInDatasets(CmdArgs cmdArgs, PrintStream out) throws IOException, AlgorithmRunException {
         DataType dataType = cmdArgs.getDataType();
         switch (dataType) {
@@ -106,6 +136,14 @@ public final class DataFiles {
         }
     }
 
+    /**
+     * Read in tabular dataset files.
+     *
+     * @param cmdArgs
+     * @param out
+     * @return
+     * @throws IOException
+     */
     private static List<DataModel> readInTabularData(CmdArgs cmdArgs, PrintStream out) throws IOException {
         List<DataModel> dataModels = new LinkedList<>();
 
@@ -163,6 +201,14 @@ public final class DataFiles {
         return dataModels;
     }
 
+    /**
+     * Read in covariances files.
+     *
+     * @param cmdArgs
+     * @param out
+     * @return
+     * @throws IOException
+     */
     private static List<DataModel> readInCovarianceFile(CmdArgs cmdArgs, PrintStream out) throws IOException {
         List<DataModel> dataModels = new LinkedList<>();
 
@@ -185,13 +231,21 @@ public final class DataFiles {
         return dataModels;
     }
 
+    /**
+     * Read in exclude-variable file.
+     *
+     * @param cmdArgs
+     * @param out
+     * @return
+     * @throws IOException
+     */
     public static Set<String> readInVariablesToExclude(CmdArgs cmdArgs, PrintStream out) throws IOException {
         Set<String> variablesToExclude = new HashSet<>();
 
         Path file = cmdArgs.getExcludeVariableFile();
         if (file != null) {
             LogMessages.readingFileStart(file, LOGGER, out);
-            try (Stream<String> stream = Files.lines(file)) {
+            try ( Stream<String> stream = Files.lines(file)) {
                 stream
                         .map(e -> e.trim())
                         .filter(e -> !e.isEmpty())

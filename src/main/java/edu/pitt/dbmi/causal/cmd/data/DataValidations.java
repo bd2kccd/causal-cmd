@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The class {@code DataValidations} is a utility class for validating data.
  *
  * Jan 9, 2019 2:17:36 PM
  *
@@ -57,6 +58,13 @@ public final class DataValidations {
     private DataValidations() {
     }
 
+    /**
+     * Validate tabular dataset and covariance data.
+     *
+     * @param cmdArgs
+     * @param out
+     * @throws ValidationException
+     */
     public static void validate(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
         DataType dataType = cmdArgs.getDataType();
         switch (dataType) {
@@ -74,6 +82,13 @@ public final class DataValidations {
         }
     }
 
+    /**
+     * Validate tabular dataset.
+     *
+     * @param cmdArgs
+     * @param out
+     * @throws ValidationException
+     */
     private static void validateTabularData(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
         try {
             Delimiter delimiter = cmdArgs.getDelimiter();
@@ -126,6 +141,13 @@ public final class DataValidations {
         }
     }
 
+    /**
+     * Validate covariance data.
+     *
+     * @param cmdArgs
+     * @param out
+     * @throws ValidationException
+     */
     private static void validateCovariance(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
         for (Path dataFile : cmdArgs.getDatasetFiles()) {
             Delimiter delimiter = cmdArgs.getDelimiter();

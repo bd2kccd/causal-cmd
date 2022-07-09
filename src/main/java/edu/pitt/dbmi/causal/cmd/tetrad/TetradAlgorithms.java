@@ -30,6 +30,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
+ * The class {@code TetradAlgorithms} is a utility class for handling Tetrad
+ * algorithms.
  *
  * Sep 21, 2017 5:46:44 PM
  *
@@ -42,6 +44,9 @@ public final class TetradAlgorithms {
     private final Map<String, AnnotatedClass<Algorithm>> algorithms = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final Map<String, AnnotatedClass<Algorithm>> nonExpAlgorithms = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
+    /**
+     * Private constructor.
+     */
     private TetradAlgorithms() {
         AlgorithmAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
             String key = e.getAnnotation().command();
@@ -52,10 +57,20 @@ public final class TetradAlgorithms {
         });
     }
 
+    /**
+     * Get the instance of this class.
+     *
+     * @return
+     */
     public static TetradAlgorithms getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Get a list of command-line options.
+     *
+     * @return
+     */
     public List<String> getCommands() {
         List<String> list = CausalCmdApplication.showExperimental
                 ? algorithms.keySet().stream().collect(Collectors.toList())
@@ -64,6 +79,12 @@ public final class TetradAlgorithms {
         return Collections.unmodifiableList(list);
     }
 
+    /**
+     * Determine if the giving command is a validate command-line option.
+     *
+     * @param command
+     * @return
+     */
     public boolean hasCommand(String command) {
         if (command == null || command.isEmpty()) {
             return false;
@@ -74,6 +95,12 @@ public final class TetradAlgorithms {
                 : nonExpAlgorithms.containsKey(command);
     }
 
+    /**
+     * Get the algorithm class from the command-line input.
+     *
+     * @param command
+     * @return
+     */
     public Class getAlgorithmClass(String command) {
         if (command == null || command.isEmpty()) {
             return null;
@@ -86,22 +113,52 @@ public final class TetradAlgorithms {
         return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }
 
+    /**
+     * Determine if the given algorithm class requires an independence test.
+     *
+     * @param clazz
+     * @return
+     */
     public boolean requireIndependenceTest(Class clazz) {
         return AlgorithmAnnotations.getInstance().requireIndependenceTest(clazz);
     }
 
+    /**
+     * Determine if the given algorithm class requires a score.
+     *
+     * @param clazz
+     * @return
+     */
     public boolean requireScore(Class clazz) {
         return AlgorithmAnnotations.getInstance().requireScore(clazz);
     }
 
+    /**
+     * Determine if the given algorithm class accepts multiple datasets.
+     *
+     * @param clazz
+     * @return
+     */
     public boolean acceptMultipleDataset(Class clazz) {
         return AlgorithmAnnotations.getInstance().acceptMultipleDataset(clazz);
     }
 
+    /**
+     * Determine if the given algorithm class accepts prior knowledge.
+     *
+     * @param clazz
+     * @return
+     */
     public boolean acceptKnowledge(Class clazz) {
         return AlgorithmAnnotations.getInstance().acceptKnowledge(clazz);
     }
 
+    /**
+     * Get the description for a given class.
+     *
+     * @param clazz
+     * @return
+     */
     public String getName(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(Algorithm.class))
                 ? ((Algorithm) clazz.getAnnotation(Algorithm.class)).name()

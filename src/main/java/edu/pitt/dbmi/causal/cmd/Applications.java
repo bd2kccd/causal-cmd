@@ -46,6 +46,9 @@ import org.apache.commons.cli.Options;
  */
 public final class Applications {
 
+    /**
+     * Use to convert {@link Date} into a date-time string.
+     */
     private static final DateFormat DF = new SimpleDateFormat("EEE, MMMM dd, yyyy hh:mm:ss a");
 
     private Applications() {

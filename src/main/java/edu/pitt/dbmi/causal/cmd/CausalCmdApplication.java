@@ -48,10 +48,19 @@ import org.slf4j.LoggerFactory;
  */
 public class CausalCmdApplication {
 
+    /**
+     * Logger for the class {@code CausalCmdApplication}.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(CausalCmdApplication.class);
 
+    /**
+     * Help message footer.
+     */
     public static final String FOOTER = "Use --help for guidance list of options.  Use --help-all to show all options.";
 
+    /**
+     * Indicate whether to show experimental algorithms, tests and scores.
+     */
     public static boolean showExperimental;
 
     /**
@@ -128,7 +137,7 @@ public class CausalCmdApplication {
             Files.deleteIfExists(outTxtFile);
         }
 
-        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
+        try ( PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
             writeOutParameters(cmdArgs, out);
 
             if (!cmdArgs.isSkipValidation()) {

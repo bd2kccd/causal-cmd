@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The class {@code Tetrad} is a utility class for getting Tetrad parameters.
  *
  * Jan 14, 2019 4:27:15 PM
  *
@@ -39,6 +40,12 @@ public final class Tetrad {
     private Tetrad() {
     }
 
+    /**
+     * Get Tetrad parameters from command-line input.
+     *
+     * @param cmdArgs
+     * @return
+     */
     public static Parameters getParameters(CmdArgs cmdArgs) {
         Parameters parameters = new Parameters();
 

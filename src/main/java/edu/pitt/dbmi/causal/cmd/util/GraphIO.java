@@ -28,6 +28,8 @@ import java.nio.file.Path;
 import java.util.Scanner;
 
 /**
+ * The class {@code FileUtils} is a utility class for converting and writing out
+ * graph object.
  *
  * Jan 15, 2019 2:58:45 PM
  *
@@ -38,18 +40,32 @@ public final class GraphIO {
     private GraphIO() {
     }
 
+    /**
+     * Write out graph object to a text file.
+     *
+     * @param graph
+     * @param path
+     * @throws IOException
+     */
     public static void writeAsTXT(Graph graph, Path path) throws IOException {
         Scanner scanner = new Scanner(graph.toString());
-        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+        try ( PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
             while (scanner.hasNextLine()) {
                 out.println(scanner.nextLine().trim());
             }
         }
     }
 
+    /**
+     * Write out graph object to a JSON file.
+     *
+     * @param graph
+     * @param path
+     * @throws IOException
+     */
     public static void writeAsJSON(Graph graph, Path path) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+        try ( PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
             out.println(gson.toJson(graph));
         }
     }

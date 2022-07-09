@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
+ * The class {@code FileUtils} is a utility class for file management.
  *
  * Sep 15, 2017 4:03:38 PM
  *
