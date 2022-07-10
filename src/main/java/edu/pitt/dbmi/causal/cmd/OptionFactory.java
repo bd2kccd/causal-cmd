@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.cli.Option;
 
 /**
+ * The class {@code OptionFactory} is a class that helps creating command-line
+ * options.
  *
  * Sep 15, 2017 1:45:16 PM
  *
@@ -36,6 +38,11 @@ public final class OptionFactory {
     private OptionFactory() {
     }
 
+    /**
+     * Create the required options for the help message.
+     *
+     * @return
+     */
     public static Option createRequiredHelpOpt() {
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.HELP);
 
@@ -48,6 +55,12 @@ public final class OptionFactory {
                 .build();
     }
 
+    /**
+     * Create the required indepedence test options.
+     *
+     * @param dataType
+     * @return
+     */
     public static Option createRequiredTestOpt(DataType dataType) {
         List<String> commands = TetradIndependenceTests.getInstance().getCommands(dataType);
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.TEST);
@@ -62,6 +75,12 @@ public final class OptionFactory {
                 .build();
     }
 
+    /**
+     * Create the required score options.
+     *
+     * @param dataType
+     * @return
+     */
     public static Option createRequiredScoreOpt(DataType dataType) {
         List<String> commands = TetradScores.getInstance().getCommands(dataType);
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.SCORE);
@@ -76,6 +95,11 @@ public final class OptionFactory {
                 .build();
     }
 
+    /**
+     * Create the required option for the number of category for mixed data.
+     *
+     * @return
+     */
     public static Option createRequiredNumCategoryOpt() {
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.NUM_CATEGORIES);
 

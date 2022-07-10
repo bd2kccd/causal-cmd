@@ -52,6 +52,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The class {@code TetradRunner} is a class for handling running Tetrad search
+ * algorithms.
  *
  * Oct 23, 2017 11:24:07 AM
  *
@@ -65,11 +67,23 @@ public class TetradRunner {
 
     private final List<Graph> graphs;
 
+    /**
+     * Constructor.
+     *
+     * @param cmdArgs command-line inputs
+     */
     public TetradRunner(CmdArgs cmdArgs) {
         this.cmdArgs = cmdArgs;
         this.graphs = new LinkedList<>();
     }
 
+    /**
+     * Run algorithm.
+     *
+     * @param out
+     * @throws AlgorithmRunException
+     * @throws IOException
+     */
     public void runAlgorithm(PrintStream out) throws AlgorithmRunException, IOException {
         final List<DataModel> dataModels = DataFiles.readInDatasets(cmdArgs, out);
         final Algorithm algorithm = getAlgorithm(cmdArgs);
@@ -134,6 +148,14 @@ public class TetradRunner {
         return hasMissingValues;
     }
 
+    /**
+     * Run search algorithm.
+     *
+     * @param algorithm
+     * @param parameters
+     * @param dataModels
+     * @return
+     */
     private List<Graph> runSearch(final Algorithm algorithm, final Parameters parameters, final List<DataModel> dataModels) {
         List<Graph> graphList = new LinkedList<>();
 
@@ -304,6 +326,13 @@ public class TetradRunner {
         return graph;
     }
 
+    /**
+     * Get algorithm instance from command-line input.
+     *
+     * @param cmdArgs
+     * @return
+     * @throws AlgorithmRunException
+     */
     private Algorithm getAlgorithm(CmdArgs cmdArgs) throws AlgorithmRunException {
         try {
             return AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass());

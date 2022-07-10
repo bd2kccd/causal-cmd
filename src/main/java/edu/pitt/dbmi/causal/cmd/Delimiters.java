@@ -26,6 +26,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
+ * The class {@code Delimiters} contains the data delimiters supported by the
+ * data reader.
  *
  * Jan 8, 2019 11:29:32 AM
  *
@@ -33,8 +35,15 @@ import java.util.stream.Collectors;
  */
 public final class Delimiters {
 
+    /**
+     * An instance of this class.
+     */
     private static final Delimiters INSTANCE = new Delimiters();
 
+    /**
+     * A data structure that holds different types of delimiters by delimiter
+     * name.
+     */
     private final Map<String, Delimiter> delimiters = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     private Delimiters() {

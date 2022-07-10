@@ -18,18 +18,16 @@
  */
 package edu.pitt.dbmi.causal.cmd.tetrad;
 
-import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
-import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.util.ParamDescription;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
 import java.util.Map;
-import java.util.TreeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The class {@code Tetrad} is a utility class for getting Tetrad parameters.
  *
  * Jan 14, 2019 4:27:15 PM
  *
@@ -42,6 +40,12 @@ public final class Tetrad {
     private Tetrad() {
     }
 
+    /**
+     * Get Tetrad parameters from command-line input.
+     *
+     * @param cmdArgs
+     * @return
+     */
     public static Parameters getParameters(CmdArgs cmdArgs) {
         Parameters parameters = new Parameters();
 
@@ -68,30 +72,6 @@ public final class Tetrad {
         });
 
         return parameters;
-    }
-
-    public static Map<String, String> getParameterValues(CmdArgs cmdArgs) {
-        Map<String, String> params = new TreeMap<>();
-
-        Class algoClass = cmdArgs.getAlgorithmClass();
-        Class indTestClass = cmdArgs.getTestClass();
-        Class scoreClass = cmdArgs.getScoreClass();
-
-        Algorithm algorithm;
-        try {
-            algorithm = AlgorithmFactory.create(algoClass, indTestClass, scoreClass);
-        } catch (IllegalAccessException | InstantiationException exception) {
-            algorithm = null;
-            LOGGER.error("Unable to construct algorithm object.", exception);
-        }
-
-        if (algorithm != null) {
-            ParamDescriptions paramDesc = ParamDescriptions.getInstance();
-            algorithm.getParameters().forEach(e -> params.put(e, String.valueOf(paramDesc.get(e).getDefaultValue())));
-        }
-        cmdArgs.getParameters().forEach((k, v) -> params.put(k, v));
-
-        return params;
     }
 
 }

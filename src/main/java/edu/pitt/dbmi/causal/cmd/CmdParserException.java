@@ -19,6 +19,8 @@
 package edu.pitt.dbmi.causal.cmd;
 
 /**
+ * The class {@code CmdParserException} occurs when it fails to parse
+ * command-line options.
  *
  * Sep 15, 2017 12:26:52 PM
  *

@@ -34,6 +34,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 /**
+ * The class {@code CmdOptions} is a class for storing command-line options.
  *
  * Aug 27, 2017 10:42:03 PM
  *
@@ -50,6 +51,11 @@ public final class CmdOptions {
         addOptionalOptions();
     }
 
+    /**
+     * Get an instance of the command-line options.
+     *
+     * @return
+     */
     public static CmdOptions getInstance() {
         if (instance == null) {
             instance = new CmdOptions();
@@ -58,18 +64,40 @@ public final class CmdOptions {
         return instance;
     }
 
+    /**
+     * Destroy the instance of the command-line options.
+     */
     public static void clear() {
         instance = null;
     }
 
+    /**
+     * Get multi-character name options for a given name..
+     *
+     * @param param multi-character name
+     * @return
+     */
     public Option getLongOption(String param) {
         return options.get(param);
     }
 
+    /**
+     * Test if the command-line options has an option with the given
+     * multi-character name.
+     *
+     * @param param multi-character name
+     * @return true if the command-line options contains the option with the
+     * given multi-character name.
+     */
     public boolean hasLongParam(String param) {
         return options.containsKey(param);
     }
 
+    /**
+     * Get all the stored command-line options.
+     *
+     * @return command-line options
+     */
     public Options getOptions() {
         Options opts = new Options();
         options.entrySet().forEach(e -> {
@@ -79,6 +107,11 @@ public final class CmdOptions {
         return opts;
     }
 
+    /**
+     * Get all the application main command-line options.
+     *
+     * @return command-line options
+     */
     public Options getMainOptions() {
         List<Option> optList = getBaseOptions();
         optList.add(options.get(CmdParams.HELP));
@@ -91,6 +124,12 @@ public final class CmdOptions {
         return toOptions(optList);
     }
 
+    /**
+     * Add a list of options to the {@code Options} object.
+     *
+     * @param optionList list of options
+     * @return the Options object containing the given list of options.
+     */
     public Options toOptions(List<Option> optionList) {
         Options opts = new Options();
 
@@ -101,6 +140,11 @@ public final class CmdOptions {
         return opts;
     }
 
+    /**
+     * Get all the application base command-line options.
+     *
+     * @return list of command-line options.
+     */
     public List<Option> getBaseOptions() {
         List<Option> opts = new LinkedList<>();
 
@@ -120,16 +164,21 @@ public final class CmdOptions {
         opts.add(options.get(CmdParams.JSON_GRAPH));
         opts.add(options.get(CmdParams.DIR_OUT));
 
-        opts.add(options.get(CmdParams.THREAD));
+//        opts.add(options.get(CmdParams.THREAD));
 
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
         opts.add(options.get(CmdParams.EXPERIMENTAL));
+        
+        opts.add(options.get(CmdParams.DEFAULT));
 
         return opts;
     }
 
+    /**
+     * Add application optional options to the stored options.
+     */
     private void addOptionalOptions() {
         options.put(CmdParams.QUOTE_CHAR, Option.builder().longOpt(CmdParams.QUOTE_CHAR).desc("Single character denotes quote.").hasArg().argName("character").build());
         options.put(CmdParams.MISSING_MARKER, Option.builder().longOpt(CmdParams.MISSING_MARKER).desc("Denotes missing value.").hasArg().argName("string").build());
@@ -171,6 +220,8 @@ public final class CmdOptions {
 
         options.put(CmdParams.EXPERIMENTAL, new Option(null, CmdParams.EXPERIMENTAL, false, "Show experimental algorithms, tests, and scores."));
 
+        options.put(CmdParams.DEFAULT, new Option(null, CmdParams.DEFAULT, false, "Use Tetrad default parameter values."));
+
         // tetrad parameters
         ParamDescriptions paramDescs = ParamDescriptions.getInstance();
         Set<String> params = paramDescs.getNames();
@@ -186,6 +237,9 @@ public final class CmdOptions {
         });
     }
 
+    /**
+     * Add application required options to the stored options.
+     */
     private void addRequiredOptions() {
         options.put(CmdParams.ALGORITHM, Option.builder().longOpt(CmdParams.ALGORITHM).desc(getAlgorithmDesc()).hasArg().argName("string").required().build());
         options.put(CmdParams.DATASET, Option.builder().longOpt(CmdParams.DATASET).desc("Dataset. Multiple files are seperated by commas.").hasArg().argName("files").required().build());
@@ -193,6 +247,11 @@ public final class CmdOptions {
         options.put(CmdParams.DATA_TYPE, Option.builder().longOpt(CmdParams.DATA_TYPE).desc(getDataTypeDesc()).hasArg().argName("string").required().build());
     }
 
+    /**
+     * Get the application required options from the stored options.
+     *
+     * @return
+     */
     public List<Option> getRequiredOptions() {
         return options.entrySet().stream()
                 .filter(e -> e.getValue().isRequired())
@@ -200,26 +259,51 @@ public final class CmdOptions {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get the names of all the datatypes.
+     *
+     * @return
+     */
     private String getDataTypeDesc() {
         return "Data type: " + DataTypes.getInstance().getNames().stream()
                 .collect(Collectors.joining(", "));
     }
 
+    /**
+     * Get the names of all the delimiters.
+     *
+     * @return
+     */
     private String getDelimiterDesc() {
         return "Delimiter: " + Delimiters.getInstance().getNames().stream()
                 .collect(Collectors.joining(", "));
     }
 
+    /**
+     * Get the names of all the scores.
+     *
+     * @return
+     */
     private String getScoreDesc() {
         return "Score: " + TetradScores.getInstance().getCommands().stream()
                 .collect(Collectors.joining(", "));
     }
 
+    /**
+     * Get the names of all the independence test.
+     *
+     * @return
+     */
     private String getIndependenceTestDesc() {
         return "Independence Test: " + TetradIndependenceTests.getInstance().getCommands().stream()
                 .collect(Collectors.joining(", "));
     }
 
+    /**
+     * Get the names of all the algorithms.
+     *
+     * @return
+     */
     private String getAlgorithmDesc() {
         return "Algorithm: " + TetradAlgorithms.getInstance().getCommands().stream()
                 .collect(Collectors.joining(", "));

@@ -30,6 +30,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 
 /**
+ * The class {@code LogMessages} is a utility class for writing out log
+ * messages.
  *
  * Jan 11, 2019 11:39:19 AM
  *
@@ -40,6 +42,14 @@ public final class LogMessages {
     private LogMessages() {
     }
 
+    /**
+     * Write out dataset information to log file.
+     *
+     * @param file
+     * @param dataModel
+     * @param logger
+     * @param out
+     */
     public static void dataInfo(Path file, DataModel dataModel, Logger logger, PrintStream out) {
         int row = 0;
         int col = 0;
@@ -58,18 +68,39 @@ public final class LogMessages {
         logMessage(msg, logger, out);
     }
 
+    /**
+     * Log the end time of reading file.
+     *
+     * @param file
+     * @param logger
+     * @param out
+     */
     public static void readingFileEnd(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
         String msg = String.format("Finished reading in file %s.", fileName);
         logMessage(msg, logger, out);
     }
 
+    /**
+     * Log the start time of reading file.
+     *
+     * @param file
+     * @param logger
+     * @param out
+     */
     public static void readingFileStart(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
         String msg = String.format("Start reading in file %s.", fileName);
         logMessage(msg, logger, out);
     }
 
+    /**
+     * Log data validation results.
+     *
+     * @param groupedResults
+     * @param logger
+     * @param out
+     */
     public static void dataValidationResults(Map<ValidationCode, List<ValidationResult>> groupedResults, Logger logger, PrintStream out) {
         if (groupedResults.containsKey(ValidationCode.INFO)) {
             groupedResults.get(ValidationCode.INFO).stream()
@@ -97,18 +128,39 @@ public final class LogMessages {
         }
     }
 
+    /**
+     * Log the end time of the data validation.
+     *
+     * @param file
+     * @param logger
+     * @param out
+     */
     public static void dataValidationEnd(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
         String msg = String.format("End data validation on file %s.", fileName);
         logMessage(msg, logger, out);
     }
 
+    /**
+     * Log the start time of the data validation.
+     *
+     * @param file
+     * @param logger
+     * @param out
+     */
     public static void dataValidationStart(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
         String msg = String.format("Start data validation on file %s.", fileName);
         logMessage(msg, logger, out);
     }
 
+    /**
+     * Log message.
+     *
+     * @param message
+     * @param logger
+     * @param out
+     */
     public static void logMessage(String message, Logger logger, PrintStream out) {
         out.printf("%s: %s%n", DateTime.printNow(), message);
         logger.info(message);
