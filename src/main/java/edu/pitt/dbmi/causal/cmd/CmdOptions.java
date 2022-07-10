@@ -164,7 +164,7 @@ public final class CmdOptions {
         opts.add(options.get(CmdParams.JSON_GRAPH));
         opts.add(options.get(CmdParams.DIR_OUT));
 
-        opts.add(options.get(CmdParams.THREAD));
+//        opts.add(options.get(CmdParams.THREAD));
 
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
