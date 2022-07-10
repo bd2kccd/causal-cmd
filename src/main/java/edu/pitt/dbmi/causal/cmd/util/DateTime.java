@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * The class {@code DateTime} is used to format data-time to String.
  *
  * Mar 14, 2017 4:21:47 PM
  *

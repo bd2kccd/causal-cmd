@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * The class {@code CmdArgs} holds values extracted from the command-line
+ * arguments.
  *
  * Sep 24, 2017 10:10:21 PM
  *
@@ -32,31 +34,100 @@ import java.util.Map;
  */
 public class CmdArgs {
 
+    /**
+     * Data set files.
+     */
     protected List<Path> datasetFiles;
+
+    /**
+     * Knowledge file.
+     */
     protected Path knowledgeFile;
+
+    /**
+     * File contains a list of variables to exclude when reading in data.
+     */
     protected Path excludeVariableFile;
+
+    /**
+     * Metadata file.
+     */
     protected Path metadataFile;
+
+    /**
+     * Directory to where
+     */
     protected Path outDirectory;
 
+    /**
+     * Prefix file name of output files.
+     */
     protected String filePrefix;
 
+    /**
+     * Quote character.
+     */
     protected char quoteChar;
+
+    /**
+     * A placeholder for missing value in dataset.
+     */
     protected String missingValueMarker;
+
+    /**
+     * A line in the data file that begins with comment marker will be ignored
+     * by the data reader.
+     */
     protected String commentMarker;
+    
+    /**
+     * Indicates whether the first line in the data file is a header.
+     */
     protected boolean hasHeader;
 
+    /**
+     * Type of data in the dataset.
+     */
     protected DataType dataType;
+    
+    /**
+     * Data delimiter.
+     */
     protected Delimiter delimiter;
 
+    /**
+     * Algorithm class.
+     */
     protected Class algorithmClass;
+    
+    /**
+     * Score class.
+     */
     protected Class scoreClass;
+    
+    /**
+     * Independence test class.
+     */
     protected Class testClass;
 
+    /**
+     * Number of discrete values.
+     */
     protected int numCategories;
 
+    /**
+     * Indicates whether or not to skip data validation.
+     */
     protected boolean skipValidation;
+    
+    /**
+     * Indicates whether to output the search graph in JSON format.
+     */
     protected boolean jsonGraph;
 
+    /**
+     * Maximum number of threads can be used by algorithm, score, or independence test.
+     */
     protected int numOfThreads;
 
     // graph manipulations
@@ -72,6 +143,8 @@ public class CmdArgs {
     protected boolean extractStructModel;
 
     protected boolean experimental;
+
+    protected boolean defaultParamValues;
 
     protected Map<String, String> parameters;
 
@@ -196,6 +269,10 @@ public class CmdArgs {
 
     public boolean isExperimental() {
         return experimental;
+    }
+
+    public boolean isDefaultParamValues() {
+        return defaultParamValues;
     }
 
     public Map<String, String> getParameters() {

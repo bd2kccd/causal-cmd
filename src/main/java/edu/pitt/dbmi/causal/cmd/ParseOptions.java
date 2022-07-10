@@ -21,6 +21,8 @@ package edu.pitt.dbmi.causal.cmd;
 import org.apache.commons.cli.Options;
 
 /**
+ * The class {@code ParseOptions} holds the command-line options that have been
+ * parsed.
  *
  * Oct 6, 2017 11:36:39 AM
  *

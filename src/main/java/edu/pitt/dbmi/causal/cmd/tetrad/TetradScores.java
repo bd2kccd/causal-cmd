@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * The class {@code TetradScores} is a utility class for handling Tetrad scores.
  *
  * Sep 22, 2017 2:10:59 PM
  *
@@ -49,6 +50,9 @@ public final class TetradScores {
     private final Map<DataType, List<String>> groupByDataType = new EnumMap<>(DataType.class);
     private final Map<DataType, List<String>> nonExpGroupByDataType = new EnumMap<>(DataType.class);
 
+    /**
+     * Private constructor.
+     */
     private TetradScores() {
         ScoreAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
             String key = e.getAnnotation().command();
@@ -91,16 +95,34 @@ public final class TetradScores {
         nonExpGroupByDataType.put(DataType.Discrete, mergeList(nonExpGroupByDataType.get(DataType.Discrete), nonExpGroupByDataType.get(DataType.Mixed)));
     }
 
+    /**
+     * Combine two lists of command-line options into one.
+     *
+     * @param listA
+     * @param listB
+     * @return
+     */
     private static List<String> mergeList(List<String> listA, List<String> listB) {
         return Stream.concat(listA.stream(), listB.stream())
                 .sorted()
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get the instance of this class.
+     *
+     * @return
+     */
     public static TetradScores getInstance() {
         return INSTANCE;
     }
 
+    /**
+     * Determine if the giving command is a validate command-line option.
+     *
+     * @param command
+     * @return
+     */
     public boolean hasCommand(String command) {
         if (command == null || command.isEmpty()) {
             return false;
@@ -111,6 +133,14 @@ public final class TetradScores {
                 : nonExpScores.containsKey(command);
     }
 
+    /**
+     * Determine if the giving command is a validate command-line option for a
+     * giving datatype.
+     *
+     * @param command
+     * @param dataType
+     * @return
+     */
     public boolean hasCommand(String command, DataType dataType) {
         if (command == null || command.isEmpty() || dataType == null) {
             return false;
@@ -128,6 +158,11 @@ public final class TetradScores {
                 .anyMatch(e -> e.equalsIgnoreCase(command));
     }
 
+    /**
+     * Get a list of command-line options.
+     *
+     * @return
+     */
     public List<String> getCommands() {
         List<String> list = CausalCmdApplication.showExperimental
                 ? scores.keySet().stream().collect(Collectors.toList())
@@ -136,6 +171,12 @@ public final class TetradScores {
         return Collections.unmodifiableList(list);
     }
 
+    /**
+     * Get a list of command-line options for a giving datatype.
+     *
+     * @param dataType
+     * @return
+     */
     public List<String> getCommands(DataType dataType) {
         Map<DataType, List<String>> map = CausalCmdApplication.showExperimental
                 ? groupByDataType
@@ -146,6 +187,12 @@ public final class TetradScores {
                 : Collections.EMPTY_LIST;
     }
 
+    /**
+     * Get class for a giving command-line option.
+     *
+     * @param command
+     * @return
+     */
     public Class getClass(String command) {
         if (command == null || command.isEmpty()) {
             return null;
@@ -158,12 +205,24 @@ public final class TetradScores {
         return (annotatedClass == null) ? null : annotatedClass.getClazz();
     }
 
+    /**
+     * Get the name for a given class.
+     *
+     * @param clazz
+     * @return
+     */
     public String getName(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(Score.class))
                 ? ((Score) clazz.getAnnotation(Score.class)).name()
                 : "";
     }
 
+    /**
+     * Get the description for a given class.
+     *
+     * @param clazz
+     * @return
+     */
     public String getDescription(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(Score.class))
                 ? ((Score) clazz.getAnnotation(Score.class)).description()

@@ -37,6 +37,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 /**
+ * The class {@code Applications} is a utility class for displaying help
+ * information and for getting the application jar file information..
  *
  * Jan 8, 2019 12:04:29 PM
  *
@@ -44,11 +46,21 @@ import org.apache.commons.cli.Options;
  */
 public final class Applications {
 
+    /**
+     * Use to convert {@link Date} into a date-time string.
+     */
     private static final DateFormat DF = new SimpleDateFormat("EEE, MMMM dd, yyyy hh:mm:ss a");
 
     private Applications() {
     }
 
+    /**
+     * Print out help messages to terminal for options that are not satisfied..
+     *
+     * @param args user's input of options and arguments
+     * @param parseOptions options that has been parsed
+     * @param footer help message footer
+     */
     public static void showHelp(String[] args, ParseOptions parseOptions, String footer) {
         Options opts = parseOptions.getOptions();
         Options invalidOpts = parseOptions.getInvalidValueOptions();
@@ -88,6 +100,9 @@ public final class Applications {
         }
     }
 
+    /**
+     * Print out a list of independence tests with descriptions to terminal..
+     */
     public static void showTestsAndDescriptions() {
         System.out.println("================================================================================");
         System.out.println("Independence Tests");
@@ -103,6 +118,9 @@ public final class Applications {
                 });
     }
 
+    /**
+     * Print out a list of scores with descriptions to terminal..
+     */
     public static void showScoresAndDescriptions() {
         System.out.println("================================================================================");
         System.out.println("Scores");
@@ -118,6 +136,9 @@ public final class Applications {
                 });
     }
 
+    /**
+     * Print out a list of algorithms with descriptions to terminal..
+     */
     public static void showAlgorithmsAndDescriptions() {
         System.out.println("================================================================================");
         System.out.println("Algorithms");
@@ -133,40 +154,83 @@ public final class Applications {
                 });
     }
 
+    /**
+     * Print out help messages to terminal for the given options.
+     *
+     * @param options options to print out in help messages.
+     */
     public static void showHelp(Options options) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
         formatter.printHelp(getHelpTitle(), options, true);
     }
 
+    /**
+     * Print out help messages to terminal for the given options with message
+     * footer.
+     *
+     * @param options options to print out in help messages.
+     * @param footer message footer
+     */
     public static void showHelp(Options options, String footer) {
         HelpFormatter formatter = new HelpFormatter();
         formatter.setWidth(-1);
         formatter.printHelp(getHelpTitle(), null, options, footer, true);
     }
 
+    /**
+     * Get the application version.
+     *
+     * @return the application version
+     */
     public static String getVersion() {
         return String.format("Version %s", jarVersion());
     }
 
+    /**
+     * Formats the given {@link Date} into a date-time string.
+     *
+     * @param date the time value to be formatted into a date-time string.
+     * @return the formatted date-time string of the given Date
+     */
     public static String fmtDate(Date date) {
         return DF.format(date);
     }
 
+    /**
+     * Formats the current {@link Date} into a date-time string.
+     *
+     * @return the formatted date-time string of the current Date
+     */
     public static String fmtDateNow() {
         return fmtDate(new Date(System.currentTimeMillis()));
     }
 
+    /**
+     * et the application jar filename.
+     *
+     * @return the jar filename.
+     */
     public static String jarTitle() {
         return Applications.class.getPackage().getImplementationTitle();
     }
 
+    /**
+     * Get the application jar file version.
+     *
+     * @return the jar file version
+     */
     public static String jarVersion() {
         String version = Applications.class.getPackage().getImplementationVersion();
 
         return (version == null) ? "unknown" : version;
     }
 
+    /**
+     * Get the title for the help message.
+     *
+     * @return title of the help message
+     */
     private static String getHelpTitle() {
         String title = jarTitle();
         String version = jarVersion();

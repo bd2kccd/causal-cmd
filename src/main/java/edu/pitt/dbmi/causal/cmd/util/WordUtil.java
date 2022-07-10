@@ -19,6 +19,7 @@
 package edu.pitt.dbmi.causal.cmd.util;
 
 /**
+ * The class {@code WordUtil} is a utility class for converting string values.
  *
  * Jan 9, 2019 11:30:13 AM
  *
@@ -29,6 +30,12 @@ public final class WordUtil {
     private WordUtil() {
     }
 
+    /**
+     * Convert true/false value to yes/no.
+     *
+     * @param value
+     * @return
+     */
     public static final String toYesOrNo(String value) {
         switch (value) {
             case "true":

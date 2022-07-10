@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
+ * The class {@code DataTypes} contains the data types supported by Tetrad.
  *
  * Jan 8, 2019 11:28:17 AM
  *
