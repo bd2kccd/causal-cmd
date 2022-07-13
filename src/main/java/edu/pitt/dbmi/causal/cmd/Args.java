@@ -72,7 +72,7 @@ public final class Args {
             }
         }
 
-        return argsToKeep.toArray(String[]::new);
+        return argsToKeep.toArray(new String[0]);
     }
 
     /**
@@ -143,7 +143,7 @@ public final class Args {
             }
         });
 
-        return argsList.toArray(String[]::new);
+        return argsList.toArray(new String[0]);
     }
 
     /**
@@ -179,7 +179,7 @@ public final class Args {
             }
         });
 
-        return argsList.toArray(String[]::new);
+        return argsList.toArray(new String[0]);
     }
 
     /**
@@ -287,10 +287,10 @@ public final class Args {
         return (args == null)
                 ? new String[0]
                 : Arrays.stream(args)
-                        .filter(Objects::nonNull)
-                        .map(String::trim)
-                        .filter(e -> !e.isEmpty())
-                        .toArray(String[]::new);
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
     }
 
 }
