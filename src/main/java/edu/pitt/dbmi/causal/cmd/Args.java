@@ -72,7 +72,7 @@ public final class Args {
             }
         }
 
-        return argsToKeep.toArray(String[]::new);
+        return argsToKeep.stream().toArray(String[]::new);
     }
 
     /**
@@ -143,7 +143,7 @@ public final class Args {
             }
         });
 
-        return argsList.toArray(String[]::new);
+        return argsList.stream().toArray(String[]::new);
     }
 
     /**
@@ -179,7 +179,7 @@ public final class Args {
             }
         });
 
-        return argsList.toArray(String[]::new);
+        return argsList.stream().toArray(String[]::new);
     }
 
     /**
