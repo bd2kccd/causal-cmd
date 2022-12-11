@@ -166,7 +166,7 @@ public class CausalCmdApplication {
 
                     Path outGraphFile = Paths.get(outDir, fileName);
                     if (Files.exists(outGraphFile)) {
-                        Files.deleteIfExists(outTxtFile);
+                        Files.deleteIfExists(outGraphFile);
                     }
 
                     GraphIO.writeAsJSON(graphs[i], outGraphFile);
