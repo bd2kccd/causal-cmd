@@ -98,9 +98,9 @@ public final class TetradScores {
     /**
      * Combine two lists of command-line options into one.
      *
-     * @param listA
-     * @param listB
-     * @return
+     * @param listA list to merge
+     * @param listB list to merge
+     * @return list containing values from listA and listB
      */
     private static List<String> mergeList(List<String> listA, List<String> listB) {
         return Stream.concat(listA.stream(), listB.stream())
@@ -111,7 +111,7 @@ public final class TetradScores {
     /**
      * Get the instance of this class.
      *
-     * @return
+     * @return instance of TetradScores
      */
     public static TetradScores getInstance() {
         return INSTANCE;
@@ -120,8 +120,9 @@ public final class TetradScores {
     /**
      * Determine if the giving command is a validate command-line option.
      *
-     * @param command
-     * @return
+     * @param command command-line argument
+     * @return true if the giving command is a validate command-line option,
+     * otherwise false
      */
     public boolean hasCommand(String command) {
         if (command == null || command.isEmpty()) {
@@ -137,9 +138,10 @@ public final class TetradScores {
      * Determine if the giving command is a validate command-line option for a
      * giving datatype.
      *
-     * @param command
-     * @param dataType
-     * @return
+     * @param command command-line argument
+     * @param dataType data type
+     * @return true if the giving command is a validate command-line option for
+     * a giving datatype. Otherwise, false.
      */
     public boolean hasCommand(String command, DataType dataType) {
         if (command == null || command.isEmpty() || dataType == null) {
@@ -159,9 +161,9 @@ public final class TetradScores {
     }
 
     /**
-     * Get a list of command-line options.
+     * Get a list of command-line options for scores.
      *
-     * @return
+     * @return a list of command-line options for scores
      */
     public List<String> getCommands() {
         List<String> list = CausalCmdApplication.showExperimental
@@ -174,8 +176,8 @@ public final class TetradScores {
     /**
      * Get a list of command-line options for a giving datatype.
      *
-     * @param dataType
-     * @return
+     * @param dataType data type
+     * @return a list of command-line options for a giving datatype
      */
     public List<String> getCommands(DataType dataType) {
         Map<DataType, List<String>> map = CausalCmdApplication.showExperimental
@@ -190,8 +192,8 @@ public final class TetradScores {
     /**
      * Get class for a giving command-line option.
      *
-     * @param command
-     * @return
+     * @param command command-line argument
+     * @return class for a giving command-line option
      */
     public Class getClass(String command) {
         if (command == null || command.isEmpty()) {
@@ -206,10 +208,10 @@ public final class TetradScores {
     }
 
     /**
-     * Get the name for a given class.
+     * Get the class name for score.
      *
-     * @param clazz
-     * @return
+     * @param clazz score class
+     * @return class name for score.
      */
     public String getName(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(Score.class))
@@ -218,10 +220,10 @@ public final class TetradScores {
     }
 
     /**
-     * Get the description for a given class.
+     * Get the score description from class.
      *
-     * @param clazz
-     * @return
+     * @param clazz score class
+     * @return description for score
      */
     public String getDescription(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(Score.class))

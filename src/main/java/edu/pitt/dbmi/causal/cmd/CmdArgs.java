@@ -79,7 +79,7 @@ public class CmdArgs {
      * by the data reader.
      */
     protected String commentMarker;
-    
+
     /**
      * Indicates whether the first line in the data file is a header.
      */
@@ -89,7 +89,7 @@ public class CmdArgs {
      * Type of data in the dataset.
      */
     protected DataType dataType;
-    
+
     /**
      * Data delimiter.
      */
@@ -99,12 +99,12 @@ public class CmdArgs {
      * Algorithm class.
      */
     protected Class algorithmClass;
-    
+
     /**
      * Score class.
      */
     protected Class scoreClass;
-    
+
     /**
      * Independence test class.
      */
@@ -119,14 +119,15 @@ public class CmdArgs {
      * Indicates whether or not to skip data validation.
      */
     protected boolean skipValidation;
-    
+
     /**
      * Indicates whether to output the search graph in JSON format.
      */
     protected boolean jsonGraph;
 
     /**
-     * Maximum number of threads can be used by algorithm, score, or independence test.
+     * Maximum number of threads can be used by algorithm, score, or
+     * independence test.
      */
     protected int numOfThreads;
 

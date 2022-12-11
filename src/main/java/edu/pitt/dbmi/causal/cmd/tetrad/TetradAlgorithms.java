@@ -60,16 +60,16 @@ public final class TetradAlgorithms {
     /**
      * Get the instance of this class.
      *
-     * @return
+     * @return instance of TetradAlgorithms
      */
     public static TetradAlgorithms getInstance() {
         return INSTANCE;
     }
 
     /**
-     * Get a list of command-line options.
+     * Get a list of command-line options for algorithms.
      *
-     * @return
+     * @return list of command-line options for algorithms
      */
     public List<String> getCommands() {
         List<String> list = CausalCmdApplication.showExperimental
@@ -82,8 +82,9 @@ public final class TetradAlgorithms {
     /**
      * Determine if the giving command is a validate command-line option.
      *
-     * @param command
-     * @return
+     * @param command command-line argument
+     * @return true if the giving command is a validate command-line option,
+     * otherwise false
      */
     public boolean hasCommand(String command) {
         if (command == null || command.isEmpty()) {
@@ -98,8 +99,8 @@ public final class TetradAlgorithms {
     /**
      * Get the algorithm class from the command-line input.
      *
-     * @param command
-     * @return
+     * @param command algorithm command-line value
+     * @return algorithm class
      */
     public Class getAlgorithmClass(String command) {
         if (command == null || command.isEmpty()) {
@@ -116,8 +117,8 @@ public final class TetradAlgorithms {
     /**
      * Determine if the given algorithm class requires an independence test.
      *
-     * @param clazz
-     * @return
+     * @param clazz algorithm class
+     * @return true of the given algorithm requires test of dependence
      */
     public boolean requireIndependenceTest(Class clazz) {
         return AlgorithmAnnotations.getInstance().requireIndependenceTest(clazz);
@@ -126,8 +127,8 @@ public final class TetradAlgorithms {
     /**
      * Determine if the given algorithm class requires a score.
      *
-     * @param clazz
-     * @return
+     * @param clazz algorithm class
+     * @return true of the given algorithm requires score
      */
     public boolean requireScore(Class clazz) {
         return AlgorithmAnnotations.getInstance().requireScore(clazz);
@@ -136,8 +137,8 @@ public final class TetradAlgorithms {
     /**
      * Determine if the given algorithm class accepts multiple datasets.
      *
-     * @param clazz
-     * @return
+     * @param clazz algorithm class
+     * @return true if algorithm can handle multiple datasets
      */
     public boolean acceptMultipleDataset(Class clazz) {
         return AlgorithmAnnotations.getInstance().acceptMultipleDataset(clazz);
@@ -146,8 +147,8 @@ public final class TetradAlgorithms {
     /**
      * Determine if the given algorithm class accepts prior knowledge.
      *
-     * @param clazz
-     * @return
+     * @param clazz algorithm class
+     * @return true if algorithm supports knowledge
      */
     public boolean acceptKnowledge(Class clazz) {
         return AlgorithmAnnotations.getInstance().acceptKnowledge(clazz);
@@ -156,8 +157,8 @@ public final class TetradAlgorithms {
     /**
      * Get the description for a given class.
      *
-     * @param clazz
-     * @return
+     * @param clazz algorithm class
+     * @return description for the given algorithm
      */
     public String getName(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(Algorithm.class))

@@ -34,6 +34,13 @@ public class FileUtils {
     private FileUtils() {
     }
 
+    /**
+     * Determine if a given file exists.
+     *
+     * @param file file to determine if it exists or not
+     * @throws FileNotFoundException when file does not exist or when file is a
+     * directory
+     */
     public static void exists(Path file) throws FileNotFoundException {
         if (Files.notExists(file)) {
             throw new FileNotFoundException(String.format("File '%s' does not exist.", file.toString()));

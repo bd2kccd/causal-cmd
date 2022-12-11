@@ -54,7 +54,7 @@ public final class CmdOptions {
     /**
      * Get an instance of the command-line options.
      *
-     * @return
+     * @return CmdOptions instance
      */
     public static CmdOptions getInstance() {
         if (instance == null) {
@@ -75,7 +75,7 @@ public final class CmdOptions {
      * Get multi-character name options for a given name..
      *
      * @param param multi-character name
-     * @return
+     * @return command-line option
      */
     public Option getLongOption(String param) {
         return options.get(param);
@@ -165,12 +165,11 @@ public final class CmdOptions {
         opts.add(options.get(CmdParams.DIR_OUT));
 
 //        opts.add(options.get(CmdParams.THREAD));
-
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
         opts.add(options.get(CmdParams.EXPERIMENTAL));
-        
+
         opts.add(options.get(CmdParams.DEFAULT));
 
         return opts;
@@ -250,7 +249,7 @@ public final class CmdOptions {
     /**
      * Get the application required options from the stored options.
      *
-     * @return
+     * @return required command-line options
      */
     public List<Option> getRequiredOptions() {
         return options.entrySet().stream()
@@ -262,7 +261,7 @@ public final class CmdOptions {
     /**
      * Get the names of all the datatypes.
      *
-     * @return
+     * @return datatype description
      */
     private String getDataTypeDesc() {
         return "Data type: " + DataTypes.getInstance().getNames().stream()
@@ -272,7 +271,7 @@ public final class CmdOptions {
     /**
      * Get the names of all the delimiters.
      *
-     * @return
+     * @return names of delimiters
      */
     private String getDelimiterDesc() {
         return "Delimiter: " + Delimiters.getInstance().getNames().stream()
@@ -282,7 +281,7 @@ public final class CmdOptions {
     /**
      * Get the names of all the scores.
      *
-     * @return
+     * @return description for score
      */
     private String getScoreDesc() {
         return "Score: " + TetradScores.getInstance().getCommands().stream()
@@ -292,7 +291,7 @@ public final class CmdOptions {
     /**
      * Get the names of all the independence test.
      *
-     * @return
+     * @return description for test of independence
      */
     private String getIndependenceTestDesc() {
         return "Independence Test: " + TetradIndependenceTests.getInstance().getCommands().stream()
@@ -302,7 +301,7 @@ public final class CmdOptions {
     /**
      * Get the names of all the algorithms.
      *
-     * @return
+     * @return description for algorithm
      */
     private String getAlgorithmDesc() {
         return "Algorithm: " + TetradAlgorithms.getInstance().getCommands().stream()

@@ -61,9 +61,9 @@ public final class DataValidations {
     /**
      * Validate tabular dataset and covariance data.
      *
-     * @param cmdArgs
-     * @param out
-     * @throws ValidationException
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @throws ValidationException when dataset validation fails
      */
     public static void validate(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
         DataType dataType = cmdArgs.getDataType();
@@ -85,8 +85,8 @@ public final class DataValidations {
     /**
      * Validate tabular dataset.
      *
-     * @param cmdArgs
-     * @param out
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
      * @throws ValidationException
      */
     private static void validateTabularData(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
@@ -144,8 +144,8 @@ public final class DataValidations {
     /**
      * Validate covariance data.
      *
-     * @param cmdArgs
-     * @param out
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
      * @throws ValidationException
      */
     private static void validateCovariance(CmdArgs cmdArgs, PrintStream out) throws ValidationException {

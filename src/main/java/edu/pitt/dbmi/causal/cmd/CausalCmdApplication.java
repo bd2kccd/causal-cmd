@@ -137,7 +137,7 @@ public class CausalCmdApplication {
             Files.deleteIfExists(outTxtFile);
         }
 
-        try ( PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
+        try (PrintStream out = new PrintStream(new BufferedOutputStream(Files.newOutputStream(outTxtFile, StandardOpenOption.CREATE)), true)) {
             writeOutParameters(cmdArgs, out);
 
             if (!cmdArgs.isSkipValidation()) {
@@ -166,7 +166,7 @@ public class CausalCmdApplication {
 
                     Path outGraphFile = Paths.get(outDir, fileName);
                     if (Files.exists(outGraphFile)) {
-                        Files.deleteIfExists(outTxtFile);
+                        Files.deleteIfExists(outGraphFile);
                     }
 
                     GraphIO.writeAsJSON(graphs[i], outGraphFile);

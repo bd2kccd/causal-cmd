@@ -80,9 +80,9 @@ public class TetradRunner {
     /**
      * Run algorithm.
      *
-     * @param out
-     * @throws AlgorithmRunException
-     * @throws IOException
+     * @param out output stream to write message to
+     * @throws AlgorithmRunException when algorithm run fails
+     * @throws IOException when unable to read knowledge file
      */
     public void runAlgorithm(PrintStream out) throws AlgorithmRunException, IOException {
         final List<DataModel> dataModels = DataFiles.readInDatasets(cmdArgs, out);
@@ -129,8 +129,8 @@ public class TetradRunner {
     /**
      * Determine if any of the data model contains missing values;
      *
-     * @param dataModels
-     * @return
+     * @param dataModels dataset
+     * @return true if data contains missing values
      */
     private boolean containsMissingValues(final List<DataModel> dataModels) {
         boolean hasMissingValues = false;
@@ -151,10 +151,10 @@ public class TetradRunner {
     /**
      * Run search algorithm.
      *
-     * @param algorithm
-     * @param parameters
-     * @param dataModels
-     * @return
+     * @param algorithm Tetrad algorithm
+     * @param parameters algorithm, score, and test parameters
+     * @param dataModels list of dataset to run
+     * @return list of result search graphs
      */
     private List<Graph> runSearch(final Algorithm algorithm, final Parameters parameters, final List<DataModel> dataModels) {
         List<Graph> graphList = new LinkedList<>();
@@ -210,7 +210,7 @@ public class TetradRunner {
     /**
      * Manipulating graphs.
      *
-     * @param graphs
+     * @param graph graph to manipulate
      * @author: Chirayu Wongchokprasitti, PhD
      */
     private Graph manipulateGraph(Graph graph) {
@@ -329,9 +329,10 @@ public class TetradRunner {
     /**
      * Get algorithm instance from command-line input.
      *
-     * @param cmdArgs
-     * @return
-     * @throws AlgorithmRunException
+     * @param cmdArgs command-line arguments
+     * @return algorithm from command-line
+     * @throws AlgorithmRunException whenever unable to algorithm from
+     * command-line
      */
     private Algorithm getAlgorithm(CmdArgs cmdArgs) throws AlgorithmRunException {
         try {
@@ -341,6 +342,11 @@ public class TetradRunner {
         }
     }
 
+    /**
+     * Get list of result graphs from search algorithms.
+     *
+     * @return list of result graphs from search algorithms
+     */
     public List<Graph> getGraphs() {
         return graphs;
     }

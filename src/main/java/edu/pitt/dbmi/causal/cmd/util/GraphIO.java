@@ -43,13 +43,13 @@ public final class GraphIO {
     /**
      * Write out graph object to a text file.
      *
-     * @param graph
-     * @param path
-     * @throws IOException
+     * @param graph Tetrad graph
+     * @param path directory to write output text file
+     * @throws IOException when unable to create or write file
      */
     public static void writeAsTXT(Graph graph, Path path) throws IOException {
         Scanner scanner = new Scanner(graph.toString());
-        try ( PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
             while (scanner.hasNextLine()) {
                 out.println(scanner.nextLine().trim());
             }
@@ -59,13 +59,13 @@ public final class GraphIO {
     /**
      * Write out graph object to a JSON file.
      *
-     * @param graph
-     * @param path
-     * @throws IOException
+     * @param graph Tetrad graph
+     * @param path directory to write output JSON file
+     * @throws IOException when unable to create or write file
      */
     public static void writeAsJSON(Graph graph, Path path) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try ( PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
             out.println(gson.toJson(graph));
         }
     }

@@ -73,10 +73,10 @@ public final class DataFiles {
     /**
      * Read in metadata file.
      *
-     * @param cmdArgs
-     * @param out
-     * @return
-     * @throws IOException
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @return metadata
+     * @throws IOException when errors occur during reading file
      */
     public static Metadata readInMetadata(CmdArgs cmdArgs, PrintStream out) throws IOException {
         Path file = cmdArgs.getMetadataFile();
@@ -94,10 +94,10 @@ public final class DataFiles {
     /**
      * Read in knowledge file.
      *
-     * @param cmdArgs
-     * @param out
-     * @return
-     * @throws IOException
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @return knowledge information from file
+     * @throws IOException when errors occur during reading file
      */
     public static IKnowledge readInKnowledge(CmdArgs cmdArgs, PrintStream out) throws IOException {
         Path file = cmdArgs.getKnowledgeFile();
@@ -115,11 +115,12 @@ public final class DataFiles {
     /**
      * Read in datasets files.
      *
-     * @param cmdArgs
-     * @param out
-     * @return
-     * @throws IOException
-     * @throws AlgorithmRunException
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @return list of datasets read in from files
+     * @throws IOException when errors occur during reading file
+     * @throws AlgorithmRunException when dataset is not supported by the given
+     * algorithm from command-line
      */
     public static List<DataModel> readInDatasets(CmdArgs cmdArgs, PrintStream out) throws IOException, AlgorithmRunException {
         DataType dataType = cmdArgs.getDataType();
@@ -139,10 +140,10 @@ public final class DataFiles {
     /**
      * Read in tabular dataset files.
      *
-     * @param cmdArgs
-     * @param out
-     * @return
-     * @throws IOException
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @return list of datasets read in from files
+     * @throws IOException when errors occur during reading file
      */
     private static List<DataModel> readInTabularData(CmdArgs cmdArgs, PrintStream out) throws IOException {
         List<DataModel> dataModels = new LinkedList<>();
@@ -204,10 +205,10 @@ public final class DataFiles {
     /**
      * Read in covariances files.
      *
-     * @param cmdArgs
-     * @param out
-     * @return
-     * @throws IOException
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @return list of datasets read in from files
+     * @throws IOException when errors occur during reading file
      */
     private static List<DataModel> readInCovarianceFile(CmdArgs cmdArgs, PrintStream out) throws IOException {
         List<DataModel> dataModels = new LinkedList<>();
@@ -234,10 +235,10 @@ public final class DataFiles {
     /**
      * Read in exclude-variable file.
      *
-     * @param cmdArgs
-     * @param out
-     * @return
-     * @throws IOException
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @return set of variables to exclude reading in
+     * @throws IOException when errors occur during reading file
      */
     public static Set<String> readInVariablesToExclude(CmdArgs cmdArgs, PrintStream out) throws IOException {
         Set<String> variablesToExclude = new HashSet<>();
@@ -245,7 +246,7 @@ public final class DataFiles {
         Path file = cmdArgs.getExcludeVariableFile();
         if (file != null) {
             LogMessages.readingFileStart(file, LOGGER, out);
-            try ( Stream<String> stream = Files.lines(file)) {
+            try (Stream<String> stream = Files.lines(file)) {
                 stream
                         .map(e -> e.trim())
                         .filter(e -> !e.isEmpty())

@@ -61,6 +61,13 @@ public final class CmdParser {
     private CmdParser() {
     }
 
+    /**
+     * Parse user input command
+     *
+     * @param args user input command
+     * @return user input command values
+     * @throws CmdParserException when an error occurs while parsing
+     */
     public static CmdArgs parse(String[] args) throws CmdParserException {
         CmdArgs cmdArgs = new CmdArgs();
 
@@ -80,10 +87,10 @@ public final class CmdParser {
     /**
      * Parse command-line options.
      *
-     * @param cmd
-     * @param parseOptions
-     * @param cmdArgs
-     * @throws CmdParserException
+     * @param cmd command-line input
+     * @param parseOptions command-line options
+     * @param cmdArgs parsed command line arguments and values
+     * @throws CmdParserException when an error occurs while parsing
      */
     private static void parseOptionalOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
         cmdArgs.knowledgeFile = cmd.hasOption(CmdParams.KNOWLEDGE)
@@ -143,10 +150,10 @@ public final class CmdParser {
     /**
      * Parse the required command-line options.
      *
-     * @param cmd
-     * @param parseOptions
-     * @param cmdArgs
-     * @throws CmdParserException
+     * @param cmd command-line input
+     * @param parseOptions command-line options
+     * @param cmdArgs parsed command line arguments and values
+     * @throws CmdParserException when an error occurs while parsing
      */
     private static void parseRequiredOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
         cmdArgs.dataType = DataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
@@ -176,9 +183,9 @@ public final class CmdParser {
     /**
      * Get the options for the help message.
      *
-     * @param args
-     * @return
-     * @throws CmdParserException
+     * @param args user input command
+     * @return parsed command-line options
+     * @throws CmdParserException when an error occurs while parsing
      */
     public static ParseOptions getHelpOptions(String[] args) throws CmdParserException {
         CmdOptions cmdOptions = CmdOptions.getInstance();
@@ -338,8 +345,8 @@ public final class CmdParser {
      * Get the parameters for the algorithm, the algorithm's test, algorithm's
      * score and bootstrap.
      *
-     * @param algorithm
-     * @return
+     * @param algorithm algorithm to get the parameters for
+     * @return set of parameters related to the given algorithm
      */
     private static Set<String> getAlgorithmRelatedParameters(Algorithm algorithm) {
         if (algorithm == null) {
@@ -370,7 +377,7 @@ public final class CmdParser {
     /**
      * Add options for manipulating Tetrad output graph.
      *
-     * @param opts
+     * @param opts options to add to
      */
     private static void addGraphManipulationOptions(Options opts) {
         opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.CHOOSE_DAG_IN_PATTERN));
@@ -393,6 +400,12 @@ public final class CmdParser {
         }
     }
 
+    /**
+     * Extract class name.
+     *
+     * @param clazz class to extract name from
+     * @return class name
+     */
     private static String extractName(Class clazz) {
         String name = clazz.getName();
         String[] fields = name.toLowerCase().split("\\.");
@@ -404,10 +417,11 @@ public final class CmdParser {
      * Get all the parameters related to the selected algorithm, test, and
      * score.
      *
-     * @param cmdArgs
-     * @param parseOptions
-     * @return
-     * @throws CmdParserException
+     * @param cmdArgs parsed command line arguments and values
+     * @param parseOptions command-line options
+     * @return set of parameters relating to the given algorithm, test and score
+     * from the command-line.
+     * @throws CmdParserException when an error occurs while parsing
      */
     private static Set<String> getAllRelatedParameters(CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
         try {
@@ -422,11 +436,11 @@ public final class CmdParser {
      * for the parameters if user use the "--default" flag. Replace any value if
      * user explicitly specified with parameter-arg input or flag.
      *
-     * @param cmd
-     * @param cmdArgs
-     * @param parseOptions
-     * @return
-     * @throws CmdParserException
+     * @param cmd command-line input
+     * @param cmdArgs parsed command line arguments and values
+     * @param parseOptions command-line options
+     * @return a collection of valid parameters
+     * @throws CmdParserException when an error occurs while parsing
      */
     private static Map<String, String> getValidParameters(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
         Map<String, String> parametersWithValues = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -439,6 +453,15 @@ public final class CmdParser {
         return parametersWithValues;
     }
 
+    /**
+     * Set parameters based on user's input.
+     *
+     * @param parametersWithValues set of parameters and values
+     * @param parameters set of parameters
+     * @param cmd command-line input
+     * @param parseOptions command-line options
+     * @throws CmdParserException when an error occurs while parsing
+     */
     private static void setUserParameterValues(Map<String, String> parametersWithValues, Set<String> parameters, CommandLine cmd, ParseOptions parseOptions) throws CmdParserException {
         ParamDescriptions paramDescriptions = ParamDescriptions.getInstance();
         Options opts = parseOptions.getOptions();
@@ -531,11 +554,11 @@ public final class CmdParser {
      * Extract the thread number from the command-line option and check to make
      * sure the number is valid.
      *
-     * @param value
-     * @param parseOptions
-     * @param cmdParam
-     * @return
-     * @throws CmdParserException
+     * @param value number of threads taken from the command-line
+     * @param parseOptions command-line options
+     * @param cmdParam command-line parameter
+     * @return number of thread from the command-line input that is valid
+     * @throws CmdParserException when an error occurs while parsing
      */
     private static int getValidThreadNumber(String value, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
         int numOfThreads = 0;
@@ -564,11 +587,11 @@ public final class CmdParser {
      * Extract the delimiter charactor from the command-line option and make
      * sure the character is valid.
      *
-     * @param quoteChar
-     * @param parseOptions
-     * @param cmdParam
-     * @return
-     * @throws CmdParserException
+     * @param quoteChar character from the command-line
+     * @param parseOptions command-line options
+     * @param cmdParam command-line parameter
+     * @return character from the command-line input that is valid
+     * @throws CmdParserException when an error occurs while parsing
      */
     private static char getValidChar(String quoteChar, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
         char c = 0;
@@ -591,11 +614,11 @@ public final class CmdParser {
      * Extract the file location from the command-line option and make sure the
      * file is valid.
      *
-     * @param filePath
-     * @param parseOptions
-     * @param cmdParam
-     * @return
-     * @throws CmdParserException
+     * @param filePath path to where the file is from the command-line input
+     * @param parseOptions command-line options
+     * @param cmdParam command-line parameter
+     * @return the path of the file from the command-line input that exists
+     * @throws CmdParserException when an error occurs while parsing
      */
     private static Path getValidFile(String filePath, ParseOptions parseOptions, String cmdParam) throws CmdParserException {
         Path file = Paths.get(filePath);
