@@ -45,10 +45,10 @@ public final class LogMessages {
     /**
      * Write out dataset information to log file.
      *
-     * @param file
-     * @param dataModel
-     * @param logger
-     * @param out
+     * @param file dataset file to log information about
+     * @param dataModel dataset read in from dataset file
+     * @param logger write log message to
+     * @param out output stream to write message to
      */
     public static void dataInfo(Path file, DataModel dataModel, Logger logger, PrintStream out) {
         int row = 0;
@@ -71,9 +71,9 @@ public final class LogMessages {
     /**
      * Log the end time of reading file.
      *
-     * @param file
-     * @param logger
-     * @param out
+     * @param file file to log information about
+     * @param logger write log message to
+     * @param out output stream to write message to
      */
     public static void readingFileEnd(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
@@ -84,9 +84,9 @@ public final class LogMessages {
     /**
      * Log the start time of reading file.
      *
-     * @param file
-     * @param logger
-     * @param out
+     * @param file file to log information about
+     * @param logger write log message to
+     * @param out output stream to write message to
      */
     public static void readingFileStart(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
@@ -97,9 +97,9 @@ public final class LogMessages {
     /**
      * Log data validation results.
      *
-     * @param groupedResults
-     * @param logger
-     * @param out
+     * @param groupedResults validation results
+     * @param logger write log message to
+     * @param out output stream to write message to
      */
     public static void dataValidationResults(Map<ValidationCode, List<ValidationResult>> groupedResults, Logger logger, PrintStream out) {
         if (groupedResults.containsKey(ValidationCode.INFO)) {
@@ -131,9 +131,9 @@ public final class LogMessages {
     /**
      * Log the end time of the data validation.
      *
-     * @param file
-     * @param logger
-     * @param out
+     * @param file data file to log information about
+     * @param logger write log message to
+     * @param out output stream to write message to
      */
     public static void dataValidationEnd(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
@@ -144,9 +144,9 @@ public final class LogMessages {
     /**
      * Log the start time of the data validation.
      *
-     * @param file
-     * @param logger
-     * @param out
+     * @param file data file to log information about
+     * @param logger write log message to
+     * @param out output stream to write message to
      */
     public static void dataValidationStart(Path file, Logger logger, PrintStream out) {
         String fileName = file.getFileName().toString();
@@ -157,9 +157,9 @@ public final class LogMessages {
     /**
      * Log message.
      *
-     * @param message
-     * @param logger
-     * @param out
+     * @param message message to write to log file
+     * @param logger write log message to
+     * @param out output stream to write message to
      */
     public static void logMessage(String message, Logger logger, PrintStream out) {
         out.printf("%s: %s%n", DateTime.printNow(), message);

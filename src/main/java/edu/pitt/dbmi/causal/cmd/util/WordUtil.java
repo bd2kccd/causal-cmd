@@ -33,8 +33,8 @@ public final class WordUtil {
     /**
      * Convert true/false value to yes/no.
      *
-     * @param value
-     * @return
+     * @param value true or false literal value
+     * @return yes literal value if the value literal is true, no otherwise.
      */
     public static final String toYesOrNo(String value) {
         switch (value) {

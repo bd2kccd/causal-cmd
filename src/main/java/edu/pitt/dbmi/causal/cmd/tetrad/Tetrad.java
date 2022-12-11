@@ -43,8 +43,8 @@ public final class Tetrad {
     /**
      * Get Tetrad parameters from command-line input.
      *
-     * @param cmdArgs
-     * @return
+     * @param cmdArgs command-line arguments
+     * @return Tetrad parameters
      */
     public static Parameters getParameters(CmdArgs cmdArgs) {
         Parameters parameters = new Parameters();

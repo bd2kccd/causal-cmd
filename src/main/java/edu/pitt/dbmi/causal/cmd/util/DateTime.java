@@ -36,10 +36,20 @@ public final class DateTime {
     private DateTime() {
     }
 
+    /**
+     * Print the current date-time.
+     *
+     * @return the current date-time
+     */
     public static String printNow() {
         return print(new Date(System.currentTimeMillis()));
     }
 
+    /**
+     *
+     * @param date date-time to format
+     * @return a formatted date-time
+     */
     public static String print(Date date) {
         return DF.format(date);
     }

@@ -41,7 +41,7 @@ public final class OptionFactory {
     /**
      * Create the required options for the help message.
      *
-     * @return
+     * @return required options
      */
     public static Option createRequiredHelpOpt() {
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.HELP);
@@ -56,10 +56,10 @@ public final class OptionFactory {
     }
 
     /**
-     * Create the required indepedence test options.
+     * Create the required options for the test of independence.
      *
-     * @param dataType
-     * @return
+     * @param dataType data type
+     * @return options required options for the test of independence
      */
     public static Option createRequiredTestOpt(DataType dataType) {
         List<String> commands = TetradIndependenceTests.getInstance().getCommands(dataType);
@@ -78,8 +78,8 @@ public final class OptionFactory {
     /**
      * Create the required score options.
      *
-     * @param dataType
-     * @return
+     * @param dataType data type
+     * @return options required options for the score
      */
     public static Option createRequiredScoreOpt(DataType dataType) {
         List<String> commands = TetradScores.getInstance().getCommands(dataType);
@@ -98,7 +98,7 @@ public final class OptionFactory {
     /**
      * Create the required option for the number of category for mixed data.
      *
-     * @return
+     * @return required option for number of categories.
      */
     public static Option createRequiredNumCategoryOpt() {
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.NUM_CATEGORIES);

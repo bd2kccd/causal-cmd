@@ -99,9 +99,9 @@ public final class TetradIndependenceTests {
     /**
      * Combine two lists of command-line options into one.
      *
-     * @param listA
-     * @param listB
-     * @return
+     * @param listA list to merge
+     * @param listB list to merge
+     * @return list containing values from listA and listB
      */
     private static List<String> mergeList(List<String> listA, List<String> listB) {
         return Stream.concat(listA.stream(), listB.stream())
@@ -112,7 +112,7 @@ public final class TetradIndependenceTests {
     /**
      * Get the instance of this class.
      *
-     * @return
+     * @return instance of TetradIndependenceTests
      */
     public static TetradIndependenceTests getInstance() {
         return INSTANCE;
@@ -121,8 +121,9 @@ public final class TetradIndependenceTests {
     /**
      * Determine if the giving command is a validate command-line option.
      *
-     * @param command
-     * @return
+     * @param command command-line argument
+     * @return true if the giving command is a validate command-line option,
+     * otherwise false
      */
     public boolean hasCommand(String command) {
         if (command == null || command.isEmpty()) {
@@ -138,9 +139,10 @@ public final class TetradIndependenceTests {
      * Determine if the giving command is a validate command-line option for a
      * giving datatype.
      *
-     * @param command
-     * @param dataType
-     * @return
+     * @param command command-line argument
+     * @param dataType data type
+     * @return true if the giving command is a validate command-line option for
+     * a giving datatype. Otherwise, false.
      */
     public boolean hasCommand(String command, DataType dataType) {
         if (command == null || command.isEmpty() || dataType == null) {
@@ -160,9 +162,9 @@ public final class TetradIndependenceTests {
     }
 
     /**
-     * Get a list of command-line options.
+     * Get a list of command-line options for test of independence.
      *
-     * @return
+     * @return a list of command-line options for test of independence
      */
     public List<String> getCommands() {
         List<String> list = CausalCmdApplication.showExperimental
@@ -175,8 +177,8 @@ public final class TetradIndependenceTests {
     /**
      * Get a list of command-line options for a giving datatype.
      *
-     * @param dataType
-     * @return
+     * @param dataType data type
+     * @return a list of command-line options for a giving datatype
      */
     public List<String> getCommands(DataType dataType) {
         Map<DataType, List<String>> map = CausalCmdApplication.showExperimental
@@ -191,8 +193,8 @@ public final class TetradIndependenceTests {
     /**
      * Get class for a giving command-line option.
      *
-     * @param command
-     * @return
+     * @param command command-line argument
+     * @return class for a giving command-line option
      */
     public Class getClass(String command) {
         if (command == null || command.isEmpty()) {
@@ -207,10 +209,10 @@ public final class TetradIndependenceTests {
     }
 
     /**
-     * Get the name for a given class.
+     * Get the class name for test of independence.
      *
-     * @param clazz
-     * @return
+     * @param clazz test-of-independence class
+     * @return class name for test of independence.
      */
     public String getName(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(TestOfIndependence.class))
@@ -219,10 +221,10 @@ public final class TetradIndependenceTests {
     }
 
     /**
-     * Get the description for a given class.
+     * Get the description for test of independence from class.
      *
-     * @param clazz
-     * @return
+     * @param clazz test-of-independence class
+     * @return description for test of independence
      */
     public String getDescription(Class clazz) {
         return (clazz != null && clazz.isAnnotationPresent(TestOfIndependence.class))
