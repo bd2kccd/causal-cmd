@@ -78,7 +78,7 @@ public final class CmdParams {
     public static final String EXTRACT_STRUCT_MODEL = "extract-struct-model";
 
     public static final String EXPERIMENTAL = "experimental";
-    
+
     public static final String DEFAULT = "default";
 
     private CmdParams() {

@@ -245,7 +245,7 @@ public final class DataFiles {
         Path file = cmdArgs.getExcludeVariableFile();
         if (file != null) {
             LogMessages.readingFileStart(file, LOGGER, out);
-            try ( Stream<String> stream = Files.lines(file)) {
+            try (Stream<String> stream = Files.lines(file)) {
                 stream
                         .map(e -> e.trim())
                         .filter(e -> !e.isEmpty())

@@ -165,12 +165,11 @@ public final class CmdOptions {
         opts.add(options.get(CmdParams.DIR_OUT));
 
 //        opts.add(options.get(CmdParams.THREAD));
-
         // data validation options
         opts.add(options.get(CmdParams.SKIP_VALIDATION));
 
         opts.add(options.get(CmdParams.EXPERIMENTAL));
-        
+
         opts.add(options.get(CmdParams.DEFAULT));
 
         return opts;

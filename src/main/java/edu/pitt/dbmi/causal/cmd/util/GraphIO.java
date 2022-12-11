@@ -49,7 +49,7 @@ public final class GraphIO {
      */
     public static void writeAsTXT(Graph graph, Path path) throws IOException {
         Scanner scanner = new Scanner(graph.toString());
-        try ( PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
             while (scanner.hasNextLine()) {
                 out.println(scanner.nextLine().trim());
             }
@@ -65,7 +65,7 @@ public final class GraphIO {
      */
     public static void writeAsJSON(Graph graph, Path path) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try ( PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
+        try (PrintStream out = new PrintStream(Files.newOutputStream(path), true)) {
             out.println(gson.toJson(graph));
         }
     }
