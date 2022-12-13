@@ -130,7 +130,7 @@ public class CausalCmdApplication {
     private static void runTetrad(CmdArgs cmdArgs) throws AlgorithmRunException, ValidationException, IOException {
         String outDir = cmdArgs.getOutDirectory().toString();
         String prefix = cmdArgs.getFilePrefix();
-        Path outTxtFile = Paths.get(outDir, String.format("%s.txt", prefix));
+        Path outTxtFile = Paths.get(outDir, String.format("%s_out.txt", prefix));
 
         // remove previous files
         if (Files.exists(outTxtFile)) {

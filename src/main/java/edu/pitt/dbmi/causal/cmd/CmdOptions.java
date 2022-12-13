@@ -190,7 +190,7 @@ public final class CmdOptions {
         options.put(CmdParams.HELP_SCORE_DESC, new Option(null, CmdParams.HELP_SCORE_DESC, false, "Show all the scores along with their descriptions."));
         options.put(CmdParams.HELP_TEST_DESC, new Option(null, CmdParams.HELP_TEST_DESC, false, "Show all the independence tests along with their descriptions."));
         options.put(CmdParams.VERSION, new Option(null, CmdParams.VERSION, false, "Show version."));
-        options.put(CmdParams.FILE_PREFIX, Option.builder().longOpt(CmdParams.FILE_PREFIX).desc("Output file name prefix.").hasArg().argName("string").build());
+        options.put(CmdParams.FILE_PREFIX, Option.builder().longOpt(CmdParams.FILE_PREFIX).desc("Replace the default output filename prefix in the format of <algorithm>_<numeric timestamp>.").hasArg().argName("string").build());
         options.put(CmdParams.JSON_GRAPH, new Option(null, CmdParams.JSON_GRAPH, false, "Write out graph as json."));
         options.put(CmdParams.DIR_OUT, Option.builder().longOpt(CmdParams.DIR_OUT).desc("Output directory").hasArg().argName("directory").build());
 
