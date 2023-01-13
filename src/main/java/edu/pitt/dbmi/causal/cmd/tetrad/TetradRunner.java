@@ -26,7 +26,7 @@ import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.ICovarianceMatrix;
-import edu.cmu.tetrad.data.IKnowledge;
+import edu.cmu.tetrad.data.Knowledge;
 import edu.cmu.tetrad.graph.Dag;
 import edu.cmu.tetrad.graph.Graph;
 import edu.cmu.tetrad.graph.GraphUtils;
@@ -87,7 +87,7 @@ public class TetradRunner {
     public void runAlgorithm(PrintStream out) throws AlgorithmRunException, IOException {
         final List<DataModel> dataModels = DataFiles.readInDatasets(cmdArgs, out);
         final Algorithm algorithm = getAlgorithm(cmdArgs);
-        final IKnowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);
+        final Knowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);
 
         final boolean acceptsKnowledge = TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass());
         final boolean hasKnowledge = !(knowledge == null || knowledge.getVariables().isEmpty());
