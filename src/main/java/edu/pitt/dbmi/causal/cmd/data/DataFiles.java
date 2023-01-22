@@ -22,7 +22,7 @@ import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.data.DataUtils;
 import edu.cmu.tetrad.data.DelimiterType;
-import edu.cmu.tetrad.data.IKnowledge;
+import edu.cmu.tetrad.data.Knowledge;
 import edu.cmu.tetrad.util.DataConvertUtils;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
@@ -99,13 +99,13 @@ public final class DataFiles {
      * @return knowledge information from file
      * @throws IOException when errors occur during reading file
      */
-    public static IKnowledge readInKnowledge(CmdArgs cmdArgs, PrintStream out) throws IOException {
+    public static Knowledge readInKnowledge(CmdArgs cmdArgs, PrintStream out) throws IOException {
         Path file = cmdArgs.getKnowledgeFile();
         if (file == null) {
             return null;
         } else {
             LogMessages.readingFileStart(file, LOGGER, out);
-            IKnowledge knowledge = DataUtils.loadKnowledge(file.toFile(), DelimiterType.WHITESPACE, "//");
+            Knowledge knowledge = DataUtils.loadKnowledge(file.toFile(), DelimiterType.WHITESPACE, "//");
             LogMessages.readingFileEnd(file, LOGGER, out);
 
             return knowledge;
