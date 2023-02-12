@@ -89,11 +89,11 @@ public class TetradRunner {
         final Algorithm algorithm = getAlgorithm(cmdArgs);
         final Knowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);
 
-        final boolean acceptsKnowledge = TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass());
+        final boolean takesKnowledge = TetradAlgorithms.getInstance().takesKnowledge(cmdArgs.getAlgorithmClass());
         final boolean hasKnowledge = !(knowledge == null || knowledge.getVariables().isEmpty());
 
         // add knowledge, if any
-        if (acceptsKnowledge && hasKnowledge) {
+        if (takesKnowledge && hasKnowledge) {
             ((HasKnowledge) algorithm).setKnowledge(knowledge);
         }
 

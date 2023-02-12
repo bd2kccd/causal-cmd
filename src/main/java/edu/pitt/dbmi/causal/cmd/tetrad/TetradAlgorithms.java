@@ -120,7 +120,7 @@ public final class TetradAlgorithms {
      * @param clazz algorithm class
      * @return true of the given algorithm requires test of dependence
      */
-    public boolean requireIndependenceTest(Class clazz) {
+    public boolean requiresIndependenceTest(Class clazz) {
         return AlgorithmAnnotations.getInstance().requiresIndependenceTest(clazz);
     }
 
@@ -130,7 +130,7 @@ public final class TetradAlgorithms {
      * @param clazz algorithm class
      * @return true of the given algorithm requires score
      */
-    public boolean requireScore(Class clazz) {
+    public boolean requiresScore(Class clazz) {
         return AlgorithmAnnotations.getInstance().requiresScore(clazz);
     }
 
@@ -140,7 +140,7 @@ public final class TetradAlgorithms {
      * @param clazz algorithm class
      * @return true if algorithm can handle multiple datasets
      */
-    public boolean acceptMultipleDataset(Class clazz) {
+    public boolean takesMultipleDataset(Class clazz) {
         return AlgorithmAnnotations.getInstance().takesMultipleDataset(clazz);
     }
 
@@ -150,7 +150,7 @@ public final class TetradAlgorithms {
      * @param clazz algorithm class
      * @return true if algorithm supports knowledge
      */
-    public boolean acceptKnowledge(Class clazz) {
+    public boolean takesKnowledge(Class clazz) {
         return AlgorithmAnnotations.getInstance().takesKnowledge(clazz);
     }
 

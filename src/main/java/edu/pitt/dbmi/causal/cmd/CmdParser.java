@@ -172,7 +172,7 @@ public final class CmdParser {
         cmdArgs.datasetFiles = dataset;
 
         // make sure algorithm can handle multiple dataset
-        if (dataset.size() > 1 && !TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.algorithmClass)) {
+        if (dataset.size() > 1 && !TetradAlgorithms.getInstance().takesMultipleDataset(cmdArgs.algorithmClass)) {
             Options opts = parseOptions.getOptions();
             Options invalidOpts = parseOptions.getInvalidValueOptions();
 
@@ -251,14 +251,14 @@ public final class CmdParser {
             String errMsg = String.format("No such algorithm '%s'.", algorithmCmd);
             throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
-        if (TetradAlgorithms.getInstance().acceptKnowledge(algorithmClass)) {
+        if (TetradAlgorithms.getInstance().takesKnowledge(algorithmClass)) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
         }
 
         addGraphManipulationOptions(opts);
 
-        boolean testParamReq = TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass);
-        boolean scoreParamReq = TetradAlgorithms.getInstance().requireScore(algorithmClass);
+        boolean testParamReq = TetradAlgorithms.getInstance().requiresIndependenceTest(algorithmClass);
+        boolean scoreParamReq = TetradAlgorithms.getInstance().requiresScore(algorithmClass);
         if (testParamReq) {
             opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
         }
