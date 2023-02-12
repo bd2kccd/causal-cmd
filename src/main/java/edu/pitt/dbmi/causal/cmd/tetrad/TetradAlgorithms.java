@@ -155,6 +155,16 @@ public final class TetradAlgorithms {
     }
 
     /**
+     * Determine if the given algorithm class accepts external graph.
+     *
+     * @param clazz algorithm class
+     * @return true if algorithm supports external graph
+     */
+    public boolean takesExternalGraph(Class clazz) {
+        return AlgorithmAnnotations.getInstance().takesExternalGraph(clazz);
+    }
+
+    /**
      * Get the description for a given class.
      *
      * @param clazz algorithm class

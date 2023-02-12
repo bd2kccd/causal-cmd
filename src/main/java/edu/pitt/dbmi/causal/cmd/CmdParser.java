@@ -254,6 +254,9 @@ public final class CmdParser {
         if (TetradAlgorithms.getInstance().takesKnowledge(algorithmClass)) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
         }
+        if (TetradAlgorithms.getInstance().takesExternalGraph(algorithmClass)) {
+            opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXTERNAL_GRAPH));
+        }
 
         addGraphManipulationOptions(opts);
 
