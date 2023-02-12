@@ -45,6 +45,11 @@ public class CmdArgs {
     protected Path knowledgeFile;
 
     /**
+     * External Graph file.
+     */
+    protected Path externalGraphFile;
+
+    /**
      * File contains a list of variables to exclude when reading in data.
      */
     protected Path excludeVariableFile;
@@ -158,6 +163,10 @@ public class CmdArgs {
 
     public Path getKnowledgeFile() {
         return knowledgeFile;
+    }
+
+    public Path getExternalGraphFile() {
+        return externalGraphFile;
     }
 
     public Path getExcludeVariableFile() {

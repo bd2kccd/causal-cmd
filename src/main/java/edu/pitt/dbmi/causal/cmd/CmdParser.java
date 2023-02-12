@@ -96,6 +96,9 @@ public final class CmdParser {
         cmdArgs.knowledgeFile = cmd.hasOption(CmdParams.KNOWLEDGE)
                 ? getValidFile(cmd.getOptionValue(CmdParams.KNOWLEDGE), parseOptions, CmdParams.KNOWLEDGE)
                 : null;
+        cmdArgs.externalGraphFile = cmd.hasOption(CmdParams.EXTERNAL_GRAPH)
+                ? getValidFile(cmd.getOptionValue(CmdParams.EXTERNAL_GRAPH), parseOptions, CmdParams.EXTERNAL_GRAPH)
+                : null;
         cmdArgs.excludeVariableFile = cmd.hasOption(CmdParams.EXCLUDE_VARIABLE)
                 ? getValidFile(cmd.getOptionValue(CmdParams.EXCLUDE_VARIABLE), parseOptions, CmdParams.EXCLUDE_VARIABLE)
                 : null;
@@ -447,7 +450,7 @@ public final class CmdParser {
 
         Set<String> parameters = getAllRelatedParameters(cmdArgs, parseOptions);
 
-        setParametersAndValues(parametersWithValues, parameters, cmdArgs.defaultParamValues);
+        setParametersAndValues(parametersWithValues, parameters, cmdArgs.isDefaultParamValues());
         setUserParameterValues(parametersWithValues, parameters, cmd, parseOptions);
 
         return parametersWithValues;

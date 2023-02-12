@@ -195,6 +195,7 @@ public final class CmdOptions {
         options.put(CmdParams.DIR_OUT, Option.builder().longOpt(CmdParams.DIR_OUT).desc("Output directory").hasArg().argName("directory").build());
 
         options.put(CmdParams.KNOWLEDGE, Option.builder().longOpt(CmdParams.KNOWLEDGE).desc("Prior knowledge file.").hasArg().argName("file").build());
+        options.put(CmdParams.EXTERNAL_GRAPH, Option.builder().longOpt(CmdParams.EXTERNAL_GRAPH).desc("External graph file.").hasArg().argName("file").build());
         options.put(CmdParams.EXCLUDE_VARIABLE, Option.builder().longOpt(CmdParams.EXCLUDE_VARIABLE).desc("Variables to be excluded from run.").hasArg().argName("file").build());
         options.put(CmdParams.METADATA, Option.builder().longOpt(CmdParams.METADATA).desc("Metadata file.  Cannot apply to dataset without header.").hasArg().argName("file").build());
 
