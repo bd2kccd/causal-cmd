@@ -45,6 +45,7 @@ public final class CmdParams {
     // file
     public static final String DATASET = "dataset";
     public static final String KNOWLEDGE = "knowledge";
+    public static final String EXTERNAL_GRAPH = "external-graph";
     public static final String EXCLUDE_VARIABLE = "exclude-var";
     public static final String METADATA = "metadata";
 

@@ -96,6 +96,9 @@ public final class CmdParser {
         cmdArgs.knowledgeFile = cmd.hasOption(CmdParams.KNOWLEDGE)
                 ? getValidFile(cmd.getOptionValue(CmdParams.KNOWLEDGE), parseOptions, CmdParams.KNOWLEDGE)
                 : null;
+        cmdArgs.externalGraphFile = cmd.hasOption(CmdParams.EXTERNAL_GRAPH)
+                ? getValidFile(cmd.getOptionValue(CmdParams.EXTERNAL_GRAPH), parseOptions, CmdParams.EXTERNAL_GRAPH)
+                : null;
         cmdArgs.excludeVariableFile = cmd.hasOption(CmdParams.EXCLUDE_VARIABLE)
                 ? getValidFile(cmd.getOptionValue(CmdParams.EXCLUDE_VARIABLE), parseOptions, CmdParams.EXCLUDE_VARIABLE)
                 : null;
@@ -169,7 +172,7 @@ public final class CmdParser {
         cmdArgs.datasetFiles = dataset;
 
         // make sure algorithm can handle multiple dataset
-        if (dataset.size() > 1 && !TetradAlgorithms.getInstance().acceptMultipleDataset(cmdArgs.algorithmClass)) {
+        if (dataset.size() > 1 && !TetradAlgorithms.getInstance().takesMultipleDataset(cmdArgs.algorithmClass)) {
             Options opts = parseOptions.getOptions();
             Options invalidOpts = parseOptions.getInvalidValueOptions();
 
@@ -248,14 +251,17 @@ public final class CmdParser {
             String errMsg = String.format("No such algorithm '%s'.", algorithmCmd);
             throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
-        if (TetradAlgorithms.getInstance().acceptKnowledge(algorithmClass)) {
+        if (TetradAlgorithms.getInstance().takesKnowledge(algorithmClass)) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.KNOWLEDGE));
+        }
+        if (TetradAlgorithms.getInstance().takesExternalGraph(algorithmClass)) {
+            opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXTERNAL_GRAPH));
         }
 
         addGraphManipulationOptions(opts);
 
-        boolean testParamReq = TetradAlgorithms.getInstance().requireIndependenceTest(algorithmClass);
-        boolean scoreParamReq = TetradAlgorithms.getInstance().requireScore(algorithmClass);
+        boolean testParamReq = TetradAlgorithms.getInstance().requiresIndependenceTest(algorithmClass);
+        boolean scoreParamReq = TetradAlgorithms.getInstance().requiresScore(algorithmClass);
         if (testParamReq) {
             opts.addOption(OptionFactory.createRequiredTestOpt(dataType));
         }
@@ -447,7 +453,7 @@ public final class CmdParser {
 
         Set<String> parameters = getAllRelatedParameters(cmdArgs, parseOptions);
 
-        setParametersAndValues(parametersWithValues, parameters, cmdArgs.defaultParamValues);
+        setParametersAndValues(parametersWithValues, parameters, cmdArgs.isDefaultParamValues());
         setUserParameterValues(parametersWithValues, parameters, cmd, parseOptions);
 
         return parametersWithValues;

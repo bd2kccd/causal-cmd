@@ -23,6 +23,7 @@ import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.algcomparison.algorithm.MultiDataSetAlgorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.cluster.ClusterAlgorithm;
 import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
+import edu.cmu.tetrad.algcomparison.utils.TakesExternalGraph;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.ICovarianceMatrix;
@@ -88,13 +89,22 @@ public class TetradRunner {
         final List<DataModel> dataModels = DataFiles.readInDatasets(cmdArgs, out);
         final Algorithm algorithm = getAlgorithm(cmdArgs);
         final Knowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);
+        final Graph externalGraph = DataFiles.readInExternalGraph(cmdArgs, out);
 
-        final boolean acceptsKnowledge = TetradAlgorithms.getInstance().acceptKnowledge(cmdArgs.getAlgorithmClass());
+        final boolean takesKnowledge = TetradAlgorithms.getInstance().takesKnowledge(cmdArgs.getAlgorithmClass());
         final boolean hasKnowledge = !(knowledge == null || knowledge.getVariables().isEmpty());
 
+        final boolean takesExternalGraph = TetradAlgorithms.getInstance().takesExternalGraph(cmdArgs.getAlgorithmClass());
+        final boolean hasExternalGraph = !(externalGraph == null || externalGraph.getEdges().isEmpty());
+
         // add knowledge, if any
-        if (acceptsKnowledge && hasKnowledge) {
+        if (takesKnowledge && hasKnowledge) {
             ((HasKnowledge) algorithm).setKnowledge(knowledge);
+        }
+
+        // add external graph, if any
+        if (takesExternalGraph && hasExternalGraph) {
+            ((TakesExternalGraph) algorithm).setExternalGraph(externalGraph);
         }
 
         final Parameters parameters = Tetrad.getParameters(cmdArgs);
