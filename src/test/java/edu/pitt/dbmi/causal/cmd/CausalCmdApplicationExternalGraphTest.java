@@ -17,13 +17,34 @@ public class CausalCmdApplicationExternalGraphTest {
     public static Path tempDir;
 
     @Test
+    public void testRSkewWithContinuousData() throws IOException {
+        String dataset = CausalCmdApplicationExternalGraphTest.class
+                .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile();
+        String graph = CausalCmdApplicationExternalGraphTest.class
+                .getResource("/data/graph_data/sim_cont_10var_1kcase/graph/graph.txt").getFile();
+
+        String dirOut = TestFiles.createSubDir(tempDir, "rskew_cont_ext_graph").toString();
+        String[] args = {
+            "--default",
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "continuous",
+            "--algorithm", "r-skew",
+            "--external-graph", graph,
+            "--default",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
     public void testFgesWithContinuousData() throws IOException {
         String dataset = CausalCmdApplicationExternalGraphTest.class
                 .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile();
         String graph = CausalCmdApplicationExternalGraphTest.class
                 .getResource("/data/graph_data/sim_cont_10var_1kcase/graph/graph.txt").getFile();
 
-        String dirOut = TestFiles.createSubDir(tempDir, "gfci_cont").toString();
+        String dirOut = TestFiles.createSubDir(tempDir, "fges_cont_ext_graph").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
