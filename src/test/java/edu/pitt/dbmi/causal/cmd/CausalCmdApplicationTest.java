@@ -208,7 +208,6 @@ public class CausalCmdApplicationTest {
             "--algorithm", "gfci",
             "--test", "g-square-test",
             "--score", "bdeu-score",
-            "--faithfulnessAssumed",
             "--default",
             "--out", dirOut
         };
