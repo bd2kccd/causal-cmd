@@ -22,6 +22,7 @@ import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.algcomparison.algorithm.MultiDataSetAlgorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.cluster.ClusterAlgorithm;
+import edu.cmu.tetrad.algcomparison.algorithm.oracle.cpdag.SingleGraphAlg;
 import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
 import edu.cmu.tetrad.algcomparison.utils.TakesExternalGraph;
 import edu.cmu.tetrad.data.DataModel;
@@ -105,6 +106,7 @@ public class TetradRunner {
         // add external graph, if any
         if (takesExternalGraph && hasExternalGraph) {
             ((TakesExternalGraph) algorithm).setExternalGraph(externalGraph);
+            ((TakesExternalGraph) algorithm).setExternalGraph(new SingleGraphAlg(externalGraph));
         }
 
         final Parameters parameters = Tetrad.getParameters(cmdArgs);
