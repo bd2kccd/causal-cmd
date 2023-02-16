@@ -105,7 +105,6 @@ public class TetradRunner {
 
         // add external graph, if any
         if (takesExternalGraph && hasExternalGraph) {
-            ((TakesExternalGraph) algorithm).setExternalGraph(externalGraph);
             ((TakesExternalGraph) algorithm).setExternalGraph(new SingleGraphAlg(externalGraph));
         }
 
