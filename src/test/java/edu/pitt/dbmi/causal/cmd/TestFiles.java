@@ -18,6 +18,7 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,53 +34,54 @@ import java.util.List;
  */
 final class TestFiles {
 
-    public static final String CONTINUOUS_DATA = TestFiles.class
-            .getResource("/data/sim_data_continuous_20var_100case.txt").getFile();
 
-    public static final String CONTINUOUS_10VAR_1KCASE_MISSING_DATA = TestFiles.class
-            .getResource("/data/sim_data_continuous_10var_1kcase_missing.csv").getFile();
+    public static final String CONTINUOUS_DATA = new File(TestFiles.class
+            .getResource("/data/sim_data_continuous_20var_100case.txt").getFile()).getAbsolutePath();
 
-    public static final String CONTINUOUS_DATA_NO_HEADER = TestFiles.class
-            .getResource("/data/sim_data_continuous_20var_100case_no_header.txt").getFile();
+    public static final String CONTINUOUS_10VAR_1KCASE_MISSING_DATA = new File(TestFiles.class
+            .getResource("/data/sim_data_continuous_10var_1kcase_missing.csv").getFile()).getAbsolutePath();
 
-    public static final String CONTINUOUS_DATA_20K_PART1 = TestFiles.class
-            .getResource("/data/sim_data_continuous_20var_100case_part_1.txt").getFile();
+    public static final String CONTINUOUS_DATA_NO_HEADER = new File(TestFiles.class
+            .getResource("/data/sim_data_continuous_20var_100case_no_header.txt").getFile()).getAbsolutePath();
 
-    public static final String CONTINUOUS_DATA_20K_PART2 = TestFiles.class
-            .getResource("/data/sim_data_continuous_20var_100case_part_2.txt").getFile();
+    public static final String CONTINUOUS_DATA_20K_PART1 = new File(TestFiles.class
+            .getResource("/data/sim_data_continuous_20var_100case_part_1.txt").getFile()).getAbsolutePath();
 
-    public static final String DISCRETE_DATA = TestFiles.class
-            .getResource("/data/sim_data_discrete_20var_100case.txt").getFile();
+    public static final String CONTINUOUS_DATA_20K_PART2 = new File(TestFiles.class
+            .getResource("/data/sim_data_continuous_20var_100case_part_2.txt").getFile()).getAbsolutePath();
 
-    public static final String MIXED_DATA = TestFiles.class
-            .getResource("/data/sim_data_mixed_20var_100case.txt").getFile();
+    public static final String DISCRETE_DATA = new File(TestFiles.class
+            .getResource("/data/sim_data_discrete_20var_100case.txt").getFile()).getAbsolutePath();
 
-    public static final String COVARIANCE_CONTINUOUS_DATA = TestFiles.class
-            .getResource("/data/covariance_sim_data_continuous_20var_100case.txt").getFile();
+    public static final String MIXED_DATA = new File(TestFiles.class
+            .getResource("/data/sim_data_mixed_20var_100case.txt").getFile()).getAbsolutePath();
 
-    public static final String KNOWLEDGE_CONTINUOUS_DATA = TestFiles.class
-            .getResource("/data/knowledge_sim_data_continuous_20var_100case.txt").getFile();
+    public static final String COVARIANCE_CONTINUOUS_DATA = new File(TestFiles.class
+            .getResource("/data/covariance_sim_data_continuous_20var_100case.txt").getFile()).getAbsolutePath();
 
-    public static final String EXCLUDE_VARIABLES = TestFiles.class
-            .getResource("/data/exclude_vars.txt").getFile();
+    public static final String KNOWLEDGE_CONTINUOUS_DATA = new File(TestFiles.class
+            .getResource("/data/knowledge_sim_data_continuous_20var_100case.txt").getFile()).getAbsolutePath();
 
-    public static final String CONTINUOUS_INTERVENTIONAL_DATA = TestFiles.class
-            .getResource("/data/metadata/sim_continuous_intervention.txt").getFile();
+    public static final String EXCLUDE_VARIABLES = new File(TestFiles.class
+            .getResource("/data/exclude_vars.txt").getFile()).getAbsolutePath();
 
-    public static final String DISCRETE_INTERVENTIONAL_DATA = TestFiles.class
-            .getResource("/data/metadata/sim_discrete_intervention.txt").getFile();
+    public static final String CONTINUOUS_INTERVENTIONAL_DATA = new File(TestFiles.class
+            .getResource("/data/metadata/sim_continuous_intervention.txt").getFile()).getAbsolutePath();
 
-    public static final String MIXED_INTERVENTIONAL_DATA = TestFiles.class
-            .getResource("/data/metadata/sim_mixed_intervention.txt").getFile();
+    public static final String DISCRETE_INTERVENTIONAL_DATA = new File(TestFiles.class
+            .getResource("/data/metadata/sim_discrete_intervention.txt").getFile()).getAbsolutePath();
 
-    public static final String CONTINUOUS_INTERVENTIONAL_METADATA = TestFiles.class
-            .getResource("/data/metadata/sim_continuous_intervention_metadata.json").getFile();
+    public static final String MIXED_INTERVENTIONAL_DATA = new File(TestFiles.class
+            .getResource("/data/metadata/sim_mixed_intervention.txt").getFile()).getAbsolutePath();
 
-    public static final String DISCRETE_INTERVENTIONAL_METADATA = TestFiles.class
-            .getResource("/data/metadata/sim_discrete_intervention_metadata.json").getFile();
+    public static final String CONTINUOUS_INTERVENTIONAL_METADATA = new File(TestFiles.class
+            .getResource("/data/metadata/sim_continuous_intervention_metadata.json").getFile()).getAbsolutePath();
 
-    public static final String MIXED_INTERVENTIONAL_METADATA = TestFiles.class
-            .getResource("/data/metadata/sim_mixed_intervention_metadata.json").getFile();
+    public static final String DISCRETE_INTERVENTIONAL_METADATA = new File(TestFiles.class
+            .getResource("/data/metadata/sim_discrete_intervention_metadata.json").getFile()).getAbsolutePath();
+
+    public static final String MIXED_INTERVENTIONAL_METADATA = new File(TestFiles.class
+            .getResource("/data/metadata/sim_mixed_intervention_metadata.json").getFile()).getAbsolutePath();
 
     private TestFiles() {
     }

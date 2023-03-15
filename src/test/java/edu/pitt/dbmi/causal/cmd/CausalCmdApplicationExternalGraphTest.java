@@ -1,5 +1,6 @@
 package edu.pitt.dbmi.causal.cmd;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,10 @@ public class CausalCmdApplicationExternalGraphTest {
 
     @Test
     public void testRSkewWithContinuousData() throws IOException {
-        String dataset = CausalCmdApplicationExternalGraphTest.class
-                .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile();
-        String graph = CausalCmdApplicationExternalGraphTest.class
-                .getResource("/data/graph_data/sim_cont_10var_1kcase/graph/graph.txt").getFile();
+        String dataset = new File(CausalCmdApplicationExternalGraphTest.class
+                .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile()).getAbsolutePath();
+        String graph = new File(CausalCmdApplicationExternalGraphTest.class
+                .getResource("/data/graph_data/sim_cont_10var_1kcase/graph/graph.txt").getFile()).getAbsolutePath();
 
         String dirOut = TestFiles.createSubDir(tempDir, "rskew_cont_ext_graph").toString();
         String[] args = {
@@ -39,10 +40,10 @@ public class CausalCmdApplicationExternalGraphTest {
 
     @Test
     public void testFgesWithContinuousData() throws IOException {
-        String dataset = CausalCmdApplicationExternalGraphTest.class
-                .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile();
-        String graph = CausalCmdApplicationExternalGraphTest.class
-                .getResource("/data/graph_data/sim_cont_10var_1kcase/graph/graph.txt").getFile();
+        String dataset = new File(CausalCmdApplicationExternalGraphTest.class
+                .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile()).getAbsolutePath();
+        String graph = new File(CausalCmdApplicationExternalGraphTest.class
+                .getResource("/data/graph_data/sim_cont_10var_1kcase/graph/graph.txt").getFile()).getAbsolutePath();
 
         String dirOut = TestFiles.createSubDir(tempDir, "fges_cont_ext_graph").toString();
         String[] args = {
