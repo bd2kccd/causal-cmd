@@ -44,7 +44,6 @@ public class CausalCmdApplicationExperimentalTest {
             "--experimental",
             "--algorithm", "boss",
             "--score", "ebic-score",
-            "--test", "fisher-z-test",
             "--default",
             "--prefix", "boss-experimental",
             "--out", dirOut
