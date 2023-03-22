@@ -1,7 +1,6 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -18,7 +17,7 @@ public class CausalCmdApplicationExternalGraphTest {
     public static Path tempDir;
 
     @Test
-    public void testRSkewWithContinuousData() throws IOException {
+    public void testRSkewWithContinuousData() throws Exception {
         String dataset = new File(CausalCmdApplicationExternalGraphTest.class
                 .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile()).getAbsolutePath();
         String graph = new File(CausalCmdApplicationExternalGraphTest.class
@@ -39,7 +38,7 @@ public class CausalCmdApplicationExternalGraphTest {
     }
 
     @Test
-    public void testFgesWithContinuousData() throws IOException {
+    public void testFgesWithContinuousData() throws Exception {
         String dataset = new File(CausalCmdApplicationExternalGraphTest.class
                 .getResource("/data/graph_data/sim_cont_10var_1kcase/data/data.txt").getFile()).getAbsolutePath();
         String graph = new File(CausalCmdApplicationExternalGraphTest.class

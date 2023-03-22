@@ -111,7 +111,7 @@ public class CausalCmdApplication {
 
             try {
                 runTetrad(cmdArgs);
-            } catch (IOException | ValidationException | AlgorithmRunException exception) {
+            } catch (Exception exception) {
                 LOGGER.error("", exception);
                 exception.printStackTrace(System.err);
                 System.exit(-1);
@@ -127,7 +127,7 @@ public class CausalCmdApplication {
      * @throws ValidationException whenever data validation fails
      * @throws IOException whenever unable to read or write file
      */
-    private static void runTetrad(CmdArgs cmdArgs) throws AlgorithmRunException, ValidationException, IOException {
+    private static void runTetrad(CmdArgs cmdArgs) throws AlgorithmRunException, ValidationException, Exception {
         String outDir = cmdArgs.getOutDirectory().toString();
         String prefix = cmdArgs.getFilePrefix();
         Path outTxtFile = Paths.get(outDir, String.format("%s_out.txt", prefix));
