@@ -86,7 +86,7 @@ public class TetradRunner {
      * @throws AlgorithmRunException when algorithm run fails
      * @throws IOException when unable to read knowledge file
      */
-    public void runAlgorithm(PrintStream out) throws AlgorithmRunException, IOException {
+    public void runAlgorithm(PrintStream out) throws Exception {
         final List<DataModel> dataModels = DataFiles.readInDatasets(cmdArgs, out);
         final Algorithm algorithm = getAlgorithm(cmdArgs);
         final Knowledge knowledge = DataFiles.readInKnowledge(cmdArgs, out);

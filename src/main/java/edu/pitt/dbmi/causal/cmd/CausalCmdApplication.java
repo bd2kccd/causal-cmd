@@ -127,7 +127,7 @@ public class CausalCmdApplication {
      * @throws ValidationException whenever data validation fails
      * @throws IOException whenever unable to read or write file
      */
-    private static void runTetrad(CmdArgs cmdArgs) throws AlgorithmRunException, ValidationException, Exception {
+    private static void runTetrad(CmdArgs cmdArgs) throws Exception {
         String outDir = cmdArgs.getOutDirectory().toString();
         String prefix = cmdArgs.getFilePrefix();
         Path outTxtFile = Paths.get(outDir, String.format("%s_out.txt", prefix));
