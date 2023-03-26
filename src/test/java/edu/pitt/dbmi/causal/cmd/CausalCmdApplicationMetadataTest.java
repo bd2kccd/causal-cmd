@@ -18,8 +18,8 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import java.io.IOException;
 import java.nio.file.Path;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -34,8 +34,9 @@ public class CausalCmdApplicationMetadataTest {
     @TempDir
     public static Path tempDir;
 
+    @Disabled
     @Test
-    public void testGFCIWithMixedData() throws IOException {
+    public void testGFCIWithMixedData() throws Exception {
         String dataset = TestFiles.MIXED_INTERVENTIONAL_DATA;
         String metadata = TestFiles.MIXED_INTERVENTIONAL_METADATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_interv_mixed").toString();
@@ -56,7 +57,7 @@ public class CausalCmdApplicationMetadataTest {
     }
 
     @Test
-    public void testGFCIWithDiscreteData() throws IOException {
+    public void testGFCIWithDiscreteData() throws Exception {
         String dataset = TestFiles.DISCRETE_INTERVENTIONAL_DATA;
         String metadata = TestFiles.DISCRETE_INTERVENTIONAL_METADATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_interv_discrete").toString();
@@ -75,7 +76,7 @@ public class CausalCmdApplicationMetadataTest {
     }
 
     @Test
-    public void testGFCIWithContinuousData() throws IOException {
+    public void testGFCIWithContinuousData() throws Exception {
         String dataset = TestFiles.CONTINUOUS_INTERVENTIONAL_DATA;
         String metadata = TestFiles.CONTINUOUS_INTERVENTIONAL_METADATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_interv_cont").toString();

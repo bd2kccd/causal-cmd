@@ -91,6 +91,11 @@ public class CmdArgs {
     protected boolean hasHeader;
 
     /**
+     * Indicates user has preferred ensemble type.
+     */
+    protected boolean hasEnsembleOption;
+
+    /**
      * Type of data in the dataset.
      */
     protected DataType dataType;
@@ -199,6 +204,10 @@ public class CmdArgs {
 
     public boolean isHasHeader() {
         return hasHeader;
+    }
+
+    public boolean isHasEnsembleOption() {
+        return hasEnsembleOption;
     }
 
     public DataType getDataType() {

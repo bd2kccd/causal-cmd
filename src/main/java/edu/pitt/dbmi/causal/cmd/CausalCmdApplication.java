@@ -19,6 +19,9 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import edu.cmu.tetrad.graph.Graph;
+import edu.cmu.tetrad.util.GraphSampling;
+import edu.cmu.tetrad.util.Params;
+import edu.pitt.dbmi.algo.resampling.ResamplingEdgeEnsemble;
 import edu.pitt.dbmi.causal.cmd.data.DataValidations;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradAlgorithms;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
@@ -111,7 +114,7 @@ public class CausalCmdApplication {
 
             try {
                 runTetrad(cmdArgs);
-            } catch (IOException | ValidationException | AlgorithmRunException exception) {
+            } catch (Exception exception) {
                 LOGGER.error("", exception);
                 exception.printStackTrace(System.err);
                 System.exit(-1);
@@ -127,7 +130,7 @@ public class CausalCmdApplication {
      * @throws ValidationException whenever data validation fails
      * @throws IOException whenever unable to read or write file
      */
-    private static void runTetrad(CmdArgs cmdArgs) throws AlgorithmRunException, ValidationException, IOException {
+    private static void runTetrad(CmdArgs cmdArgs) throws Exception {
         String outDir = cmdArgs.getOutDirectory().toString();
         String prefix = cmdArgs.getFilePrefix();
         Path outTxtFile = Paths.get(outDir, String.format("%s_out.txt", prefix));
@@ -150,11 +153,30 @@ public class CausalCmdApplication {
             out.println();
             out.println("================================================================================");
 
-            Graph[] graphs = tetradRunner.getGraphs().stream()
-                    .toArray(Graph[]::new);
+            Graph[] graphs = tetradRunner.getGraphs().stream().toArray(Graph[]::new);
             for (int i = 0; i < graphs.length; i++) {
                 if (i > 0) {
                     out.println("--------------------------------------------------------------------------------");
+                }
+
+                if (cmdArgs.hasEnsembleOption) {
+                    String ensemble = cmdArgs.getParameters().get(Params.RESAMPLING_ENSEMBLE);
+                    if (ensemble != null) {
+                        try {
+                            int ensembleValue = Integer.parseInt(ensemble);
+
+                            // Ensemble method: Preserved (1), Highest (2), Majority (3)
+                            if (ensembleValue == 1) {
+                                graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Preserved);
+                            } else if (ensembleValue == 2) {
+                                graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Highest);
+                            } else if (ensembleValue == 3) {
+                                graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Majority);
+                            }
+                        } catch (NumberFormatException exception) {
+                            exception.printStackTrace(System.err);
+                        }
+                    }
                 }
 
                 out.println(graphs[i].toString().trim());

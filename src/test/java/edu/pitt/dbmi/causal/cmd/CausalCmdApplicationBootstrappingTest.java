@@ -18,7 +18,6 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,7 +34,7 @@ public class CausalCmdApplicationBootstrappingTest {
     public static Path tempDir;
 
     @Test
-    public void testFgesBootstrappingWithContinuousData() throws IOException {
+    public void testFgesBootstrappingWithContinuousData() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "fges_bootstrapping").toString();
         String[] args = {
@@ -49,6 +48,7 @@ public class CausalCmdApplicationBootstrappingTest {
             "--numberResampling", "10",
             "--percentResampleSize", "100",
             "--seed", "1673588774198",
+            "--resamplingEnsemble", "2",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);

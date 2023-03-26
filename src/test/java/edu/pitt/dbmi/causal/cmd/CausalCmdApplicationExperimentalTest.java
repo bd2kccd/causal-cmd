@@ -18,7 +18,6 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -35,7 +34,7 @@ public class CausalCmdApplicationExperimentalTest {
     public static Path tempDir;
 
     @Test
-    public void testBossWithContinuousData() throws IOException {
+    public void testBossWithContinuousData() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "boss_experimental").toString();
         String[] args = {
@@ -45,7 +44,6 @@ public class CausalCmdApplicationExperimentalTest {
             "--experimental",
             "--algorithm", "boss",
             "--score", "ebic-score",
-            "--test", "fisher-z-test",
             "--default",
             "--prefix", "boss-experimental",
             "--out", dirOut

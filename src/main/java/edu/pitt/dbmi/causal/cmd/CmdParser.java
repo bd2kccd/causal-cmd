@@ -131,6 +131,8 @@ public final class CmdParser {
                 ? getValidThreadNumber(cmd.getOptionValue(CmdParams.THREAD), parseOptions, CmdParams.THREAD)
                 : Runtime.getRuntime().availableProcessors() - 1;
 
+        cmdArgs.hasEnsembleOption = cmd.hasOption(Params.RESAMPLING_ENSEMBLE);
+
         // graph manipulations
         cmdArgs.chooseDagInPattern = cmd.hasOption(CmdParams.CHOOSE_DAG_IN_PATTERN);
         cmdArgs.chooseMagInPag = cmd.hasOption(CmdParams.CHOOSE_MAG_IN_PAG);
@@ -375,7 +377,13 @@ public final class CmdParser {
         }
 
         // add the bootstrap parameters, if any
-        params.addAll(Params.getBootstrappingParameters(algorithm));
+        Set<String> bootstrapParameters = Params.getBootstrappingParameters(algorithm);
+        if (!bootstrapParameters.isEmpty()) {
+            // ensemble is no longer a parameter in tetrad
+            bootstrapParameters.add(Params.RESAMPLING_ENSEMBLE);
+
+            params.addAll(bootstrapParameters);
+        }
 
         return params;
     }

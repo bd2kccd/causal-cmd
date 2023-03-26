@@ -18,7 +18,6 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ public class CausalCmdApplicationTest {
 
     @Disabled
     @Test
-    public void testExperimentalAlgorithm() throws IOException {
+    public void testExperimentalAlgorithm() throws Exception {
         String dataset = TestFiles.DISCRETE_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "rfci-bsc_discrete").toString();
         String[] args = {
@@ -53,7 +52,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithContinuousMissingData() throws IOException {
+    public void testGFCIWithContinuousMissingData() throws Exception {
         String dataset = TestFiles.CONTINUOUS_10VAR_1KCASE_MISSING_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_missing_values").toString();
         String[] args = {
@@ -71,7 +70,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithContinuousDataAndChooseMagInPag() throws IOException {
+    public void testGFCIWithContinuousDataAndChooseMagInPag() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_choose_dag_in_pattern").toString();
         String[] args = {
@@ -89,7 +88,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testFaskVoteWithMultipleContinuousData() throws IOException {
+    public void testFaskVoteWithMultipleContinuousData() throws Exception {
         String dataset1 = TestFiles.CONTINUOUS_DATA_20K_PART1;
         String dataset2 = TestFiles.CONTINUOUS_DATA_20K_PART2;
         String dirOut = TestFiles.createSubDir(tempDir, "fask-vote_cont").toString();
@@ -107,7 +106,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithContinuousDataAndVariablesToExclude() throws IOException {
+    public void testGFCIWithContinuousDataAndVariablesToExclude() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String excludeVar = TestFiles.EXCLUDE_VARIABLES;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_exclude_vars").toString();
@@ -126,7 +125,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testFGESCovariance() throws IOException {
+    public void testFGESCovariance() throws Exception {
         String dataset = TestFiles.COVARIANCE_CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_covar").toString();
         String[] args = {
@@ -143,7 +142,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithContinuousDataAndKnowledge() throws IOException {
+    public void testGFCIWithContinuousDataAndKnowledge() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String knowledge = TestFiles.KNOWLEDGE_CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_knowledge").toString();
@@ -162,7 +161,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithNoHeaderContinuousData() throws IOException {
+    public void testGFCIWithNoHeaderContinuousData() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA_NO_HEADER;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_cont_no_header").toString();
         String[] args = {
@@ -180,7 +179,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithMixedData() throws IOException {
+    public void testGFCIWithMixedData() throws Exception {
         String dataset = TestFiles.MIXED_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_mixed").toString();
         String[] args = {
@@ -198,7 +197,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithDiscreteData() throws IOException {
+    public void testGFCIWithDiscreteData() throws Exception {
         String dataset = TestFiles.DISCRETE_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_discrete").toString();
         String[] args = {
@@ -215,7 +214,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGFCIWithContinuousData() throws IOException {
+    public void testGFCIWithContinuousData() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "gfci_cont").toString();
         String[] args = {
@@ -234,7 +233,7 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
-    public void testGRaSPWithContinuousData() throws IOException {
+    public void testGRaSPWithContinuousData() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String dirOut = TestFiles.createSubDir(tempDir, "grasp_cont").toString();
         String[] args = {
