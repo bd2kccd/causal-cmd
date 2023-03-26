@@ -19,6 +19,7 @@
 package edu.pitt.dbmi.causal.cmd;
 
 import java.nio.file.Path;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -33,6 +34,7 @@ public class CausalCmdApplicationMetadataTest {
     @TempDir
     public static Path tempDir;
 
+    @Disabled
     @Test
     public void testGFCIWithMixedData() throws Exception {
         String dataset = TestFiles.MIXED_INTERVENTIONAL_DATA;

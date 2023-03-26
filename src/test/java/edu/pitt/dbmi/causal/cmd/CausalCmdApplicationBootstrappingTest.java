@@ -48,6 +48,7 @@ public class CausalCmdApplicationBootstrappingTest {
             "--numberResampling", "10",
             "--percentResampleSize", "100",
             "--seed", "1673588774198",
+            "--resamplingEnsemble", "2",
             "--out", dirOut
         };
         CausalCmdApplication.main(args);
