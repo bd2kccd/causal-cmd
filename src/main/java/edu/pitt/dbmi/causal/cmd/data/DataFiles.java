@@ -24,7 +24,7 @@ import edu.cmu.tetrad.data.DelimiterType;
 import edu.cmu.tetrad.data.Knowledge;
 import edu.cmu.tetrad.data.SimpleDataLoader;
 import edu.cmu.tetrad.graph.Graph;
-import edu.cmu.tetrad.graph.GraphPersistence;
+import edu.cmu.tetrad.graph.GraphSaveLoadUtils;
 import edu.cmu.tetrad.util.DataConvertUtils;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
@@ -120,7 +120,7 @@ public final class DataFiles {
             return null;
         } else {
             LogMessages.readingFileStart(file, LOGGER, out);
-            Graph graph = GraphPersistence.loadGraphTxt(file.toFile());
+            Graph graph = GraphSaveLoadUtils.loadGraphTxt(file.toFile());
             LogMessages.readingFileEnd(file, LOGGER, out);
 
             return graph;
