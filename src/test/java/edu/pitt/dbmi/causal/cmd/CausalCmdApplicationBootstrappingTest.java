@@ -35,8 +35,8 @@ public class CausalCmdApplicationBootstrappingTest {
 
     @Test
     public void testFgesBootstrappingWithContinuousData() throws Exception {
-        String dataset = TestFiles.CONTINUOUS_DATA;
-        String dirOut = TestFiles.createSubDir(tempDir, "fges_bootstrapping").toString();
+        String dataset = TestFiles.CONTINUOUS_DATA_JESSI;
+        String dirOut = TestFiles.createSubDir(tempDir, "fges_bootstrapping_jessi").toString();
         String[] args = {
             "--dataset", dataset,
             "--delimiter", "tab",
@@ -45,13 +45,24 @@ public class CausalCmdApplicationBootstrappingTest {
             "--score", "ebic-score",
             "--default",
             "--prefix", "fges-bootstrapping",
-            "--numberResampling", "10",
+            "--numberResampling", "1",
             "--percentResampleSize", "100",
             "--seed", "1673588774198",
             "--resamplingEnsemble", "2",
             "--out", dirOut
         };
+        long startTime = System.nanoTime();
+
         CausalCmdApplication.main(args);
+
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime) / 1000000000;  //divide by 1000000 to get milliseconds.
+
+        System.out.println(
+                "Total time: " + duration + " seconds"
+        );
+
     }
 
 }

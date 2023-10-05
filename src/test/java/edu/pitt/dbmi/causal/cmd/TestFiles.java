@@ -34,6 +34,10 @@ import java.util.List;
  */
 final class TestFiles {
 
+    public static final String CONTINUOUS_DATA_JESSI = new File(TestFiles.class
+            .getResource("/data/1000_nodes_400_edges_deg_1.txt").getFile()).getAbsolutePath();
+
+
     public static final String CONTINUOUS_DATA = new File(TestFiles.class
             .getResource("/data/sim_data_continuous_20var_100case.txt").getFile()).getAbsolutePath();
 
