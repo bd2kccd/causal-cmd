@@ -31,11 +31,11 @@ import edu.cmu.tetrad.data.ICovarianceMatrix;
 import edu.cmu.tetrad.data.Knowledge;
 import edu.cmu.tetrad.graph.Dag;
 import edu.cmu.tetrad.graph.Graph;
+import edu.cmu.tetrad.graph.GraphTransforms;
 import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.graph.Node;
 import edu.cmu.tetrad.graph.NodeType;
 import edu.cmu.tetrad.search.utils.DagToPag;
-import edu.cmu.tetrad.search.utils.GraphSearchUtils;
 import edu.cmu.tetrad.search.utils.TsDagToPag;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
@@ -236,7 +236,7 @@ public class TetradRunner {
 
         if (cmdArgs.isChooseMagInPag()) {
             try {
-                graph = GraphSearchUtils.pagToMag(graph);
+                graph = GraphTransforms.pagToMag(graph);
             } catch (Exception exception) {
                 LOGGER.error("Unable to choose MAG in PAG.", exception);
             }
@@ -244,7 +244,7 @@ public class TetradRunner {
 
         if (cmdArgs.isGeneratePatternFromDag()) {
             try {
-                graph = GraphSearchUtils.cpdagFromDag(graph);
+                graph = GraphTransforms.cpdagForDag(graph);
             } catch (Exception exception) {
                 LOGGER.error("Unable to generate pattern graph from DAG.", exception);
             }
