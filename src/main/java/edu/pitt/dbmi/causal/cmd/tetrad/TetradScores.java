@@ -55,15 +55,15 @@ public final class TetradScores {
      */
     private TetradScores() {
         ScoreAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
-            String key = e.getAnnotation().command();
+            String key = e.annotation().command();
             scores.put(key, e);
-            if (!e.getClazz().isAnnotationPresent(Experimental.class)) {
+            if (!e.clazz().isAnnotationPresent(Experimental.class)) {
                 nonExpScores.put(key, e);
             }
         });
 
         scores.forEach((k, v) -> {
-            DataType[] dataTypes = v.getAnnotation().dataType();
+            DataType[] dataTypes = v.annotation().dataType();
             for (DataType dataType : dataTypes) {
                 List<String> list = groupByDataType.get(dataType);
                 if (list == null) {
@@ -75,7 +75,7 @@ public final class TetradScores {
         });
 
         nonExpScores.forEach((k, v) -> {
-            DataType[] dataTypes = v.getAnnotation().dataType();
+            DataType[] dataTypes = v.annotation().dataType();
             for (DataType dataType : dataTypes) {
                 List<String> list = nonExpGroupByDataType.get(dataType);
                 if (list == null) {
@@ -204,7 +204,7 @@ public final class TetradScores {
                 ? scores.get(command)
                 : nonExpScores.get(command);
 
-        return (annotatedClass == null) ? null : annotatedClass.getClazz();
+        return (annotatedClass == null) ? null : annotatedClass.clazz();
     }
 
     /**

@@ -49,9 +49,9 @@ public final class TetradAlgorithms {
      */
     private TetradAlgorithms() {
         AlgorithmAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
-            String key = e.getAnnotation().command();
+            String key = e.annotation().command();
             algorithms.put(key, e);
-            if (!e.getClazz().isAnnotationPresent(Experimental.class)) {
+            if (!e.clazz().isAnnotationPresent(Experimental.class)) {
                 nonExpAlgorithms.put(key, e);
             }
         });
@@ -111,7 +111,7 @@ public final class TetradAlgorithms {
                 ? algorithms.get(command)
                 : nonExpAlgorithms.get(command);
 
-        return (annotatedClass == null) ? null : annotatedClass.getClazz();
+        return (annotatedClass == null) ? null : annotatedClass.clazz();
     }
 
     /**

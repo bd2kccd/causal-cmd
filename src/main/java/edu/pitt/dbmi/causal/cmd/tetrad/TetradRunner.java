@@ -44,6 +44,7 @@ import edu.pitt.dbmi.causal.cmd.data.DataFiles;
 import edu.pitt.dbmi.causal.cmd.util.DateTime;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.MarshalledObject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -348,7 +349,7 @@ public class TetradRunner {
     private Algorithm getAlgorithm(CmdArgs cmdArgs) throws AlgorithmRunException {
         try {
             return AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass());
-        } catch (IllegalAccessException | InstantiationException exception) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException exception) {
             throw new AlgorithmRunException(exception);
         }
     }
