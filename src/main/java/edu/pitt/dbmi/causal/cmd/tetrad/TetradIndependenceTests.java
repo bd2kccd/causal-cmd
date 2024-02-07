@@ -56,15 +56,15 @@ public final class TetradIndependenceTests {
      */
     private TetradIndependenceTests() {
         TestOfIndependenceAnnotations.getInstance().getAnnotatedClasses().stream().forEach(e -> {
-            String key = e.getAnnotation().command();
+            String key = e.annotation().command();
             tests.put(key, e);
-            if (!e.getClazz().isAnnotationPresent(Experimental.class)) {
+            if (!e.clazz().isAnnotationPresent(Experimental.class)) {
                 nonExpTests.put(key, e);
             }
         });
 
         tests.forEach((k, v) -> {
-            DataType[] dataTypes = v.getAnnotation().dataType();
+            DataType[] dataTypes = v.annotation().dataType();
             for (DataType dataType : dataTypes) {
                 List<String> list = groupByDataType.get(dataType);
                 if (list == null) {
@@ -76,7 +76,7 @@ public final class TetradIndependenceTests {
         });
 
         nonExpTests.forEach((k, v) -> {
-            DataType[] dataTypes = v.getAnnotation().dataType();
+            DataType[] dataTypes = v.annotation().dataType();
             for (DataType dataType : dataTypes) {
                 List<String> list = nonExpGroupByDataType.get(dataType);
                 if (list == null) {
@@ -205,7 +205,7 @@ public final class TetradIndependenceTests {
                 ? tests.get(command)
                 : nonExpTests.get(command);
 
-        return (annotatedClass == null) ? null : annotatedClass.getClazz();
+        return (annotatedClass == null) ? null : annotatedClass.clazz();
     }
 
     /**

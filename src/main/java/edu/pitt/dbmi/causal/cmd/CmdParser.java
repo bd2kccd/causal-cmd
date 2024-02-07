@@ -32,6 +32,7 @@ import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
 import edu.pitt.dbmi.causal.cmd.util.FileUtils;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -322,7 +323,7 @@ public final class CmdParser {
         Set<String> params = new HashSet<>();
         try {
             params.addAll(getAlgorithmRelatedParameters(AlgorithmFactory.create(algorithmClass, indTestClass, scoreClass)));
-        } catch (IllegalAccessException | InstantiationException exception) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException exception) {
             throw new CmdParserException(parseOptions, exception);
         }
 
@@ -440,7 +441,7 @@ public final class CmdParser {
     private static Set<String> getAllRelatedParameters(CmdArgs cmdArgs, ParseOptions parseOptions) throws CmdParserException {
         try {
             return getAlgorithmRelatedParameters(AlgorithmFactory.create(cmdArgs.getAlgorithmClass(), cmdArgs.getTestClass(), cmdArgs.getScoreClass()));
-        } catch (IllegalAccessException | InstantiationException exception) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException exception) {
             throw new CmdParserException(parseOptions, exception);
         }
     }
