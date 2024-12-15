@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>edu.pitt.dbmi</groupId>
     <artifactId>causal-cmd</artifactId>
-    <version>1.12.0</version>
+    <version>1.13.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>io.github.cmu-phil</groupId>
             <artifactId>tetrad-lib</artifactId>
-            <version>7.6.3</version>
+            <version>7.6.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>io.github.cmu-phil</groupId>
             <artifactId>data-reader</artifactId>
-            <version>7.6.3</version>
+            <version>7.6.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

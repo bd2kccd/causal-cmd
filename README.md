@@ -10,4 +10,4 @@ https://s01.oss.sonatype.org/content/repositories/releases/io/github/cmu-phil/ca
 
 Here is the current jar to use for causal-cmd:
 
-https://s01.oss.sonatype.org/content/repositories/releases/io/github/cmu-phil/causal-cmd/1.11.1/causal-cmd-1.11.1-jar-with-dependencies.jar
+https://s01.oss.sonatype.org/content/repositories/releases/io/github/cmu-phil/causal-cmd/1.13.0/causal-cmd-1.13.0-jar-with-dependencies.jar

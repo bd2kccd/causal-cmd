@@ -237,7 +237,7 @@ public class TetradRunner {
 
         if (cmdArgs.isChooseMagInPag()) {
             try {
-                graph = GraphTransforms.pagToMag(graph);
+                graph = GraphTransforms.magFromPag(graph);
             } catch (Exception exception) {
                 LOGGER.error("Unable to choose MAG in PAG.", exception);
             }
@@ -245,7 +245,7 @@ public class TetradRunner {
 
         if (cmdArgs.isGeneratePatternFromDag()) {
             try {
-                graph = GraphTransforms.cpdagForDag(graph);
+                graph = GraphTransforms.dagToCpdag(graph);
             } catch (Exception exception) {
                 LOGGER.error("Unable to generate pattern graph from DAG.", exception);
             }
