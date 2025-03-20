@@ -166,12 +166,18 @@ public class CausalCmdApplication {
                             int ensembleValue = Integer.parseInt(ensemble);
 
                             // Ensemble method: Preserved (1), Highest (2), Majority (3)
-                            if (ensembleValue == 1) {
-                                graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Preserved);
-                            } else if (ensembleValue == 2) {
-                                graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Highest);
-                            } else if (ensembleValue == 3) {
-                                graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Majority);
+                            switch (ensembleValue) {
+                                case 1:
+                                    graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Preserved);
+                                    break;
+                                case 2:
+                                    graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Highest);
+                                    break;
+                                case 3:
+                                    graphs[i] = GraphSampling.createDisplayGraph(graphs[i], ResamplingEdgeEnsemble.Majority);
+                                    break;
+                                default:
+                                    break;
                             }
                         } catch (NumberFormatException exception) {
                             exception.printStackTrace(System.err);

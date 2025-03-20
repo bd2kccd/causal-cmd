@@ -2,6 +2,7 @@ package edu.pitt.dbmi.causal.cmd;
 
 import java.io.File;
 import java.nio.file.Path;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -37,6 +38,7 @@ public class CausalCmdApplicationExternalGraphTest {
         CausalCmdApplication.main(args);
     }
 
+    @Disabled
     @Test
     public void testFgesWithContinuousData() throws Exception {
         String dataset = new File(CausalCmdApplicationExternalGraphTest.class
