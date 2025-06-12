@@ -168,10 +168,10 @@ public class TetradRunner {
      * @param dataModels list of dataset to run
      * @return list of result search graphs
      */
-    private List<Graph> runSearch(final Algorithm algorithm, final Parameters parameters, final List<DataModel> dataModels) {
+    private List<Graph> runSearch(final Algorithm algorithm, final Parameters parameters, final List<DataModel> dataModels) throws InterruptedException {
         List<Graph> graphList = new LinkedList<>();
 
-        if (algorithm instanceof MultiDataSetAlgorithm) {
+        if (algorithm instanceof MultiDataSetAlgorithm multiDataSetAlgorithm) {
             int numOfRuns = parameters.getInt("numRuns");
             while (numOfRuns > 0) {
                 numOfRuns--;
@@ -190,30 +190,29 @@ public class TetradRunner {
                     sub.add(dataSets.get(j));
                 }
 
-                graphList.add(((MultiDataSetAlgorithm) algorithm).search(sub, parameters));
+                graphList.add(multiDataSetAlgorithm.search(sub, parameters));
             }
         } else if (algorithm instanceof ClusterAlgorithm) {
             int numOfRuns = parameters.getInt("numRuns");
             while (numOfRuns > 0) {
                 numOfRuns--;
 
-                dataModels.forEach(dataModel -> {
+                for (DataModel dataModel : dataModels) {
                     if (dataModel instanceof ICovarianceMatrix) {
                         graphList.add(algorithm.search(dataModel, parameters));
-                    } else if (dataModel instanceof DataSet) {
-                        DataSet dataSet = (DataSet) dataModel;
+                    } else if (dataModel instanceof DataSet dataSet) {
                         if (dataSet.isContinuous()) {
                             graphList.add(algorithm.search(dataSet, parameters));
                         } else {
                             throw new IllegalArgumentException("Sorry, you need a continuous dataset for a cluster algorithm.");
                         }
                     }
-                });
+                }
             }
         } else {
-            dataModels.forEach(dataModel -> {
+            for (DataModel dataModel : dataModels) {
                 graphList.add(algorithm.search(dataModel, parameters));
-            });
+            }
         }
 
         return graphList;
@@ -237,7 +236,7 @@ public class TetradRunner {
 
         if (cmdArgs.isChooseMagInPag()) {
             try {
-                graph = GraphTransforms.magFromPag(graph);
+                graph = GraphTransforms.zhangMagFromPag(graph);
             } catch (Exception exception) {
                 LOGGER.error("Unable to choose MAG in PAG.", exception);
             }
