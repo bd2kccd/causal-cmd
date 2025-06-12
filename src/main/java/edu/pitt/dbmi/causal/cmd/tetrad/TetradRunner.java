@@ -236,7 +236,7 @@ public class TetradRunner {
 
         if (cmdArgs.isChooseMagInPag()) {
             try {
-                graph = GraphTransforms.magFromPag(graph);
+                graph = GraphTransforms.zhangMagFromPag(graph);
             } catch (Exception exception) {
                 LOGGER.error("Unable to choose MAG in PAG.", exception);
             }
