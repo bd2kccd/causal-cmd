@@ -21,10 +21,10 @@ package edu.pitt.dbmi.causal.cmd.tetrad;
 import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.algcomparison.algorithm.MultiDataSetAlgorithm;
-import edu.cmu.tetrad.algcomparison.algorithm.cluster.ClusterAlgorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.oracle.cpdag.SingleGraphAlg;
 import edu.cmu.tetrad.algcomparison.utils.HasKnowledge;
 import edu.cmu.tetrad.algcomparison.utils.TakesExternalGraph;
+import edu.cmu.tetrad.cluster.ClusteringAlgorithm;
 import edu.cmu.tetrad.data.DataModel;
 import edu.cmu.tetrad.data.DataSet;
 import edu.cmu.tetrad.data.ICovarianceMatrix;
@@ -35,7 +35,7 @@ import edu.cmu.tetrad.graph.GraphTransforms;
 import edu.cmu.tetrad.graph.GraphUtils;
 import edu.cmu.tetrad.graph.Node;
 import edu.cmu.tetrad.graph.NodeType;
-import edu.cmu.tetrad.search.utils.DagToPag;
+import edu.cmu.tetrad.search.utils.MagToPag;
 import edu.cmu.tetrad.search.utils.TsDagToPag;
 import edu.cmu.tetrad.util.Parameters;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
@@ -192,7 +192,7 @@ public class TetradRunner {
 
                 graphList.add(multiDataSetAlgorithm.search(sub, parameters));
             }
-        } else if (algorithm instanceof ClusterAlgorithm) {
+        } else if (algorithm instanceof ClusteringAlgorithm) {
             int numOfRuns = parameters.getInt("numRuns");
             while (numOfRuns > 0) {
                 numOfRuns--;
@@ -259,8 +259,8 @@ public class TetradRunner {
                     throw new IllegalArgumentException("The source graph is not a DAG.");
                 }
 
-                DagToPag p = new DagToPag(graph);
-                graph = p.convert();
+                MagToPag p = new MagToPag(graph);
+                graph = p.convert(true);
 
             } catch (Exception exception) {
                 LOGGER.error("Unable to generate PAG from DAG.", exception);

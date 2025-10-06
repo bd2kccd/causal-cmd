@@ -21,7 +21,7 @@ package edu.pitt.dbmi.causal.cmd;
 import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.algcomparison.utils.TakesIndependenceWrapper;
-import edu.cmu.tetrad.algcomparison.utils.UsesScoreWrapper;
+import edu.cmu.tetrad.algcomparison.utils.TakesScoreWrapper;
 import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.util.ParamDescription;
 import edu.cmu.tetrad.util.ParamDescriptions;
@@ -124,7 +124,7 @@ public final class CmdParser {
         cmdArgs.scoreClass = cmd.hasOption(CmdParams.SCORE)
                 ? TetradScores.getInstance().getClass(cmd.getOptionValue(CmdParams.SCORE))
                 : null;
-        cmdArgs.filePrefix = getValidPrefix(cmd, cmdArgs, parseOptions);
+        cmdArgs.filePrefix = getValidPrefix(cmd, cmdArgs);
         cmdArgs.jsonGraph = cmd.hasOption(CmdParams.JSON_GRAPH);
         cmdArgs.skipValidation = cmd.hasOption(CmdParams.SKIP_VALIDATION);
         cmdArgs.hasHeader = !cmd.hasOption(CmdParams.NO_HEADER);
@@ -368,13 +368,13 @@ public final class CmdParser {
         params.addAll(algorithm.getParameters());
 
         // add the algorithm test parameters, if any
-        if (algorithm instanceof TakesIndependenceWrapper) {
-            params.addAll(((TakesIndependenceWrapper) algorithm).getIndependenceWrapper().getParameters());
+        if (algorithm instanceof TakesIndependenceWrapper takesIndependenceWrapper) {
+            params.addAll(takesIndependenceWrapper.getIndependenceWrapper().getParameters());
         }
 
         // add the algorithm's score parameters, if any
-        if (algorithm instanceof UsesScoreWrapper) {
-            params.addAll(((UsesScoreWrapper) algorithm).getScoreWrapper().getParameters());
+        if (algorithm instanceof TakesScoreWrapper takesScoreWrapper) {
+            params.addAll(takesScoreWrapper.getScoreWrapper().getParameters());
         }
 
         // add the bootstrap parameters, if any
@@ -407,7 +407,7 @@ public final class CmdParser {
         opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXTRACT_STRUCT_MODEL));
     }
 
-    private static String getValidPrefix(CommandLine cmd, CmdArgs cmdArgs, ParseOptions parseOptions) {
+    private static String getValidPrefix(CommandLine cmd, CmdArgs cmdArgs) {
         if (cmd.hasOption(CmdParams.FILE_PREFIX)) {
             return cmd.getOptionValue(CmdParams.FILE_PREFIX);
         } else {

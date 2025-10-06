@@ -46,7 +46,7 @@ public class CausalCmdApplicationBootstrappingTest {
             "--default",
             "--prefix", "fges-bootstrapping",
             "--numberResampling", "10",
-            "--fractionResampleSize", "100",
+            "--percentResampleSize", "100",
             "--seed", "1673588774198",
             "--resamplingEnsemble", "2",
             "--out", dirOut
