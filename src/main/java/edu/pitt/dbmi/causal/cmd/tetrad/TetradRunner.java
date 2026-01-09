@@ -260,7 +260,7 @@ public class TetradRunner {
                 }
 
                 MagToPag p = new MagToPag(graph);
-                graph = p.convert(true);
+                graph = p.convert(true, true);
 
             } catch (Exception exception) {
                 LOGGER.error("Unable to generate PAG from DAG.", exception);
