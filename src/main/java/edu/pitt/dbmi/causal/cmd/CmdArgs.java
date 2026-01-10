@@ -18,7 +18,6 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import edu.cmu.tetrad.data.DataType;
 import edu.pitt.dbmi.data.reader.Delimiter;
 import java.nio.file.Path;
 import java.util.List;
@@ -98,7 +97,7 @@ public class CmdArgs {
     /**
      * Type of data in the dataset.
      */
-    protected DataType dataType;
+    protected CmdDataType dataType;
 
     /**
      * Data delimiter.
@@ -210,7 +209,7 @@ public class CmdArgs {
         return hasEnsembleOption;
     }
 
-    public DataType getDataType() {
+    public CmdDataType getDataType() {
         return dataType;
     }
 

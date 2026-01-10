@@ -124,6 +124,23 @@ public class CausalCmdApplicationTest {
     }
 
     @Test
+    public void testFGESLowerCovariance() throws Exception {
+        String dataset = TestFiles.LOWER_COVARIANCE_CONTINUOUS_DATA;
+        String dirOut = TestFiles.createSubDir(tempDir, "gfci_lcovar").toString();
+        String[] args = {
+            "--dataset", dataset,
+            "--delimiter", "tab",
+            "--data-type", "lcovariance",
+            "--algorithm", "gfci",
+            "--test", "fisher-z-test",
+            "--score", "sem-bic-score",
+            "--default",
+            "--out", dirOut
+        };
+        CausalCmdApplication.main(args);
+    }
+
+    @Test
     public void testGFCIWithContinuousDataAndKnowledge() throws Exception {
         String dataset = TestFiles.CONTINUOUS_DATA;
         String knowledge = TestFiles.KNOWLEDGE_CONTINUOUS_DATA;

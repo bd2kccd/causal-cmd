@@ -58,6 +58,9 @@ final class TestFiles {
     public static final String COVARIANCE_CONTINUOUS_DATA = new File(TestFiles.class
             .getResource("/data/covariance_sim_data_continuous_20var_100case.txt").getFile()).getAbsolutePath();
 
+    public static final String LOWER_COVARIANCE_CONTINUOUS_DATA = new File(TestFiles.class
+            .getResource("/data/lower_covariance_sim_data_continuous_20var_100case.txt").getFile()).getAbsolutePath();
+
     public static final String KNOWLEDGE_CONTINUOUS_DATA = new File(TestFiles.class
             .getResource("/data/knowledge_sim_data_continuous_20var_100case.txt").getFile()).getAbsolutePath();
 

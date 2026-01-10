@@ -260,12 +260,12 @@ public final class CmdOptions {
     }
 
     /**
-     * Get the names of all the datatypes.
+     * Get the names of all the data types.
      *
      * @return datatype description
      */
     private String getDataTypeDesc() {
-        return "Data type: " + DataTypes.getInstance().getNames().stream()
+        return "Data type: " + CmdDataTypes.getInstance().getNames().stream()
                 .collect(Collectors.joining(", "));
     }
 

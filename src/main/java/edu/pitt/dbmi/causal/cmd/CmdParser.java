@@ -22,7 +22,6 @@ import edu.cmu.tetrad.algcomparison.algorithm.Algorithm;
 import edu.cmu.tetrad.algcomparison.algorithm.AlgorithmFactory;
 import edu.cmu.tetrad.algcomparison.utils.TakesIndependenceWrapper;
 import edu.cmu.tetrad.algcomparison.utils.TakesScoreWrapper;
-import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.util.ParamDescription;
 import edu.cmu.tetrad.util.ParamDescriptions;
 import edu.cmu.tetrad.util.Params;
@@ -162,7 +161,7 @@ public final class CmdParser {
      * @throws CmdParserException when an error occurs while parsing
      */
     private static void parseRequiredOptions(CommandLine cmd, ParseOptions parseOptions, CmdArgs cmdArgs) throws CmdParserException {
-        cmdArgs.dataType = DataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
+        cmdArgs.dataType = CmdDataTypes.getInstance().get(cmd.getOptionValue(CmdParams.DATA_TYPE));
         cmdArgs.delimiter = Delimiters.getInstance().get(cmd.getOptionValue(CmdParams.DELIMITER));
         cmdArgs.algorithmClass = TetradAlgorithms.getInstance().getAlgorithmClass(cmd.getOptionValue(CmdParams.ALGORITHM));
 
@@ -231,17 +230,17 @@ public final class CmdParser {
 
         // get data type
         String dataTypeCmd = argsMap.get(CmdParams.DATA_TYPE);
-        DataType dataType = DataTypes.getInstance().get(dataTypeCmd);
+        CmdDataType dataType = CmdDataTypes.getInstance().get(dataTypeCmd);
         if (dataType == null) {
             invalidOpts.addOption(opts.getOption(CmdParams.DATA_TYPE));
             String errMsg = String.format("No such data type '%s'.", dataTypeCmd);
             throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
         }
-        if (dataType != DataType.Covariance) {
+        if (dataType != CmdDataType.Covariance && dataType != CmdDataType.LCovariance) {
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.EXCLUDE_VARIABLE));
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.MISSING_MARKER));
             opts.addOption(CmdOptions.getInstance().getLongOption(CmdParams.NO_HEADER));
-            if (dataType == DataType.Mixed) {
+            if (dataType == CmdDataType.Mixed) {
                 opts.addOption(OptionFactory.createRequiredNumCategoryOpt());
             }
         }
@@ -293,7 +292,7 @@ public final class CmdParser {
                 String errMsg = String.format("No such test '%s'.", indTestCmd);
                 throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
-            if (!indTests.hasCommand(indTestCmd, dataType)) {
+            if (!indTests.hasCommand(indTestCmd, CmdDataTypes.toTetradDataType(dataType))) {
                 invalidOpts.addOption(opts.getOption(CmdParams.TEST));
                 String errMsg = String.format("Independence test '%s' is invalid for data-type '%s'.", indTestCmd, argsMap.get(CmdParams.DATA_TYPE));
                 throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
@@ -311,7 +310,7 @@ public final class CmdParser {
                 String errMsg = String.format("No such score '%s'.", scoreCmd);
                 throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));
             }
-            if (!scores.hasCommand(scoreCmd, dataType)) {
+            if (!scores.hasCommand(scoreCmd, CmdDataTypes.toTetradDataType(dataType))) {
                 invalidOpts.addOption(opts.getOption(CmdParams.SCORE));
                 String errMsg = String.format("Score '%s' is invalid for data-type '%s'.", scoreCmd, argsMap.get(CmdParams.DATA_TYPE));
                 throw new CmdParserException(parseOptions, new IllegalArgumentException(errMsg));

@@ -18,7 +18,6 @@
  */
 package edu.pitt.dbmi.causal.cmd;
 
-import edu.cmu.tetrad.data.DataType;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradIndependenceTests;
 import edu.pitt.dbmi.causal.cmd.tetrad.TetradScores;
 import java.util.List;
@@ -61,8 +60,8 @@ public final class OptionFactory {
      * @param dataType data type
      * @return options required options for the test of independence
      */
-    public static Option createRequiredTestOpt(DataType dataType) {
-        List<String> commands = TetradIndependenceTests.getInstance().getCommands(dataType);
+    public static Option createRequiredTestOpt(CmdDataType dataType) {
+        List<String> commands = TetradIndependenceTests.getInstance().getCommands(CmdDataTypes.toTetradDataType(dataType));
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.TEST);
 
         return Option.builder()
@@ -81,8 +80,8 @@ public final class OptionFactory {
      * @param dataType data type
      * @return options required options for the score
      */
-    public static Option createRequiredScoreOpt(DataType dataType) {
-        List<String> commands = TetradScores.getInstance().getCommands(dataType);
+    public static Option createRequiredScoreOpt(CmdDataType dataType) {
+        List<String> commands = TetradScores.getInstance().getCommands(CmdDataTypes.toTetradDataType(dataType));
         Option opt = CmdOptions.getInstance().getLongOption(CmdParams.SCORE);
 
         return Option.builder()

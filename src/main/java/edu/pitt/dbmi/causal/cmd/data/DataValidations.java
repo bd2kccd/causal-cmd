@@ -18,8 +18,8 @@
  */
 package edu.pitt.dbmi.causal.cmd.data;
 
-import edu.cmu.tetrad.data.DataType;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
+import edu.pitt.dbmi.causal.cmd.CmdDataType;
 import edu.pitt.dbmi.causal.cmd.ValidationException;
 import edu.pitt.dbmi.causal.cmd.util.LogMessages;
 import edu.pitt.dbmi.data.reader.DataColumn;
@@ -31,6 +31,7 @@ import edu.pitt.dbmi.data.reader.tabular.TabularDataReader;
 import edu.pitt.dbmi.data.reader.validation.ValidationCode;
 import edu.pitt.dbmi.data.reader.validation.ValidationResult;
 import edu.pitt.dbmi.data.reader.validation.covariance.CovarianceValidation;
+import edu.pitt.dbmi.data.reader.validation.covariance.FullCovarianceDataFileValidation;
 import edu.pitt.dbmi.data.reader.validation.covariance.LowerCovarianceDataFileValidation;
 import edu.pitt.dbmi.data.reader.validation.tabular.TabularDataFileValidation;
 import edu.pitt.dbmi.data.reader.validation.tabular.TabularDataValidation;
@@ -66,19 +67,18 @@ public final class DataValidations {
      * @throws ValidationException when dataset validation fails
      */
     public static void validate(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
-        DataType dataType = cmdArgs.getDataType();
+        CmdDataType dataType = cmdArgs.getDataType();
         switch (dataType) {
-            case Covariance:
+            case Covariance ->
                 validateCovariance(cmdArgs, out);
-                break;
-            case Continuous:
-            case Discrete:
-            case Mixed:
+            case LCovariance ->
+                validateLowerCovariance(cmdArgs, out);
+            case Continuous, Discrete, Mixed ->
                 validateTabularData(cmdArgs, out);
-                break;
-            default:
+            default -> {
                 String errMsg = String.format("Data type %s not supported.", dataType.name());
                 throw new ValidationException(errMsg);
+            }
         }
     }
 
@@ -103,11 +103,11 @@ public final class DataValidations {
                 columnReader.setCommentMarker(commentMarker);
                 columnReader.setQuoteCharacter(quoteCharacter);
 
-                boolean isDiscrete = (cmdArgs.getDataType() == DataType.Discrete);
+                boolean isDiscrete = (cmdArgs.getDataType() == CmdDataType.Discrete);
                 DataColumn[] dataColumns = columnReader.readInDataColumns(varsToExclude, isDiscrete);
 
                 // handle mixed data
-                if (cmdArgs.getDataType() == DataType.Mixed) {
+                if (cmdArgs.getDataType() == CmdDataType.Mixed) {
                     TabularDataReader dataReader = new TabularDataFileReader(dataFile, delimiter);
                     dataReader.setCommentMarker(commentMarker);
                     dataReader.setQuoteCharacter(quoteCharacter);
@@ -149,6 +149,39 @@ public final class DataValidations {
      * @throws ValidationException
      */
     private static void validateCovariance(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
+        for (Path dataFile : cmdArgs.getDatasetFiles()) {
+            Delimiter delimiter = cmdArgs.getDelimiter();
+            char quoteCharacter = cmdArgs.getQuoteChar();
+            String commentMarker = cmdArgs.getCommentMarker();
+
+            CovarianceValidation validation = new FullCovarianceDataFileValidation(dataFile, delimiter);
+            validation.setCommentMarker(commentMarker);
+            validation.setQuoteCharacter(quoteCharacter);
+
+            // run data validationn
+            LogMessages.dataValidationStart(dataFile, LOGGER, out);
+            List<ValidationResult> validationResults = validation.validate();
+            LogMessages.dataValidationEnd(dataFile, LOGGER, out);
+
+            // group validation results by validation code
+            Map<ValidationCode, List<ValidationResult>> groupedResults = validationResults.stream()
+                    .collect(Collectors.groupingBy(ValidationResult::getCode));
+            LogMessages.dataValidationResults(groupedResults, LOGGER, out);
+
+            if (groupedResults.containsKey(ValidationCode.ERROR)) {
+                throw new ValidationException();
+            }
+        }
+    }
+
+    /**
+     * Validate covariance data.
+     *
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @throws ValidationException
+     */
+    private static void validateLowerCovariance(CmdArgs cmdArgs, PrintStream out) throws ValidationException {
         for (Path dataFile : cmdArgs.getDatasetFiles()) {
             Delimiter delimiter = cmdArgs.getDelimiter();
             char quoteCharacter = cmdArgs.getQuoteChar();

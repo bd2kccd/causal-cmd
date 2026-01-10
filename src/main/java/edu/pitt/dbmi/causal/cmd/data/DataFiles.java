@@ -19,7 +19,6 @@
 package edu.pitt.dbmi.causal.cmd.data;
 
 import edu.cmu.tetrad.data.DataModel;
-import edu.cmu.tetrad.data.DataType;
 import edu.cmu.tetrad.data.DelimiterType;
 import edu.cmu.tetrad.data.Knowledge;
 import edu.cmu.tetrad.data.SimpleDataLoader;
@@ -28,12 +27,14 @@ import edu.cmu.tetrad.graph.GraphSaveLoadUtils;
 import edu.cmu.tetrad.util.DataConvertUtils;
 import edu.pitt.dbmi.causal.cmd.AlgorithmRunException;
 import edu.pitt.dbmi.causal.cmd.CmdArgs;
+import edu.pitt.dbmi.causal.cmd.CmdDataType;
 import edu.pitt.dbmi.causal.cmd.util.LogMessages;
 import edu.pitt.dbmi.data.reader.DataColumn;
 import edu.pitt.dbmi.data.reader.DataColumns;
 import edu.pitt.dbmi.data.reader.Delimiter;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceData;
 import edu.pitt.dbmi.data.reader.covariance.CovarianceDataReader;
+import edu.pitt.dbmi.data.reader.covariance.FullCovarianceDataFileReader;
 import edu.pitt.dbmi.data.reader.covariance.LowerCovarianceDataFileReader;
 import edu.pitt.dbmi.data.reader.metadata.Metadata;
 import edu.pitt.dbmi.data.reader.metadata.MetadataFileReader;
@@ -138,17 +139,21 @@ public final class DataFiles {
      * algorithm from command-line
      */
     public static List<DataModel> readInDatasets(CmdArgs cmdArgs, PrintStream out) throws IOException, AlgorithmRunException {
-        DataType dataType = cmdArgs.getDataType();
+        CmdDataType dataType = cmdArgs.getDataType();
         switch (dataType) {
-            case Covariance:
+            case Covariance -> {
                 return readInCovarianceFile(cmdArgs, out);
-            case Continuous:
-            case Discrete:
-            case Mixed:
+            }
+            case LCovariance -> {
+                return readInLowerCovarianceFile(cmdArgs, out);
+            }
+            case Continuous, Discrete, Mixed -> {
                 return readInTabularData(cmdArgs, out);
-            default:
+            }
+            default -> {
                 String errMsg = String.format("Data type %s not supported.", dataType.name());
                 throw new AlgorithmRunException(errMsg);
+            }
         }
     }
 
@@ -177,7 +182,7 @@ public final class DataFiles {
             columnReader.setCommentMarker(commentMarker);
             columnReader.setQuoteCharacter(quoteCharacter);
 
-            boolean isDiscrete = (cmdArgs.getDataType() == DataType.Discrete);
+            boolean isDiscrete = (cmdArgs.getDataType() == CmdDataType.Discrete);
             DataColumn[] dataColumns;
             if (hasHeader) {
                 dataColumns = columnReader.readInDataColumns(varsToExclude, isDiscrete);
@@ -190,7 +195,7 @@ public final class DataFiles {
             }
 
             // handle mixed data
-            if (cmdArgs.getDataType() == DataType.Mixed) {
+            if (cmdArgs.getDataType() == CmdDataType.Mixed) {
                 TabularDataReader dataReader = new TabularDataFileReader(dataFile, delimiter);
                 dataReader.setCommentMarker(commentMarker);
                 dataReader.setQuoteCharacter(quoteCharacter);
@@ -226,6 +231,36 @@ public final class DataFiles {
      * @throws IOException when errors occur during reading file
      */
     private static List<DataModel> readInCovarianceFile(CmdArgs cmdArgs, PrintStream out) throws IOException {
+        List<DataModel> dataModels = new LinkedList<>();
+
+        for (Path dataFile : cmdArgs.getDatasetFiles()) {
+            Delimiter delimiter = cmdArgs.getDelimiter();
+            char quoteCharacter = cmdArgs.getQuoteChar();
+            String commentMarker = cmdArgs.getCommentMarker();
+
+            CovarianceDataReader dataFileReader = new FullCovarianceDataFileReader(dataFile, delimiter);
+            dataFileReader.setCommentMarker(commentMarker);
+            dataFileReader.setQuoteCharacter(quoteCharacter);
+
+            LogMessages.readingFileStart(dataFile, LOGGER, out);
+            CovarianceData covarianceData = dataFileReader.readInData();
+            LogMessages.readingFileEnd(dataFile, LOGGER, out);
+
+            dataModels.add(DataConvertUtils.toCovarianceMatrix(covarianceData));
+        }
+
+        return dataModels;
+    }
+
+    /**
+     * Read in covariances files.
+     *
+     * @param cmdArgs command-line arguments
+     * @param out output stream to write message to
+     * @return list of datasets read in from files
+     * @throws IOException when errors occur during reading file
+     */
+    private static List<DataModel> readInLowerCovarianceFile(CmdArgs cmdArgs, PrintStream out) throws IOException {
         List<DataModel> dataModels = new LinkedList<>();
 
         for (Path dataFile : cmdArgs.getDatasetFiles()) {
