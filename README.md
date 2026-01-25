@@ -6,8 +6,10 @@ Causal-cmd is a Java application that provides a Command-Line Interface (CLI) to
 
 Public builds are available here:
 
-https://s01.oss.sonatype.org/content/repositories/releases/io/github/cmu-phil/causal-cmd/
+https://repo1.maven.org/maven2/io/github/cmu-phil/causal-cmd/
 
 Here is the current jar to use for causal-cmd:
 
-https://s01.oss.sonatype.org/content/repositories/releases/io/github/cmu-phil/causal-cmd/7.6.9/causal-cmd-7.6.9-jar-with-dependencies.jar
+https://repo1.maven.org/maven2/io/github/cmu-phil/causal-cmd/7.6.10/causal-cmd-7.6.10.jar
+
+Causal Command 7.6.10 is released under JDK 25. It is build using Corretto JDK 25.
